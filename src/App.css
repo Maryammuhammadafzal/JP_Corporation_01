@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+.bgImage{
+        background-image: url("../src/assets/Images/hero_background.jpg");
+        background-size: contain ;
+}
+
+.bgImage::after {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: #000;
+  opacity: 0.3;
+}
+
+.nav-tab .hoverBorder  {
+  height: 1px;
+  background-color: orangered;
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin-top: 1px;
+  z-index: 10;
+  transition: width 0.2s ease-in-out;
+  width: 0%;
+}
+
+.nav-tab:hover .hoverBorder{
+width: 100%;
+}
+
+ul.custom-bullet li {
+        position: relative;
+        padding-left: 1.5rem; 
+        list-style: none;    
+      }
+      
+      ul.custom-bullet li::before {
+        content: "";
+        position: absolute;
+        top: 0.6rem;           
+        left: 0;                
+        width: 0.6rem;         
+        height: 0.6rem;         
+        border-radius: 50%;     
+        background-color: #000; 
+        border: 2px solid #e46922; 
+      }
+     
+      
+
+.cardImage{
+  transition: transform 0.4s ease;
+}
+
+.cardImage:hover{
+  transform: scale(1.1);
+}
+.shakeAnimation:hover{
+  animation: shake 0.5s;
+
+  animation-iteration-count: infinite;
+}
+
+@keyframes shake {
+  0% { transform: translate(1px, 1px) rotate(0deg); }
+  10% { transform: translate(-1px, -2px) rotate(-1deg); }
+  20% { transform: translate(-3px, 0px) rotate(1deg); }
+  30% { transform: translate(3px, 2px) rotate(0deg); }
+  40% { transform: translate(1px, -1px) rotate(1deg); }
+  50% { transform: translate(-1px, 2px) rotate(-1deg); }
+  60% { transform: translate(-3px, 1px) rotate(0deg); }
+  70% { transform: translate(3px, 1px) rotate(-1deg); }
+  80% { transform: translate(-1px, -1px) rotate(1deg); }
+  90% { transform: translate(1px, 2px) rotate(0deg); }
+  100% { transform: translate(1px, -2px) rotate(-1deg); }
+}
