@@ -3,29 +3,65 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import Copyright from "../../../../Components/Copyright/Copyright";
 import Pagination from "../../../../Components/Pagination/Pagination";
+import { model } from "mongoose";
 
 const ManageListing = () => {
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [modalData, setModalData] = useState([]);
+  const [makeData, setMakeData] = useState([]);
 
+  const token = localStorage.getItem("adminToken")
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("/api/model");
+      const res = await axios.get("http://localhost:5000/api/model/" , {
+        headers : {
+          "Authorization" : `Barear ${token}`
+        }
+      });
       const data = await res.data;
       setModalData(data);
+      
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+  useEffect(() => {
+    fetchModalData();
+  }, []);
+
+let allMake;
+  const fetchMakeData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/make/"  , {
+        headers : {
+          "Authorization" : `Barear ${token}`
+        }
+    });
+      const data = await res.data.data;
+      setMakeData(data);
+      
     } catch (error) {
       console.log("error", error.message);
     }
   };
 
   useEffect(() => {
-    fetchModalData();
+    fetchMakeData();
   }, []);
 
+  for ( let i = 0; i < makeData.length; i++){
+    allMake = makeData[i];
+  }
+
+  
+  let make = makeData.find(make => modalData.make_id === makeData.make_id);
+  console.log(make);
+  
   // allModals array
   const allModals = modalData;
+ 
 
   // Filter search
   const filteredModals = allModals.map((car) => {
@@ -138,7 +174,7 @@ const ManageListing = () => {
   <tbody>
   {currentModal && currentModal
     .filter((modal) =>
-      modal.modalTitle
+      modal.model
         .toLowerCase()
         .includes(search.toLowerCase())
     )
@@ -148,8 +184,9 @@ const ManageListing = () => {
         <td className="p-4 text-center">
           {indexOfFirstModal + index + 1}
         </td>
-        <td className="p-4 text-start">{modal.modalTitle}</td>
-        <td className="p-4 text-start">{modal.modalMake}</td>
+{makeData.find(make =>  console.log(make.make_id === modal.make_id) )}
+        <td className="p-4 text-start">{modal.model}</td>
+        <td className="p-4 text-start">{makeData.find(make => make.make_id === model.make_id)}</td>
         <td className="p-4 justify-center flex space-x-2">
           <button
             className="text-white p-1 rounded bg-orange-400"

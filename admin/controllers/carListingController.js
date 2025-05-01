@@ -113,16 +113,13 @@ export const getCarListing = async (req, res) => {
 
 }
 export const getCarListingById = async (req, res) => {
-
         const { id } = req.params;
 
         try {
                 const get_car_listing_data_by_id = await CarListing.findById(id);
-console.log(get_car_listing_data_by_id);
 
                 res.status(200).json({ message: "Success", data: get_car_listing_data_by_id });
         } catch (error) {
-console.log(error.message);
 
                 res.status(400).json({ message: "Invalid Credentials", error });
         }

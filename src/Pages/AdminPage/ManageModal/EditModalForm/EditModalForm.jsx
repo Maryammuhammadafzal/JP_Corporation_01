@@ -18,9 +18,7 @@ const EditModalForm = () => {
   useEffect(() => {
     const fetchModalById = async () => {
       try {
-        const res = await axios.get(
-          `/api/model/get/${id}`
-        );
+        const res = await axios.get(`http://localhost:5000/api/model/get/${id}`);
         const modal = await res.data;
         console.log(modal);
 
@@ -51,16 +49,12 @@ const EditModalForm = () => {
 
       try {
         const token = localStorage.getItem("adminToken");
-        const response = await axios.put(
-          `/api/model/update/${id}`,
-          payload,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const response = await axios.put(`/api/model/update/${id}`, payload, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         console.log("Success" + JSON.stringify(response.data));
         alert("Updated Succesfully");
@@ -114,7 +108,9 @@ const EditModalForm = () => {
                 }`}
                 placeholder="Select make"
                 ref={makeRef}
-                onChange={(e) => setModalData({ ...modalData, modalMake: e.target.value })}
+                onChange={(e) =>
+                  setModalData({ ...modalData, modalMake: e.target.value })
+                }
                 value={modalData.modalMake}
               >
                 <option
@@ -126,114 +122,133 @@ const EditModalForm = () => {
                   Select Make
                 </option>
                 <option
+                  id="1"
                   value="AUDI"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   AUDI
                 </option>
                 <option
+                  id="2"
                   value="BENTLEY"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   BENTLEY
                 </option>
                 <option
+                  id="3"
                   value="BMW"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   BMW
                 </option>
                 <option
+                  id="4"
                   value="CADILLAC"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   CADILLAC
                 </option>
                 <option
+                  id="5"
                   value="CHEVROLET"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   CHEVROLET
                 </option>
                 <option
+                  id="6"
                   value="FARRARI"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   FARRARI
                 </option>
                 <option
+                  id="7"
                   value="FORD"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   FORD
                 </option>
                 <option
+                  id="8"
                   value="HINO"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   HINO
                 </option>
                 <option
+                  id="9"
                   value="HONDA"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   HONDA
                 </option>
                 <option
+                  id="10"
                   value="ISUZU"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   ISUZU
                 </option>
                 <option
+                  id="11"
                   value="LEXUS"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   LEXUS
                 </option>
                 <option
+                  id="12"
                   value="MAZDA"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MAZDA
                 </option>
                 <option
+                  id="13"
                   value="MERCEDES-BENZ"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MERCEDES-BENZ
                 </option>
                 <option
+                  id="14"
                   value="MISTUBISHI"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MISTUBISHI
                 </option>
                 <option
+                  id="15"
                   value="NISSAN"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   NISSAN
                 </option>
                 <option
+                  id="16"
                   value="PORCH"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   PORCH
                 </option>
                 <option
+                  id="17"
                   value="SUBARO"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   SUBARO
                 </option>
                 <option
+                  id="18"
                   value="SUZUKI"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   SUZUKI
                 </option>
                 <option
+                  id="19"
                   value="TOYOTA"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >

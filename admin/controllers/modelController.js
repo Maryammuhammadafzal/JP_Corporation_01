@@ -11,7 +11,7 @@ export const getModal =  async (req, res) => {
         const getModal = await Model.find().sort({ createdAt: -1 })
                 .skip((page - 1) * limit)
                 .limit(limit);
-
+                
         res.json(getModal);
 };
 
@@ -35,27 +35,27 @@ export const getModal =  async (req, res) => {
 //           }
 //     };
 
-//     // Get Modal By Make
-// export const getModalByMake = async (req, res) => {
-//   try {
-//     const make = req.params.modalMake;
-//     console.log("Make" , make);
+    // Get Modal By Make
+export const getModalByMake = async (req, res) => {
+  try {
+    const make = req.params.make_id;
+    console.log("Make" , make);
   
-//     const getModalByMake = await Modal.find({ modalMake : make});     
+    const get_modal_by_make = await Model.find({ model_id : make});     
         
-//             if (!getModalByMake) {
-//               return res.status(404).json({ message: "modal not found" });
-//             }
+            if (!get_modal_by_make) {
+              return res.status(404).json({ message: "modal not found" });
+            }
 
-//             console.log(getModalByMake);
+            console.log(get_modal_by_make);
             
         
-//             res.status(200).json(getModalByMake);
-//           } catch (error) {
-//             console.error("Error fetching modal by Make:", error);
-//             res.status(500).json({ message: "Server error" });
-//           }
-//     };
+            res.status(200).json(get_modal_by_make);
+          } catch (error) {
+            console.error("Error fetching modal by Make:", error);
+            res.status(500).json({ message: "Server error" });
+          }
+    };
     
 //     // Delete Modal
 // export const deleteModal =  async (req, res) => {
