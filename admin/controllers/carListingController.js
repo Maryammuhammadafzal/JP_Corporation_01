@@ -3,92 +3,113 @@ import CarListing from "../models/CarListingModel.js";
 export const addCarListing = async (req, res) => {
 
         let admin = req.user.username;
-
         try {
+                
+                
+                        let {
+                                title,
+                                condition,
+                                type,
+                                makeID,
+                                modelID,
+                                price,
+                                year,
+                                drive_type,
+                                transmission,
+                                fuel_type,
+                                mileage,
+                                engine_size,
+                                cylinders,
+                                color,
+                                doors,
+                                vin,
+                                availability,
+                                description,
+                                features,
+                                safety_features
+                        } = req.body;
+                console.log(req.body)
+                        console.log(isNaN(title) , title)
+                        console.log(isNaN(condition) , condition)
+                        console.log(isNaN(type) , type)
+                        console.log(isNaN(modelID) , modelID)
+                        console.log(isNaN(makeID) , makeID)
+                        console.log(isNaN(price) , price)
+                        console.log(isNaN(year) , year)
+                        console.log(isNaN(drive_type) , drive_type)
+                        console.log(isNaN(transmission) , transmission)
+                        console.log(isNaN(fuel_type) , fuel_type)
+                        console.log(isNaN(mileage) , mileage)
+                        console.log(isNaN(engine_size) , engine_size)
+                        console.log(isNaN(cylinders) , cylinders)
+                        console.log(isNaN(color) , color)
+                        console.log(isNaN(doors) , doors)
+                        console.log(isNaN(vin) , vin)
+                        console.log(isNaN(availability) , availability)
+                        console.log(isNaN(description) , description)
+                        console.log(isNaN(features) , features)
+                        console.log(isNaN(safety_features) , safety_features)
 
-                let {
-                        title,
-                        condition,
-                        type,
-                        makeID,
-                        modelID,
-                        price,
-                        year,
-                        drive_type,
-                        transmission,
-                        fuel_type,
-                        mileage,
-                        engine_size,
-                        cylinders,
-                        color,
-                        doors,
-                        vin,
-                        availability,
-                        description,
-                        features,
-                        safety_features
-                } = req.body;
 
+        //         // Check All Inputs
+        //         if (!availability || !vin || !doors || !color || !engine_size || !mileage || !fuel_type || !transmission || !drive_type || !year || !price || !modelID || !makeID || !type || !condition || !title) {
+        //                 return res.status(400).json("All Feilds are required");
+        //         }
 
-                // Check All Inputs
-                if (!availability || !vin || !doors || !color || !engine_size || !mileage || !fuel_type || !transmission || !drive_type || !year || !price || !modelID || !makeID || !type || !condition || !title) {
-                        return res.status(400).json("All Feilds are required");
-                }
+        //         // // Check Files
+        //         // if (!req.file || Object.keys(req.file).length === 0) {
+        //         //         return res.status(400).json({ errors: "No file uploaded" });
 
+        //         // }
 
-                // Check Files
-                if (!req.file || Object.keys(req.file).length === 0) {
-                        return res.status(400).json({ errors: "No file uploaded" });
+        //         // // Check File Format
+        //         // const allowedFileFormat = ["image/png", "image/jpg", "image/jpeg"];
+        //         // if (!allowedFileFormat.includes(req.file.mimetype)) {
+        //         //         return res.status(400).json({ errors: "Invalid File Format . Only png , jpg & jpeg are allowed" })
+        //         // }
 
-                }
+        //         // // Get File Name
+        //         // const featuredImagePath = req.file.filename;
 
-                // Check File Format
-                const allowedFileFormat = ["image/png", "image/jpg", "image/jpeg"];
-                if (!allowedFileFormat.includes(req.file.mimetype)) {
-                        return res.status(400).json({ errors: "Invalid File Format . Only png , jpg & jpeg are allowed" })
-                }
+        //         // Count All Documents
+        //         const count = await CarListing.countDocuments();
 
-                // Get File Name
-                const featuredImagePath = req.file.filename;
+        //         // Create New Car Listing Object
+        //         const new_car_listing = new CarListing({
+        //                 title,
+        //                 condition,
+        //                 type,
+        //                 makeID ,
+        //                 modelID ,
+        //                 price ,
+        //                 year ,
+        //                 drive_type,
+        //                 transmission,
+        //                 fuel_type,
+        //                 mileage,
+        //                 engine_size ,
+        //                 cylinders,
+        //                 color,
+        //                 doors,
+        //                 vin ,
+        //                 availability,
+        //                 description,
+        //                 features,
+        //                 safety_features,
+        //                 status: count + 1,
+        //                 uploaded_by: admin,
+        //                 // featured_image: featuredImagePath
 
-                // Count All Documents
-                const count = await CarListing.countDocuments();
+        //         });
 
-                // Create New Car Listing Object
-                const new_car_listing = new CarListing({
-                        title,
-                        condition,
-                        type,
-                        makeID,
-                        modelID,
-                        price,
-                        year,
-                        drive_type,
-                        transmission,
-                        fuel_type,
-                        mileage,
-                        engine_size,
-                        cylinders,
-                        color,
-                        doors,
-                        vin,
-                        availability,
-                        description,
-                        features,
-                        safety_features,
-                        status: count + 1,
-                        uploaded_by: admin,
-                        featured_image: featuredImagePath
-
-                });
-
-                // Add New Car Listing Object
-                const add_car_listing = new_car_listing.save();
-                res.status(200).json({ message: "Added Car Listing", add_car_listing });
+        //         // Add New Car Listing Object
+        //         const add_car_listing = new_car_listing.save();
+        //         res.status(200).json({ message: "Added Car Listing", add_car_listing });
 
         } catch (error) {
+                console.log(error.message);
+                
                 res.status(400).json({ message: "Invalid Credentials", error });
-
         }
 }
 export const getCarListing = async (req, res) => {
@@ -134,7 +155,7 @@ export const updateCarListing = async (req, res) => {
         }
 }
 export const deleteCarListing = async (req, res) => {
-  
+
         const { id } = req.params;
 
         try {
@@ -142,7 +163,7 @@ export const deleteCarListing = async (req, res) => {
 
                 if (!delete_car_listing) {
                         console.log("not Found");
-                        
+
                         return res.status(404).json({ message: "Car Listing not found" });
                 }
                 res.status(201).json({ message: "Car Listing deleted Succesfully", data: delete_car_listing })

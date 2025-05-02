@@ -1,7 +1,7 @@
 import express from 'express';
 import verifyToken from '../middlewares/tokenVerify.js';
 // import { addModal , getModal , deleteModal , getModalById , updateModal , getModalByMake  } from '../controllers/modelController.js'
-import { getModal , getModalByMake } from '../controllers/modelController.js'
+import { getModal , getModalByMake  } from '../controllers/modelController.js'
 
 const router = express.Router();
 
@@ -10,7 +10,7 @@ const router = express.Router();
 // router.post('/add' , addModal);
 router.get('/' , verifyToken , getModal);
 // router.get('/get/:id' , getModalById);
-router.get('/getModalByMake/:modalMake' , getModalByMake);
+router.get('/getModalByMake/:makeId' , getModalByMake);
 // router.put('/update/:id' , updateModal);
 // router.delete('/delete/:id', deleteModal);
 

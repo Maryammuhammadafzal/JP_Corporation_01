@@ -18,19 +18,19 @@ const carListingSchema = new mongoose.Schema({
     required: true
   },
   makeID: {
-    type: String,
+    type: Number,
     required: true
   },
   modelID: {
-    type: String,
+    type: Number,
     required: true
   },
   price: {
-    type: String,
+    type: Number,
     required: true
   },
   year: {
-    type: String,
+    type: Number,
     required: true
   },
   drive_type: {
@@ -46,15 +46,15 @@ const carListingSchema = new mongoose.Schema({
     required: true
   },
   mileage: {
-    type: String,
+    type: Number,
     required: true
   },
   engine_size: {
-    type: String,
+    type: Number,
     required: true
   },
   cylinders: {
-    type: String,
+    type: Number,
     required: true
   },
   color: {
@@ -66,7 +66,7 @@ const carListingSchema = new mongoose.Schema({
     required: true
   },
   vin: {
-    type: String,
+    type: Number,
     required: true
   },
   availability: {

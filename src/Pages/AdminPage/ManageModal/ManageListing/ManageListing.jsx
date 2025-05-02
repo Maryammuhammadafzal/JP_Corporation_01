@@ -192,8 +192,7 @@ let allMake;
             className="text-white p-1 rounded bg-orange-400"
             onClick={() =>
               handleEdit(modal._id, modal.modalTitle)
-            }
-          >
+            }>
             <FaEdit size={13} />
           </button>
           <button

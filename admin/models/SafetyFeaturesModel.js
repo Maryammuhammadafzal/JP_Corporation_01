@@ -8,6 +8,6 @@ const safetyFeaturesSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const SafetyFeature = mongoose.model('SafetyFeature', safetyFeaturesSchema);
+const SafetyFeature = mongoose.model('SafetyFeature', safetyFeaturesSchema  );
 
 export default SafetyFeature;

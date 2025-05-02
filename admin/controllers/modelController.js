@@ -38,10 +38,10 @@ export const getModal =  async (req, res) => {
     // Get Modal By Make
 export const getModalByMake = async (req, res) => {
   try {
-    const make = req.params.make_id;
+    const make = req.params.makeId;
     console.log("Make" , make);
   
-    const get_modal_by_make = await Model.find({ model_id : make});     
+    const get_modal_by_make = await Model.find({ make_id : make});     
         
             if (!get_modal_by_make) {
               return res.status(404).json({ message: "modal not found" });
@@ -97,6 +97,7 @@ export const getModalByMake = async (req, res) => {
 //           res.status(500).json({ message: "Server Error" });
 //         }
 //       };
+      
 
 
 //       export const updateModal = async (req, res) => {
