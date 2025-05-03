@@ -19,7 +19,7 @@ const imageSchema = new mongoose.Schema({
     required: true
   }
 }, {
-  timestamps: true // Adds createdAt and updatedAt fields automatically
+  timestamps: true 
 });
 
 // Create the model

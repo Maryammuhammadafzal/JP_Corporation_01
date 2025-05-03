@@ -20,6 +20,8 @@ const CarListings = () => {
       });
       const data = await res.data.data;
       setCarData(data);
+      console.log(data);
+      
       
     } catch (error) {
       console.log("error", error.message);
@@ -172,7 +174,7 @@ const CarListings = () => {
                         </td>
                         <td className="p-2 ">
                           <img
-                            src={`../../../../admin/uploads/${car.featured_image}`}
+                            src={`../../../../admin/public/uploads/${car.featured_image}`}
                             alt="cars"
                             className="w-12 h-12 rounded-lg object-cover "
                           />

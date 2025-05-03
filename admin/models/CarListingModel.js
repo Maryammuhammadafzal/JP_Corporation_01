@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const carListingSchema = new mongoose.Schema({
+  list_id: {
+    type: Number,
+    required: true
+  },
   featured_image: {
     type: String,
     required: true

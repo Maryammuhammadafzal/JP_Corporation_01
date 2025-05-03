@@ -6,7 +6,6 @@ import { safetyFeatures } from "../../../../Components/safetyFeatures.js";
 import Copyright from "../../../../Components/Copyright/Copyright.jsx";
 
 const AddListingForm = () => {
-
   // States
   let [isActive, setIsActive] = useState(false);
   const [featuredImage, setFeaturedImage] = useState(null);
@@ -16,27 +15,26 @@ const AddListingForm = () => {
   const [selectedSafetyFeatures, setselectedSafetyFeatures] = useState([]);
   const [make, setMake] = useState(null);
   const [modals, setModals] = useState("");
-  
- // All Input Reference
- const titleRef = useRef(null);
- const conditionRef = useRef(null);
- const typeRef = useRef(null);
- const makeRef = useRef(null);
- const modelRef = useRef(null);
- const priceRef = useRef(null);
- const yearRef = useRef(null);
- const driveTypeRef = useRef(null);
- const transmissionRef = useRef(null);
- const fuelTypeRef = useRef(null);
- const mileageRef = useRef(null);
- const engineSizeRef = useRef(null);
- const cylinderRef = useRef(null);
- const colorRef = useRef(null);
- const doorRef = useRef(null);
- const vinRef = useRef(null);
- const availabilityRef = useRef(null);
- const descriptionRef = useRef(null);
-  
+
+  // All Input Reference
+  const titleRef = useRef(null);
+  const conditionRef = useRef(null);
+  const typeRef = useRef(null);
+  const makeRef = useRef(null);
+  const modelRef = useRef(null);
+  const priceRef = useRef(null);
+  const yearRef = useRef(null);
+  const driveTypeRef = useRef(null);
+  const transmissionRef = useRef(null);
+  const fuelTypeRef = useRef(null);
+  const mileageRef = useRef(null);
+  const engineSizeRef = useRef(null);
+  const cylinderRef = useRef(null);
+  const colorRef = useRef(null);
+  const doorRef = useRef(null);
+  const vinRef = useRef(null);
+  const availabilityRef = useRef(null);
+  const descriptionRef = useRef(null);
 
   // Handle Features
   const toggleCheckbox = (featureValue) => {
@@ -59,8 +57,6 @@ const AddListingForm = () => {
     }
   };
 
- 
-
   // Handle Images
   const handleFeaturedChange = (e) => {
     setFeaturedImage(e.target.files[0]);
@@ -72,7 +68,6 @@ const AddListingForm = () => {
     setGalleryImages([...e.target.files]);
   };
 
-
   // Fetch Modal By Make Api Call
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
@@ -82,12 +77,11 @@ const AddListingForm = () => {
     const data = await response.data;
     setModals(data);
   };
-  
+
   const handleMake = (e) => {
     setMake(e.target.value);
     fetchModalByMake(e.target.value);
   };
-
 
   // Submit Listing Form
   const SubmitDetail = async (e) => {
@@ -98,7 +92,10 @@ const AddListingForm = () => {
       titleRef.current.focus();
       setIsActive("title");
     } else if (!conditionRef.current.value) {
-      conditionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      conditionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       conditionRef.current.focus();
       setIsActive("condition");
     } else if (!typeRef.current.value) {
@@ -109,7 +106,7 @@ const AddListingForm = () => {
       yearRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       yearRef.current.focus();
       setIsActive("year");
-    }  else if (!makeRef.current.value) {
+    } else if (!makeRef.current.value) {
       makeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       makeRef.current.focus();
       setIsActive("make");
@@ -122,27 +119,45 @@ const AddListingForm = () => {
       priceRef.current.focus();
       setIsActive("price");
     } else if (!driveTypeRef.current.value) {
-      driveTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      driveTypeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       driveTypeRef.current.focus();
       setIsActive("driveType");
     } else if (!transmissionRef.current.value) {
-      transmissionRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      transmissionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       transmissionRef.current.focus();
       setIsActive("transmission");
     } else if (!fuelTypeRef.current.value) {
-      fuelTypeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      fuelTypeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       fuelTypeRef.current.focus();
       setIsActive("fuelType");
     } else if (!mileageRef.current.value) {
-      mileageRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      mileageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       mileageRef.current.focus();
       setIsActive("mileage");
     } else if (!engineSizeRef.current.value) {
-      engineSizeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      engineSizeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       engineSizeRef.current.focus();
       setIsActive("engineSize");
     } else if (!cylinderRef.current.value) {
-      cylinderRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      cylinderRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       cylinderRef.current.focus();
       setIsActive("cylinder");
     } else if (!colorRef.current.value) {
@@ -158,13 +173,15 @@ const AddListingForm = () => {
       vinRef.current.focus();
       setIsActive("vin");
     } else if (!availabilityRef.current.value) {
-      availabilityRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      availabilityRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
       availabilityRef.current.focus();
       setIsActive("availability");
     } else {
-
       const formData = new FormData();
-      
+
       // All Inputs
       formData.append("title", titleRef.current.value);
       formData.append("condition", conditionRef.current.value);
@@ -185,21 +202,14 @@ const AddListingForm = () => {
       formData.append("availability", availabilityRef.current.value);
       formData.append("description", descriptionRef.current.value);
       formData.append("features", selectedAllFeatures.toString());
-      formData.append(
-        "safety_features",
-        selectedSafetyFeatures.toString()
-      );
-      
+      formData.append("safety_features", selectedSafetyFeatures.toString());
+
       // Images
       formData.append("featured_image", featuredImage);
-      console.log(typeof featuredImage , featuredImage);
       // formData.append("attachmentImage", attachmentImage);
-
-      for (let i = 0; i < galleryImages.length; i++) {
-        formData.append("galleryImages", galleryImages[i]);
-      }
-
+     
       
+
       // Post Api Call
       try {
         const token = localStorage.getItem("adminToken");
@@ -209,15 +219,41 @@ const AddListingForm = () => {
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              // "Content-Type": "application/json",
-              "Authorization": `Bearer ${token}`
+              Authorization: `Bearer ${token}`,
             },
           }
         );
 
-        console.log("Success" + JSON.stringify(response.data));
-        alert("Added Succesfully");
-
+        setTimeout(() => {
+          if (Object.keys(response?.data || {}).length === 0) {
+            console.log("Empty Data");
+          } else {
+            console.log(JSON.stringify(response.data));
+          }
+        }, 2000);
+        // console.log( JSON.stringify(response));
+        
+        // console.log("Success" + JSON.stringify(response?.data));
+        
+        const imageData = new FormData();
+        
+        for (let i = 0; i < galleryImages.length; i++) {
+          imageData.append("gallery_images", galleryImages[i]);
+        }
+        imageData.append("car_id" , response.data._id)
+        const gallery_images_response = await axios.post(
+          "http://localhost:5000/api/images/add", imageData , 
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              // "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        
+        // alert("Added Succesfully");
+        // console.log("Success" + JSON.stringify(gallery_images_response.data));
         // Reset refs
         titleRef.current.value = "";
         typeRef.current.value = "";
@@ -250,7 +286,7 @@ const AddListingForm = () => {
           });
 
         // Redirect to dashboard
-        window.location.href = "/dashboard";
+        // window.location.href = "/dashboard";
       } catch (error) {
         console.error(error);
         alert("Error");
@@ -448,10 +484,14 @@ const AddListingForm = () => {
                   {/* Make Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="make" className="w-full">
-                      <p>Make <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Make <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="make"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select make"
                         ref={makeRef}
                         onChange={(e) => handleMake(e)}
@@ -465,133 +505,133 @@ const AddListingForm = () => {
                           Select Make
                         </option>
                         <option
-                        id="1"
+                          id="1"
                           value="1"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           AUDI
                         </option>
                         <option
-                        id="2"
+                          id="2"
                           value="2"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           BENTLEY
                         </option>
                         <option
-                        id="3"
+                          id="3"
                           value="3"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           BMW
                         </option>
                         <option
-                        id="4"
+                          id="4"
                           value="4"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           CADILLAC
                         </option>
                         <option
-                        id="5"
+                          id="5"
                           value="5"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           CHEVROLET
                         </option>
                         <option
-                        id="6"
+                          id="6"
                           value="6"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           FARRARI
                         </option>
                         <option
-                        id="7"
+                          id="7"
                           value="7"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           FORD
                         </option>
                         <option
-                        id="8"
+                          id="8"
                           value="8"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           HINO
                         </option>
                         <option
-                        id="9"
+                          id="9"
                           value="9"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           HONDA
                         </option>
                         <option
-                        id="10"
+                          id="10"
                           value="10"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           ISUZU
                         </option>
                         <option
-                        id="11"
+                          id="11"
                           value="11"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           LEXUS
                         </option>
                         <option
-                        id="12"
+                          id="12"
                           value="12"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           MAZDA
                         </option>
                         <option
-                        id="13"
+                          id="13"
                           value="13"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           MERCEDES-BENZ
                         </option>
                         <option
-                        id="14"
+                          id="14"
                           value="14"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           MISTUBISHI
                         </option>
                         <option
-                        id="15"
+                          id="15"
                           value="15"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           NISSAN
                         </option>
                         <option
-                        id="16"
+                          id="16"
                           value="16"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           PORCH
                         </option>
                         <option
-                        id="17"
+                          id="17"
                           value="17"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           SUBARO
                         </option>
                         <option
-                        id="18"
+                          id="18"
                           value="18"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
                           SUZUKI
                         </option>
                         <option
-                        id="19"
+                          id="19"
                           value="19"
                           className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                         >
@@ -604,10 +644,14 @@ const AddListingForm = () => {
                   {/* Model Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="model" className="w-full">
-                      <p>Model <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Model <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="model"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select Model"
                         ref={modelRef}
                       >
@@ -631,17 +675,19 @@ const AddListingForm = () => {
                               Select Model
                             </option>
                             {modals &&
-                              modals.map(({ make_id , model_id , model }, index) => (
-                                <>
-                                <option
-                                  key={index}
-                                  value={model_id}
-                                  className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                                >
-                                  {model}
-                                </option>
-                                </>
-                              ))}
+                              modals.map(
+                                ({ make_id, model_id, model }, index) => (
+                                  <>
+                                    <option
+                                      key={index}
+                                      value={model_id}
+                                      className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                                    >
+                                      {model}
+                                    </option>
+                                  </>
+                                )
+                              )}
                           </>
                         )}
                       </select>
@@ -651,12 +697,16 @@ const AddListingForm = () => {
                   {/*Price Input  */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="price" className="w-full">
-                      <p>Price (USD) <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Price (USD) <sup className="text-orange-700">*</sup>
+                      </p>
                       <input
                         type="number"
                         id="price"
                         ref={priceRef}
-                        className={`mt-2 w-full border rounded-md p-2 ${isActive && "border-orange-400"}`}
+                        className={`mt-2 w-full border rounded-md p-2 ${
+                          isActive && "border-orange-400"
+                        }`}
                       />
                     </label>
                   </div>
@@ -681,10 +731,14 @@ const AddListingForm = () => {
                   {/* Drive Type Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="driveType" className="w-full">
-                      <p>Drive Type <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Drive Type <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="driveType"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select drive Type"
                         ref={driveTypeRef}
                       >
@@ -739,10 +793,15 @@ const AddListingForm = () => {
                   {/* Transmission Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="transmission" className="w-full">
-                      <p>Select Transmission <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Select Transmission{" "}
+                        <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="transmission"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select transmission"
                         ref={transmissionRef}
                       >
@@ -791,10 +850,14 @@ const AddListingForm = () => {
                   {/* Fuel Type Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="fuelType" className="w-full">
-                      <p>Fuel Type <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Fuel Type <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="fuelType"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select fuelType"
                         ref={fuelTypeRef}
                       >
@@ -843,13 +906,17 @@ const AddListingForm = () => {
                   {/* Mileage Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="mileage" className="w-full">
-                      <p>Mileage <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Mileage <sup className="text-orange-700">*</sup>
+                      </p>
                       <input
                         type="number"
                         id="mileage"
                         ref={mileageRef}
                         placeholder="Enter Mileage Here"
-                      className={`mt-2 w-full border rounded-md text-gray-600 p-2 ${isActive && "border-orange-400"}`}
+                        className={`mt-2 w-full border rounded-md text-gray-600 p-2 ${
+                          isActive && "border-orange-400"
+                        }`}
                       />
                     </label>
                   </div>
@@ -857,12 +924,17 @@ const AddListingForm = () => {
                   {/* Engine Size Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="engineSize" className="w-full">
-                      <p>Enter Engine Size <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Enter Engine Size{" "}
+                        <sup className="text-orange-700">*</sup>
+                      </p>
                       <input
                         type="number"
                         id="engineSize"
                         ref={engineSizeRef}
-                        className={`mt-2 w-full border rounded-md p-2 ${isActive && "border-orange-400"}`}
+                        className={`mt-2 w-full border rounded-md p-2 ${
+                          isActive && "border-orange-400"
+                        }`}
                       />
                     </label>
                   </div>
@@ -870,10 +942,15 @@ const AddListingForm = () => {
                   {/* Cylinder Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="cylinder" className="w-full">
-                      <p>Select Cylinders <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Select Cylinders{" "}
+                        <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="cylinder"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select cylinder"
                         ref={cylinderRef}
                       >
@@ -910,10 +987,14 @@ const AddListingForm = () => {
                   {/* Colours Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="colours" className="w-full">
-                      <p>Select Colours <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Select Colours <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="colours"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select colours"
                         ref={colorRef}
                       >
@@ -1011,10 +1092,14 @@ const AddListingForm = () => {
                   {/* Door Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="door" className="w-full">
-                      <p>Doors <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Doors <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="door"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select Doors"
                         ref={doorRef}
                       >
@@ -1063,12 +1148,16 @@ const AddListingForm = () => {
                   {/* Vin Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="vin" className="w-full">
-                      <p>Vin <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Vin <sup className="text-orange-700">*</sup>
+                      </p>
                       <input
-                        type="text"
+                        type="number"
                         id="vin"
                         ref={vinRef}
-                        className={`mt-2 w-full border rounded-md p-2 ${isActive && "border-orange-400"}`}
+                        className={`mt-2 w-full border rounded-md p-2 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Enter Vin Here"
                       />
                     </label>
@@ -1077,10 +1166,14 @@ const AddListingForm = () => {
                   {/* Availabilty Input */}
                   <div className="w-auto mx-2 my-3">
                     <label htmlFor="availability" className="w-full">
-                      <p>Availability <sup className="text-orange-700">*</sup></p>
+                      <p>
+                        Availability <sup className="text-orange-700">*</sup>
+                      </p>
                       <select
                         id="availability"
-                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${isActive && "border-orange-400"}`}
+                        className={`appearance-none mt-2 w-full border rounded-md p-2 outline-0 text-gray-700 ${
+                          isActive && "border-orange-400"
+                        }`}
                         placeholder="Select Availability"
                         ref={availabilityRef}
                       >
@@ -1107,7 +1200,6 @@ const AddListingForm = () => {
                       </select>
                     </label>
                   </div>
-
                 </div>
 
                 {/* Description */}
@@ -1129,7 +1221,7 @@ const AddListingForm = () => {
               </div>
               <div className="imageInpput border text-sm rounded-md w-full h-auto p-10 ">
                 <div className="flex flex-col gap-2 space-y-4">
-                  Upload Featured Image 
+                  Upload Featured Image
                   <label htmlFor="featuredImage" className="w-full h-auto flex">
                     {/* Custom Button */}
                     <button
@@ -1171,6 +1263,7 @@ const AddListingForm = () => {
                     <input
                       type="file"
                       id="galleryImages"
+                      name="gallery_images"
                       multiple
                       required
                       onChange={handleGalleryChange}

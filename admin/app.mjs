@@ -22,17 +22,10 @@ import safetyFeatureRoutes from "./routes/safetyFeatureRoutes.js"
 import shippingInformationRoutes from "./routes/shippingInformationRoutes.js"
 import statusRoutes from "./routes/statusRoutes.js"
 
-
 const PORT = process.env.PORT || 8800;
 import path from 'path';
 const app = express();
 dotenv.config();
-
-
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI)
-.then(() => console.log("MongoDB Connected" ,process.env.MONGO_URI))
-.catch((err) => console.log(err));
 
 const allowedOrigins = [
   // "https://jpcorporation-production.up.railway.app",
@@ -47,7 +40,7 @@ const allowedOrigins = [
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
+      callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
     }
@@ -62,6 +55,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static("public/uploads"));
 // app.use(fileUpload({ useTempFiles : true, tempFileDir : '/tmp/' }));
 
+
+// MongoDB Connection
+mongoose.connect(process.env.MONGO_URI)
+.then(() => console.log("MongoDB Connected" ,process.env.MONGO_URI))
+.catch((err) => console.log(err));
+
 // app.use("/api/cards", carRoutes);
 // app.use("/api/dashboard" , dashboardRoutes)
 // app.use("/api/car" , carRoutes)
@@ -74,7 +73,7 @@ app.use("/api/make" , makeRoutes)
 app.use("/api/carListing" , carListingRoutes);
 app.use("/api/feature" , featureRoutes)
 app.use("/api/status" , statusRoutes)
-app.use("/api/image" , imageRoutes)
+app.use("/api/images" , imageRoutes)
 app.use("/api/shippingInformation" , shippingInformationRoutes)
 app.use("/api/safetyFeature" , safetyFeatureRoutes)
 app.use("/api/productInformation" , productInformationRoutes)
