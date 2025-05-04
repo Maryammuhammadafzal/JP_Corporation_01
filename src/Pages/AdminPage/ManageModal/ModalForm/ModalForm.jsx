@@ -1,36 +1,35 @@
 import React, { useRef, useState } from "react";
 import Button from "../../../../Components/Button/Button";
 import axios from "axios";
-import AllFeatures from "../../../../Components/AllFeatures.js";
-import { safetyFeatures } from "../../../../Components/safetyFeatures.js";
 
 const ModalForm = () => {
-  let [active, setActive] = useState(false);
+  let [ isActive , setIsActive] = useState(false);
 
   const titleRef = useRef(null);
   const makeRef = useRef(null);
 
 
   const submitModal = async () => {
-    if (titleRef.current.value === "") {
-      setActive(true);
+    if (!titleRef.current.value) {
+      titleRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      titleRef.current.focus();
+      setIsActive("title");
     }
-    if (makeRef.current.value === "") {
-      setActive(true);
+    if (!makeRef.current.value) {
+      makeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      makeRef.current.focus();
+      setIsActive("make");
     }
-console.log(makeRef.current.value);
-console.log(makeRef.current.id);
-
 
     if (titleRef.current.value && makeRef.current.value) {
       const payload = {
-        modalMake: makeRef.current.id,
-        modalTitle: titleRef.current.value.toUpperCase(),
+        make_id: makeRef.current.value,
+        model: titleRef.current.value.toUpperCase(),
       };
 
       try {
         const token = localStorage.getItem("adminToken");
-        const response = await axios.post("/api/model/add", payload, {
+        const response = await axios.post("http://localhost:5000/api/model/add", payload, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
@@ -67,9 +66,10 @@ console.log(makeRef.current.id);
               <input
                 type="text"
                 id="title"
+                name="title"
                 ref={titleRef}
                 className={`mt-2 w-full border rounded-md max-sm:text-xs p-2 ${
-                  active && "border-orange-400 shadow-orange-300"
+                  isActive && "border-orange-400 shadow-orange-300"
                 }`}
                 placeholder="Enter Title Here"
               />
@@ -82,8 +82,9 @@ console.log(makeRef.current.id);
               <p>Make</p>
               <select
                 id="make"
+                name="make"
                 className={`appearance-none mt-2 w-full border rounded-md max-sm:text-xs p-2 outline-0 text-gray-400  ${
-                  active && "border-orange-400 shadow-orange-300"
+                  isActive && "border-orange-400 shadow-orange-300"
                 }`}
                 placeholder="Select make"
                 ref={makeRef}
@@ -98,133 +99,133 @@ console.log(makeRef.current.id);
                 </option>
                 <option
                   id="1"
-                  value="AUDI"
+                  value="1"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   AUDI
                 </option>
                 <option
                   id="2"
-                  value="BENTLEY"
+                  value="2"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   BENTLEY
                 </option>
                 <option
                   id="3"
-                  value="BMW"
+                  value="3"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   BMW
                 </option>
                 <option
                   id="4"
-                  value="CADILLAC"
+                  value="4"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   CADILLAC
                 </option>
                 <option
                   id="5"
-                  value="CHEVROLET"
+                  value="5"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   CHEVROLET
                 </option>
                 <option
                   id="6"
-                  value="FARRARI"
+                  value="6"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   FARRARI
                 </option>
                 <option
                   id="7"
-                  value="FORD"
+                  value="7"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   FORD
                 </option>
                 <option
                   id="8"
-                  value="HINO"
+                  value="8"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   HINO
                 </option>
                 <option
                   id="9"
-                  value="HONDA"
+                  value="9"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   HONDA
                 </option>
                 <option
                   id="10"
-                  value="ISUZU"
+                  value="10"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   ISUZU
                 </option>
                 <option
                   id="11"
-                  value="LEXUS"
+                  value="11"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   LEXUS
                 </option>
                 <option
                   id="12"
-                  value="MAZDA"
+                  value="12"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MAZDA
                 </option>
                 <option
                   id="13"
-                  value="MERCEDES-BENZ"
+                  value="13"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MERCEDES-BENZ
                 </option>
                 <option
                   id="14"
-                  value="MISTUBISHI"
+                  value="14"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   MISTUBISHI
                 </option>
                 <option
                   id="15"
-                  value="NISSAN"
+                  value="15"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   NISSAN
                 </option>
                 <option
                   id="16"
-                  value="PORCH"
+                  value="16"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   PORCH
                 </option>
                 <option
                   id="17"
-                  value="SUBARO"
+                  value="17"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   SUBARO
                 </option>
                 <option
                   id="18"
-                  value="SUZUKI"
+                  value="18"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   SUZUKI
                 </option>
                 <option
                   id="19"
-                  value="TOYOTA"
+                  value="19"
                   className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                 >
                   TOYOTA

@@ -86,7 +86,7 @@ export const addCarListing = async (req, res) => {
                 // Add New Car Listing Object
                 const add_car_listing = await new_car_listing.save();
                 console.log("Added Car Listing", add_car_listing );
-                res.status(200).json({ message: "Added Car Listing", add_car_listing });
+                res.status(200).json({ message: "Added Car Listing", data : add_car_listing });
 
         } catch (error) {
                 console.log(error.message);
@@ -103,7 +103,7 @@ export const getCarListing = async (req, res) => {
 
                 // Get All Car Listing 
                 const get_car_listing_data = await CarListing.find()
-                // .sort({ created_at: -1 })
+                .sort({ created_at: -1 })
                 // .skip((page - 1) * limit)
                 // .limit(limit);
 
@@ -130,7 +130,10 @@ export const getCarListingById = async (req, res) => {
 
 }
 export const updateCarListing = async (req, res) => {
+        const { id } = req.params;
+        
         try {
+                
 
         } catch (error) {
 

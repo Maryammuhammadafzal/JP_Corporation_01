@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const attachmentSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true
+  },
   attachments: {
     type: String,
     required: true
@@ -13,6 +17,6 @@ const attachmentSchema = new mongoose.Schema({
   timestamps: true
 });
 
-const Attachment = mongoose.model('Attachment', attachmentSchema);
+const Attachment = mongoose.model('Attachment', attachmentSchema , "attachments");
 
 export default Attachment;

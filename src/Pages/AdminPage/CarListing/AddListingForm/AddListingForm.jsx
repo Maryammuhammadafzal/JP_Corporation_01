@@ -15,6 +15,7 @@ const AddListingForm = () => {
   const [selectedSafetyFeatures, setselectedSafetyFeatures] = useState([]);
   const [make, setMake] = useState(null);
   const [modals, setModals] = useState("");
+  const [attachmentError , setAttachmentError] = useState(false);
 
   // All Input Reference
   const titleRef = useRef(null);
@@ -62,7 +63,12 @@ const AddListingForm = () => {
     setFeaturedImage(e.target.files[0]);
   };
   const handleAttachmentChange = (e) => {
-    setAttachmentImage(e.target.files[0]);
+    const pdfFile = e.target.files[0];
+    if ( pdfFile.type !== "application/pdf") {
+      setAttachmentError(!attachmentError);
+    } else {
+      setAttachmentImage(e.target.files[0]);
+    }
   };
   const handleGalleryChange = (e) => {
     setGalleryImages([...e.target.files]);
@@ -206,9 +212,6 @@ const AddListingForm = () => {
 
       // Images
       formData.append("featured_image", featuredImage);
-      // formData.append("attachmentImage", attachmentImage);
-     
-      
 
       // Post Api Call
       try {
@@ -224,36 +227,44 @@ const AddListingForm = () => {
           }
         );
 
-        setTimeout(() => {
-          if (Object.keys(response?.data || {}).length === 0) {
-            console.log("Empty Data");
-          } else {
-            console.log(JSON.stringify(response.data));
-          }
-        }, 2000);
-        // console.log( JSON.stringify(response));
-        
-        // console.log("Success" + JSON.stringify(response?.data));
-        
+        console.log("Car Listing", JSON.stringify(response.data));
+
         const imageData = new FormData();
-        
+
         for (let i = 0; i < galleryImages.length; i++) {
           imageData.append("gallery_images", galleryImages[i]);
         }
-        imageData.append("car_id" , response.data._id)
+
+        imageData.append("car_id", response?.data?.data?.list_id);
+
         const gallery_images_response = await axios.post(
-          "http://localhost:5000/api/images/add", imageData , 
+          "http://localhost:5000/api/images/add",
+          imageData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
-              // "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
         );
-        
-        // alert("Added Succesfully");
-        // console.log("Success" + JSON.stringify(gallery_images_response.data));
+
+        const attachmentData = new FormData();
+        attachmentData.append( "car_id" , response?.data?.data?.list_id)
+        attachmentData.append( "attachment_image" , attachmentImage)
+        const attachment_pdf_response = await axios.post(
+          "http://localhost:5000/api/attachment/add",
+          attachmentData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        alert("Added Succesfully");
+        console.log("Success" + JSON.stringify(gallery_images_response.data));
+        console.log("Success" + JSON.stringify(attachment_pdf_response.data));
         // Reset refs
         titleRef.current.value = "";
         typeRef.current.value = "";
@@ -286,7 +297,7 @@ const AddListingForm = () => {
           });
 
         // Redirect to dashboard
-        // window.location.href = "/dashboard";
+        window.location.href = "/dashboard";
       } catch (error) {
         console.error(error);
         alert("Error");
@@ -677,7 +688,7 @@ const AddListingForm = () => {
                             {modals &&
                               modals.map(
                                 ({ make_id, model_id, model }, index) => (
-                                  <>
+                                  
                                     <option
                                       key={index}
                                       value={model_id}
@@ -685,7 +696,7 @@ const AddListingForm = () => {
                                     >
                                       {model}
                                     </option>
-                                  </>
+                                 
                                 )
                               )}
                           </>
@@ -1294,10 +1305,13 @@ const AddListingForm = () => {
                     <input
                       type="file"
                       id="attachmentImage"
+                      name="attachment_image"
+                      accept="application/pdf"
                       onChange={handleAttachmentChange}
                       className="border rounded-br-xl p-3 rounded-tr-xl w-[90%]"
                     />
                   </label>
+                  { attachmentError && (<p className="text-sm text-red-500 "> Please Upload Only Pdf File</p>)}
                 </div>
               </div>
 

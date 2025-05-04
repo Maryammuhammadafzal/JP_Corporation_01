@@ -12,17 +12,18 @@ const ManageListing = () => {
   const [modalData, setModalData] = useState([]);
   const [makeData, setMakeData] = useState([]);
 
-  const token = localStorage.getItem("adminToken")
+  // Get Verification Token
+  const token = localStorage.getItem("adminToken");
+
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/model/" , {
-        headers : {
-          "Authorization" : `Barear ${token}`
-        }
+      const res = await axios.get("http://localhost:5000/api/model/", {
+        headers: {
+          Authorization: `Barear ${token}`,
+        },
       });
       const data = await res.data;
       setModalData(data);
-      
     } catch (error) {
       console.log("error", error.message);
     }
@@ -34,14 +35,13 @@ const ManageListing = () => {
 let allMake;
   const fetchMakeData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/make/"  , {
-        headers : {
-          "Authorization" : `Barear ${token}`
-        }
-    });
+      const res = await axios.get("http://localhost:5000/api/make/", {
+        headers: {
+          Authorization: `Barear ${token}`,
+        },
+      });
       const data = await res.data.data;
       setMakeData(data);
-      
     } catch (error) {
       console.log("error", error.message);
     }
@@ -51,17 +51,12 @@ let allMake;
     fetchMakeData();
   }, []);
 
-  for ( let i = 0; i < makeData.length; i++){
+  for (let i = 0; i < makeData.length; i++) {
     allMake = makeData[i];
   }
 
-  
-  let make = makeData.find(make => modalData.make_id === makeData.make_id);
-  console.log(make);
-  
   // allModals array
   const allModals = modalData;
- 
 
   // Filter search
   const filteredModals = allModals.map((car) => {
@@ -74,10 +69,14 @@ let allMake;
   const currentModal = allModals.slice(indexOfFirstModal, indexOfLastModal);
   const totalPages = Math.ceil(filteredModals.length / entriesPerPage);
 
+  // Delete Model
   const handleDelete = async (id, title) => {
-    const response = await axios.delete(
-      `/api/model/delete/${id}`
-    );
+    const response = await axios.delete(`http://localhost:5000/api/model/delete/${id}` , {
+      headers: {
+        Authorization: `Barear ${token}`,
+      },
+    });
+
     if (response.status === 200) {
       alert(`${title} deleted`);
       fetchModalData();
@@ -85,6 +84,8 @@ let allMake;
       alert("error");
     }
   };
+
+  // Edit Model
   const handleEdit = async (id) => {
     localStorage.setItem("EditId", id);
     window.location.href = `/modal-listing/edit-modal-listing/get/${id}`;
@@ -171,44 +172,47 @@ let allMake;
                 </tr>
               </thead>
 
-  <tbody>
-  {currentModal && currentModal
-    .filter((modal) =>
-      modal.model
-        .toLowerCase()
-        .includes(search.toLowerCase())
-    )
-    .slice(0, entriesPerPage)
-    .map((modal, index) => (
-      <tr key={modal._id} className="border-b ">
-        <td className="p-4 text-center">
-          {indexOfFirstModal + index + 1}
-        </td>
-{makeData.find(make =>  console.log(make.make_id === modal.make_id) )}
-        <td className="p-4 text-start">{modal.model}</td>
-        <td className="p-4 text-start">{makeData.find(make => make.make_id === model.make_id)}</td>
-        <td className="p-4 justify-center flex space-x-2">
-          <button
-            className="text-white p-1 rounded bg-orange-400"
-            onClick={() =>
-              handleEdit(modal._id, modal.modalTitle)
-            }>
-            <FaEdit size={13} />
-          </button>
-          <button
-            className="text-white p-1 rounded bg-red-500"
-            onClick={() =>
-              handleDelete(modal._id, modal.modalTitle)
-            }
-          >
-            <FaTrash size={13} />
-          </button>
-        </td>
-      </tr>
-    ))}
-     
-</tbody>
-             
+              <tbody>
+                {currentModal &&
+                  currentModal
+                    .filter((modal) =>
+                      modal.model.toLowerCase().includes(search.toLowerCase())
+                    )
+                    .slice(0, entriesPerPage)
+                    .map((modal, index) => (
+                      <tr key={modal._id} className="border-b ">
+                        <td className="p-4 text-center">
+                          {indexOfFirstModal + index + 1}
+                        </td>
+
+                        <td className="p-4 text-start">{modal.model}</td>
+                        <td className="p-4 text-start">
+                          {makeData.find(
+                            (make) =>
+                              String(make.make_id) === String(modal.make_id)
+                          )?.make || "Unknown"}
+                        </td>
+                        <td className="p-4 justify-center flex space-x-2">
+                          <button
+                            className="text-white p-1 rounded bg-orange-400"
+                            onClick={() =>
+                              handleEdit(modal._id, modal.model)
+                            }
+                          >
+                            <FaEdit size={13} />
+                          </button>
+                          <button
+                            className="text-white p-1 rounded bg-red-500"
+                            onClick={() =>
+                              handleDelete(modal._id, modal.model)
+                            }
+                          >
+                            <FaTrash size={13} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+              </tbody>
             </table>
           </div>
 
@@ -216,12 +220,13 @@ let allMake;
             <div className="dataNumber w-auto text-sm max-sm:text-xs text-neutral-600 flex justify-start font-semibold ">
               <p>{`Showing ${indexOfFirstModal} to ${indexOfLastModal} of ${allModals.length} entries`}</p>
             </div>
-          <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          goToPage={goToPage}
-          goToPreviousPage={goToPreviousPage}
-          goToNextPage={goToNextPage}/>
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              goToPage={goToPage}
+              goToPreviousPage={goToPreviousPage}
+              goToNextPage={goToNextPage}
+            />
           </div>
         </div>
         <div className="w-full h-[150px] ">

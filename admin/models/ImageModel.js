@@ -18,11 +18,9 @@ const imageSchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-}, {
-  timestamps: true 
-});
+},  {versionKey : false});
 
 // Create the model
-const Image = mongoose.model('Image', imageSchema);
+const Image = mongoose.model('Image', imageSchema , "images");
 
 export default Image;

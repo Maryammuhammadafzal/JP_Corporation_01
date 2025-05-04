@@ -17,7 +17,8 @@ import EditModalForm from "../ManageModal/EditModalForm/EditModalForm";
 
 
 const AdminDashboard = () => {
-  const {id} = useParams()
+  const { id } = useParams();
+  
   const [isOpen, setIsOpen] = useState(true);
   const toggleAdminMenu = () => {
     console.log("clicked");

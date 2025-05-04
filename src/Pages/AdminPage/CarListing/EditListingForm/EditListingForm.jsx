@@ -14,6 +14,8 @@ const EditListingForm = ({ carId }) => {
   const [carAllFeatures, setCarAllFeatures] = useState([]);
   const [carSafetyFeatures, setCarSafetyFeatures] = useState([]);
   const [carData, setCarData] = useState([]);
+  const [imageData, setImageData] = useState([]);
+  const [attachmentData, setAttachmentData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [make, setMake] = useState(null);
   const [modals, setModals] = useState("");
@@ -42,7 +44,60 @@ const EditListingForm = ({ carId }) => {
     fetchCar();
   }, [editId]);
 
-  console.log(carData);
+  //Fetch gallery Image
+  let id = carData.list_id;
+  useEffect(() => {
+    if (id) {
+      const fetchGalleryImages = async () => {
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/images/get/${id}`,
+            {
+              headers: {
+                Authorization: `Barear ${token}`,
+              },
+            }
+          );
+          const images = res.data.data;
+          console.log(images);
+
+          setImageData(images);
+          setLoading(false);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchGalleryImages();
+    }
+  }, [carData.list_id]);
+
+  //Fetch gallery Image
+  useEffect(() => {
+    if (id) {
+      const fetchAttachmentImages = async () => {
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/attachment/get/${id}`,
+            {
+              headers: {
+                Authorization: `Barear ${token}`,
+              },
+            }
+          );
+          const attachment = res.data.data;
+          let pdfAttachment = attachment.map(
+            (attachment) => attachment.attachments
+          );
+
+          setAttachmentData(pdfAttachment[0]);
+          setLoading(false);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchAttachmentImages();
+    }
+  }, [carData.list_id]);
 
   useEffect(() => {
     if (carData) {
@@ -196,66 +251,129 @@ const EditListingForm = ({ carId }) => {
       titleRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
       titleRef.current.focus();
       setIsActive("title");
-
-      if (!conditionRef.current.value) {
-       conditionRef.current.scrollIntoView({
-         behavior: "smooth",
-         block: "center",
-       });
-       conditionRef.current.focus();
-       setIsActive("condition");
-       
-       if (!typeRef.current.value) {
-         typeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-         typeRef.current.focus();
-         setIsActive("type");
-         
-         if (!yearRef.current.value) {
-          yearRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-          yearRef.current.focus();
-          setIsActive("year");
-          
-          if (!makeRef.current.value) {
-           makeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
-           makeRef.current.focus();
-           setIsActive("make");
-         } 
-        } 
-       } 
-     }  
-    } 
-    else {
+    } else if (!conditionRef.current.value) {
+      conditionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      conditionRef.current.focus();
+      setIsActive("condition");
+    } else if (!typeRef.current.value) {
+      typeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      typeRef.current.focus();
+      setIsActive("type");
+    } else if (!yearRef.current.value) {
+      yearRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      yearRef.current.focus();
+      setIsActive("year");
+    } else if (!makeRef.current.value) {
+      makeRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      makeRef.current.focus();
+      setIsActive("make");
+    } else if (!modelRef.current.value) {
+      modelRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      modelRef.current.focus();
+      setIsActive("model");
+    } else if (!priceRef.current.value) {
+      priceRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      priceRef.current.focus();
+      setIsActive("price");
+    } else if (!driveTypeRef.current.value) {
+      driveTypeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      driveTypeRef.current.focus();
+      setIsActive("driveType");
+    } else if (!transmissionRef.current.value) {
+      transmissionRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      transmissionRef.current.focus();
+      setIsActive("transmission");
+    } else if (!fuelTypeRef.current.value) {
+      fuelTypeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      fuelTypeRef.current.focus();
+      setIsActive("fuelType");
+    } else if (!mileageRef.current.value) {
+      mileageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      mileageRef.current.focus();
+      setIsActive("mileage");
+    } else if (!engineSizeRef.current.value) {
+      engineSizeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      engineSizeRef.current.focus();
+      setIsActive("engineSize");
+    } else if (!cylinderRef.current.value) {
+      cylinderRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      cylinderRef.current.focus();
+      setIsActive("cylinder");
+    } else if (!colorRef.current.value) {
+      colorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      colorRef.current.focus();
+      setIsActive("colours");
+    } else if (!doorRef.current.value) {
+      doorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      doorRef.current.focus();
+      setIsActive("door");
+    } else if (!vinRef.current.value) {
+      vinRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      vinRef.current.focus();
+      setIsActive("vin");
+    } else if (!availabilityRef.current.value) {
+      availabilityRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      availabilityRef.current.focus();
+      setIsActive("availability");
+    } else {
       const formData = new FormData();
 
       formData.append("title", titleRef.current.value);
       formData.append("condition", conditionRef.current.value);
       formData.append("type", typeRef.current.value);
-      formData.append("makeID", makeRef.current.value);
-      formData.append("modelID", modelRef.current.value);
-      formData.append("price", priceRef.current.value);
-      formData.append("year", yearRef.current.value);
+      formData.append("makeID", parseInt(makeRef.current.value));
+      formData.append("modelID", parseInt(modelRef.current.value));
+      formData.append("price", parseInt(priceRef.current.value));
+      formData.append("year", parseInt(yearRef.current.value));
       formData.append("drive_type", driveTypeRef.current.value);
       formData.append("transmission", transmissionRef.current.value);
       formData.append("fuel_type", fuelTypeRef.current.value);
-      formData.append("mileage", mileageRef.current.value);
-      formData.append("engine_size", engineSizeRef.current.value);
-      formData.append("cylinders", cylinderRef.current.value);
+      formData.append("mileage", parseInt(mileageRef.current.value));
+      formData.append("engine_size", parseInt(engineSizeRef.current.value));
+      formData.append("cylinders", parseInt(cylinderRef.current.value));
       formData.append("color", colorRef.current.value);
-      formData.append("door", doorRef.current.value);
-      formData.append("vin", vinRef.current.value);
+      formData.append("doors", doorRef.current.value);
+      formData.append("vin", parseInt(vinRef.current.value));
       formData.append("availability", availabilityRef.current.value);
       formData.append("description", descriptionRef.current.value);
+      formData.append("features", carAllFeatures.toString());
+      formData.append("safety_features", carSafetyFeatures.toString());
 
-      // Add features arrays as JSON strings
-      formData.append("features", JSON.stringify(carAllFeatures));
-      formData.append("safety_features", JSON.stringify(carSafetyFeatures));
+      // // Add features arrays as JSON strings
+      // formData.append("features", JSON.stringify(carAllFeatures));
+      // formData.append("safety_features", JSON.stringify(carSafetyFeatures));
 
       // Images
       formData.append("featured_image", featuredImage);
-      formData.append("attachmentImage", attachmentImage);
-      for (let i = 0; i < galleryImages.length; i++) {
-        formData.append("galleryImages", galleryImages[i]);
-      }
+
+      // formData.append("attachmentImage", attachmentImage);
+      // for (let i = 0; i < galleryImages.length; i++) {
+      //   formData.append("galleryImages", galleryImages[i]);
+      // }
 
       // Edit Listing Api Call
       try {
@@ -271,6 +389,43 @@ const EditListingForm = ({ carId }) => {
         );
 
         console.log("Success" + JSON.stringify(response.data));
+
+        const imageData = new FormData();
+
+        for (let i = 0; i < galleryImages.length; i++) {
+          imageData.append("gallery_images", galleryImages[i]);
+        }
+
+        imageData.append("car_id", id);
+
+        const gallery_images_response = await axios.post(
+          `http://localhost:5000/api/images/update/${id}`,
+          imageData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Success" + JSON.stringify(gallery_images_response.data));
+
+        const attachmentData = new FormData();
+        attachmentData.append("attachment_image", attachmentImage);
+        const attachment_pdf_response = await axios.post(
+          "http://localhost:5000/api/attachment/add",
+          attachmentData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        console.log("Success" + JSON.stringify(attachment_pdf_response.data));
+
         alert("Updated Succesfully");
 
         // reset car features
@@ -515,137 +670,137 @@ const EditListingForm = ({ carId }) => {
                       </option>
                       <option
                         id="1"
-                          value="AUDI"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          AUDI
-                        </option>
-                        <option
+                        value="AUDI"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        AUDI
+                      </option>
+                      <option
                         id="2"
-                          value="BENTLEY"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          BENTLEY
-                        </option>
-                        <option
+                        value="BENTLEY"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        BENTLEY
+                      </option>
+                      <option
                         id="3"
-                          value="BMW"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          BMW
-                        </option>
-                        <option
+                        value="BMW"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        BMW
+                      </option>
+                      <option
                         id="4"
-                          value="CADILLAC"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          CADILLAC
-                        </option>
-                        <option
+                        value="CADILLAC"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        CADILLAC
+                      </option>
+                      <option
                         id="5"
-                          value="CHEVROLET"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          CHEVROLET
-                        </option>
-                        <option
+                        value="CHEVROLET"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        CHEVROLET
+                      </option>
+                      <option
                         id="6"
-                          value="FARRARI"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          FARRARI
-                        </option>
-                        <option
+                        value="FARRARI"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        FARRARI
+                      </option>
+                      <option
                         id="7"
-                          value="FORD"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          FORD
-                        </option>
-                        <option
+                        value="FORD"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        FORD
+                      </option>
+                      <option
                         id="8"
-                          value="HINO"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          HINO
-                        </option>
-                        <option
+                        value="HINO"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        HINO
+                      </option>
+                      <option
                         id="9"
-                          value="HONDA"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          HONDA
-                        </option>
-                        <option
+                        value="HONDA"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        HONDA
+                      </option>
+                      <option
                         id="10"
-                          value="ISUZU"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          ISUZU
-                        </option>
-                        <option
+                        value="ISUZU"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        ISUZU
+                      </option>
+                      <option
                         id="11"
-                          value="LEXUS"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          LEXUS
-                        </option>
-                        <option
+                        value="LEXUS"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        LEXUS
+                      </option>
+                      <option
                         id="12"
-                          value="MAZDA"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MAZDA
-                        </option>
-                        <option
+                        value="MAZDA"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        MAZDA
+                      </option>
+                      <option
                         id="13"
-                          value="MERCEDES-BENZ"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MERCEDES-BENZ
-                        </option>
-                        <option
+                        value="MERCEDES-BENZ"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        MERCEDES-BENZ
+                      </option>
+                      <option
                         id="14"
-                          value="MISTUBISHI"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MISTUBISHI
-                        </option>
-                        <option
+                        value="MISTUBISHI"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        MISTUBISHI
+                      </option>
+                      <option
                         id="15"
-                          value="NISSAN"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          NISSAN
-                        </option>
-                        <option
+                        value="NISSAN"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        NISSAN
+                      </option>
+                      <option
                         id="16"
-                          value="PORCH"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          PORCH
-                        </option>
-                        <option
+                        value="PORCH"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        PORCH
+                      </option>
+                      <option
                         id="17"
-                          value="SUBARO"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          SUBARO
-                        </option>
-                        <option
+                        value="SUBARO"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        SUBARO
+                      </option>
+                      <option
                         id="18"
-                          value="SUZUKI"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          SUZUKI
-                        </option>
-                        <option
+                        value="SUZUKI"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        SUZUKI
+                      </option>
+                      <option
                         id="19"
-                          value="TOYOTA"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          TOYOTA
-                        </option>
+                        value="TOYOTA"
+                        className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                      >
+                        TOYOTA
+                      </option>
                     </select>
                   </label>
                 </div>
@@ -1269,7 +1424,7 @@ const EditListingForm = ({ carId }) => {
                   </div>
                   <img
                     loading="lazy"
-                    src={`/${carData.featured_image}`}
+                    src={`../../../../admin/public/uploads/${carData.featured_image}`}
                     alt="image"
                     className="w-[160px] h-[160px] rounded-lg max-[780px]:w-[140px] max-[780px]:h-[140px] object-cover"
                   />
@@ -1318,9 +1473,9 @@ const EditListingForm = ({ carId }) => {
                     id="showGalleryImages"
                     className="showImage w-full mt-5 h-auto gap-4 flex-wrap flex justify-start items-center "
                   >
-                    {carData?.galleryImages?.map((galleryImage, index) => (
+                    {imageData?.map(({ images, order_id }) => (
                       <div
-                        key={index}
+                        key={order_id}
                         className="w-auto h-auto p-3 max-[780px]:p-1 relative"
                       >
                         <div
@@ -1332,8 +1487,8 @@ const EditListingForm = ({ carId }) => {
                         </div>
                         <img
                           loading="lazy"
-                          src={`/${galleryImage}`}
-                          alt={`gallery-image-${index}`}
+                          src={`../../../../admin/public/uploads/${images}`}
+                          alt={`gallery-image-${order_id}`}
                           className="w-[160px] h-[160px] rounded-lg max-[780px]:w-[140px] max-[780px]:h-[140px] object-cover"
                         />
                       </div>
@@ -1380,7 +1535,7 @@ const EditListingForm = ({ carId }) => {
                 </div>
 
                 {/* Image Preview */}
-                {carData.attachmentImage == null ? (
+                {attachmentData == [] ? (
                   <>
                     <h3 className="text-neutral-700 pt-3 text-2xl max-sm:text-[14px] font-bold">
                       Uploaded Image{" "}
@@ -1403,7 +1558,7 @@ const EditListingForm = ({ carId }) => {
                       </div>
                       <img
                         loading="lazy"
-                        src={`/${carData.attachmentImage}`}
+                        src={`../../../../admin/public/uploads/${attachmentData}`}
                         alt="image"
                         className="w-[160px] h-[160px] rounded-lg"
                       />

@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post("/add", verifyToken, galleryImageUpload.array("gallery_images", 20), addImage);
-router.get("/get" , getImage);
+router.get("/get/:car_id" , verifyToken , getImage);
 router.put("/update" , updateImage);
 router.delete("/delete" , deleteImage);
 

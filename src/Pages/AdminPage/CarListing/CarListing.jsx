@@ -9,6 +9,7 @@ const CarListings = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [carData, setCarData] = useState([]);
+  const [makeData, setMakeData] = useState([]);
 
   const fetchCarData = async () => {
     let token = localStorage.getItem("adminToken");
@@ -20,7 +21,6 @@ const CarListings = () => {
       });
       const data = await res.data.data;
       setCarData(data);
-      console.log(data);
       
       
     } catch (error) {
@@ -30,6 +30,26 @@ const CarListings = () => {
 
   useEffect(() => {
     fetchCarData();
+  }, []);
+
+  const fetchCarMake = async () => {
+    let token = localStorage.getItem("adminToken");
+    try {
+      const res = await axios.get("http://localhost:5000/api/make/" , {
+        headers : {
+          "Authorization" : `Barear ${token}`
+        }
+      });
+      const data = await res.data.data;
+      setMakeData(data);
+   
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchCarMake();
   }, []);
 
   // allCars array
@@ -47,7 +67,6 @@ const CarListings = () => {
   const totalPages = Math.ceil(filteredCars.length / entriesPerPage);
 
   const handleDelete = async (id, title) => {
-    console.log(id);
 
     if(id) {
       let token = localStorage.getItem("adminToken");
@@ -57,7 +76,6 @@ const CarListings = () => {
             "Authorization" : `Barear ${token}`
           }
         });
-        console.log(response);
         
       if (response.status === 200) {
         alert(`${title} deleted`);
@@ -182,7 +200,7 @@ const CarListings = () => {
 
                         <td className="p-2 text-start">{car.title}</td>
                         <td className="p-2 text-center">{car.type}</td>
-                        <td className="p-2 text-center">{car.makeID}</td>
+                        <td className="p-2 text-center">{makeData.find(make => make.make_id === car.makeID)?.make || "Unknown"}</td>
                         <td className="p-2 text-center">{car.year}</td>
                         <td className="p-2 text-center">
                           {car.created_at.slice(0, 10)}
