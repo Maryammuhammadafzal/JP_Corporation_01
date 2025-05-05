@@ -9,7 +9,7 @@ router.use(verifyToken);
 router.post("/add" , verifyToken , featuredImageUpload.single("featured_image") ,addCarListing);
 router.get("/get" , verifyToken, getCarListing);
 router.get("/getById/:id" , verifyToken, getCarListingById);
-router.put("/update/:id" , verifyToken , updateCarListing);
+router.put("/update/:id" , verifyToken , featuredImageUpload.single("featured_image") , updateCarListing);
 router.delete("/delete/:id" , verifyToken , deleteCarListing);
 
 // Export Router

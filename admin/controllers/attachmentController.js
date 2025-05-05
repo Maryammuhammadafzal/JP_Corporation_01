@@ -19,7 +19,7 @@ export const addAttachment = async (req, res) => {
                         pdf = "";
                 }
 
-                if ( file.mimetype !== "application/pdf" ) {
+                if (file.mimetype !== "application/pdf") {
                         res.status(400).json("Only Pdf file is allowed")
                 }
 
@@ -43,7 +43,7 @@ export const addAttachment = async (req, res) => {
 
         } catch (error) {
                 console.log("attachment error", error.message);
-                res.status(400).json({ message : "failed to add attachment" , error : error.message});
+                res.status(400).json({ message: "failed to add attachment", error: error.message });
 
         }
 }
@@ -51,21 +51,21 @@ export const getAttachment = async (req, res) => {
         try {
                 const id = req.params.car_id;
 
-                const get_attachment = await Attachment.find({ car_id : id })
+                const get_attachment = await Attachment.find({ car_id: id })
                 console.log(get_attachment);
 
-                res.status(200).json({message : "Get Attachment " , data : get_attachment});
-                
+                res.status(200).json({ message: "Get Attachment ", data: get_attachment });
+
 
         } catch (error) {
 
-                res.status(400).json( {message : " failed to get attachemt" , error : error.message})
+                res.status(400).json({ message: " failed to get attachemt", error: error.message })
         }
 }
 export const updateAttachment = async (req, res) => {
         try {
                 const id = req.params.car_id;
-                
+
                 if (!id) {
                         res.status(400).json("Car_id is not defined");
                 }
@@ -78,16 +78,31 @@ export const updateAttachment = async (req, res) => {
                         pdf = "";
                 }
 
-                if ( file.mimetype !== "application/pdf" ) {
+                if (file.mimetype !== "application/pdf") {
                         res.status(400).json("Only Pdf file is allowed")
                 }
 
                 pdf = file.filename;
-                
-                // const update_attachment = await Attachment.
+
+                const update_attachment = await Attachment.findOneAndUpdate(
+                        {
+                                car_id: id,
+                                attachments: pdf
+                        },
+                        { new: true }
+                );
+
+                if (!update_attachment) {
+                        return res.status(404).json({ message: 'Attachment not found' });
+                }
+
+                res.status(200).json({
+                        message: 'Attachment updated successfully',
+                        data: update_attachment,
+                });
 
         } catch (error) {
-
+                res.status(400).json({ message : "Failed To update Attachment" , error : error.message});
         }
 }
 export const deleteAttachment = async (req, res) => {

@@ -6,7 +6,7 @@ import { safetyFeatures } from "../../../../Components/safetyFeatures.js";
 import Copyright from "../../../../Components/Copyright/Copyright.jsx";
 import AdminButton from "../../../../Components/AdminButton/AdminButton.jsx";
 
-const EditListingForm = ({ carId }) => {
+const EditListingForm = () => {
   let [isActive, setIsActive] = useState(false);
   const [featuredImage, setFeaturedImage] = useState(null);
   const [attachmentImage, setAttachmentImage] = useState(null);
@@ -18,7 +18,8 @@ const EditListingForm = ({ carId }) => {
   const [attachmentData, setAttachmentData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [make, setMake] = useState(null);
-  const [modals, setModals] = useState("");
+  const [modals, setModals] = useState([]);
+  // const [selectedModel, setSelectedModel] = useState(carData.modelID || "");
 
   // Fetch car data by id
   let editId = localStorage.getItem("EditId");
@@ -59,7 +60,6 @@ const EditListingForm = ({ carId }) => {
             }
           );
           const images = res.data.data;
-          console.log(images);
 
           setImageData(images);
           setLoading(false);
@@ -105,15 +105,17 @@ const EditListingForm = ({ carId }) => {
     }
   }, [carData]);
   useEffect(() => {
-    if (carData) {
-      setGalleryImages(carData.galleryImages);
+    if (imageData) {
+      setGalleryImages(imageData);
     }
-  }, [carData]);
+  }, [imageData]);
+  console.log(galleryImages);
+  
   useEffect(() => {
-    if (carData) {
-      setAttachmentImage(carData.attachmentImage);
+    if (attachmentData) {
+      setAttachmentImage(attachmentData.attachments);
     }
-  }, [carData]);
+  }, [attachmentData]);
 
   useEffect(() => {
     if (carData) {
@@ -174,7 +176,7 @@ const EditListingForm = ({ carId }) => {
   let newAttachmentImage = null;
   let newGalleryImages = [];
   // Handle Images
-  const handleFeaturedChange = (e) => {
+  const handleFeaturedChange = (e ) => {
     newFeaturedImage = e.target.files[0];
     if (newFeaturedImage !== null) {
       setFeaturedImage(newFeaturedImage);
@@ -190,17 +192,21 @@ const EditListingForm = ({ carId }) => {
       let image = document.getElementById("showAttachmentImage");
       image.classList.add("hidden");
     }
-    setAttachmentImage(carData.attachmentImage);
+    setAttachmentImage(attachmentData.attachments);
   };
+  
+  console.log(imageData);
+  
   const handleGalleryChange = (e) => {
     newGalleryImages = [...e.target.files];
-
+    
     if (newGalleryImages.length > 0) {
       setGalleryImages(newGalleryImages);
       let images = document.getElementById("showGalleryImages");
       images.classList.add("hidden");
     }
-    setGalleryImages(carData.galleryImages);
+    setGalleryImages(imageData);
+ 
   };
 
   // Show & Hide Images
@@ -218,6 +224,20 @@ const EditListingForm = ({ carId }) => {
   };
 
   // Handle Safety Features Change
+  const handleFeaturesChange = (e, type) => {
+    const { value, checked } = e.target;
+    if (type === "allFeatures") {
+      setCarAllFeatures((prevAllFeatures) => {
+        if (checked) {
+          return [...prevAllFeatures, value]; //Added ,If Checked
+        } else {
+          return prevAllFeatures.filter((item) => item !== value); // Removed ,If Not Checked
+        }
+      });
+    }
+  };
+
+  // Handle Safety Features Change
   const handleSafetyFeatureChange = (e, type) => {
     const { value, checked } = e.target;
     if (type === "safetyFeatures") {
@@ -231,12 +251,37 @@ const EditListingForm = ({ carId }) => {
     }
   };
 
+
   // Fetch Modal By Make Api Call
   const fetchModalByMake = async (make) => {
-    const response = await axios.get(`/api/model/getModal/${make}`);
+    let makeId = parseInt(make);
+    const response = await axios.get(
+      `http://localhost:5000/api/model/getModalByMake/${makeId}`
+    );
     const data = await response.data;
     setModals(data);
   };
+
+  useEffect(() => {
+   
+    if ((!modals || modals.length === 0) && carData.makeID) {
+      
+      const fetchModels = async () => {
+        const id = parseInt(carData.makeID);
+        
+        try {
+          const response = await axios.get(`http://localhost:5000/api/model/getModalByMake/${id}`);
+          const data = await response.data;
+            setModals(data); 
+        } catch (error) {
+          console.error("Error fetching models:", error);
+        }
+      };
+  
+      fetchModels();
+    }
+  }, [carData.makeID]);
+
   const handleMake = (e) => {
     setMake(e.target.value);
     fetchModalByMake(e.target.value);
@@ -362,13 +407,13 @@ const EditListingForm = ({ carId }) => {
       formData.append("description", descriptionRef.current.value);
       formData.append("features", carAllFeatures.toString());
       formData.append("safety_features", carSafetyFeatures.toString());
+      formData.append("featured_image", featuredImage);
 
       // // Add features arrays as JSON strings
       // formData.append("features", JSON.stringify(carAllFeatures));
       // formData.append("safety_features", JSON.stringify(carSafetyFeatures));
 
       // Images
-      formData.append("featured_image", featuredImage);
 
       // formData.append("attachmentImage", attachmentImage);
       // for (let i = 0; i < galleryImages.length; i++) {
@@ -392,13 +437,16 @@ const EditListingForm = ({ carId }) => {
 
         const imageData = new FormData();
 
-        for (let i = 0; i < galleryImages.length; i++) {
-          imageData.append("gallery_images", galleryImages[i]);
+        if (galleryImages && galleryImages.length != 0) {
+
+          for (let i = 0; i < galleryImages.length; i++) {
+            imageData.append("gallery_images", galleryImages[i].images);
+          }
         }
 
         imageData.append("car_id", id);
 
-        const gallery_images_response = await axios.post(
+        const gallery_images_response = await axios.put(
           `http://localhost:5000/api/images/update/${id}`,
           imageData,
           {
@@ -413,8 +461,8 @@ const EditListingForm = ({ carId }) => {
 
         const attachmentData = new FormData();
         attachmentData.append("attachment_image", attachmentImage);
-        const attachment_pdf_response = await axios.post(
-          "http://localhost:5000/api/attachment/add",
+        const attachment_pdf_response = await axios.put(
+          `http://localhost:5000/api/attachment/update/${id}`,
           attachmentData,
           {
             headers: {
@@ -670,133 +718,133 @@ const EditListingForm = ({ carId }) => {
                       </option>
                       <option
                         id="1"
-                        value="AUDI"
+                        value="1"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         AUDI
                       </option>
                       <option
                         id="2"
-                        value="BENTLEY"
+                        value="2"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         BENTLEY
                       </option>
                       <option
                         id="3"
-                        value="BMW"
+                        value="3"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         BMW
                       </option>
                       <option
                         id="4"
-                        value="CADILLAC"
+                        value="4"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         CADILLAC
                       </option>
                       <option
                         id="5"
-                        value="CHEVROLET"
+                        value="5"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         CHEVROLET
                       </option>
                       <option
                         id="6"
-                        value="FARRARI"
+                        value="6"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         FARRARI
                       </option>
                       <option
                         id="7"
-                        value="FORD"
+                        value="7"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         FORD
                       </option>
                       <option
                         id="8"
-                        value="HINO"
+                        value="8"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         HINO
                       </option>
                       <option
                         id="9"
-                        value="HONDA"
+                        value="9"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         HONDA
                       </option>
                       <option
                         id="10"
-                        value="ISUZU"
+                        value="10"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         ISUZU
                       </option>
                       <option
                         id="11"
-                        value="LEXUS"
+                        value="11"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         LEXUS
                       </option>
                       <option
                         id="12"
-                        value="MAZDA"
+                        value="12"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         MAZDA
                       </option>
                       <option
                         id="13"
-                        value="MERCEDES-BENZ"
+                        value="13"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         MERCEDES-BENZ
                       </option>
                       <option
                         id="14"
-                        value="MISTUBISHI"
+                        value="14"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         MISTUBISHI
                       </option>
                       <option
                         id="15"
-                        value="NISSAN"
+                        value="15"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         NISSAN
                       </option>
                       <option
                         id="16"
-                        value="PORCH"
+                        value="16"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         PORCH
                       </option>
                       <option
                         id="17"
-                        value="SUBARO"
+                        value="17"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         SUBARO
                       </option>
                       <option
                         id="18"
-                        value="SUZUKI"
+                        value="18"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         SUZUKI
                       </option>
                       <option
                         id="19"
-                        value="TOYOTA"
+                        value="19"
                         className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                       >
                         TOYOTA
@@ -814,7 +862,11 @@ const EditListingForm = ({ carId }) => {
                       className="appearance-none mt-2 w-full border rounded-md p-2 max-sm:text-[12px] outline-0 text-gray-700 "
                       placeholder="Select Model"
                       ref={modelRef}
-                    >
+                      value={carData.modelID || ""}
+                      onChange={(e) =>
+                        setCarData({ ...carData, modelID: e.target.value })
+                      }
+                      >
                       {makeRef.current === null ? (
                         <option
                           value=""
@@ -834,14 +886,14 @@ const EditListingForm = ({ carId }) => {
                           >
                             Select Model
                           </option>
-                          {modals &&
-                            modals.map(({ modalTitle }, index) => (
+                          { modals && 
+                            modals.map(({ model , model_id }, index) => (
                               <option
                                 key={index}
-                                value={modalTitle}
+                                value={model_id}
                                 className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
                               >
-                                {modalTitle}
+                                {model}
                               </option>
                             ))}
                         </>
@@ -1253,7 +1305,7 @@ const EditListingForm = ({ carId }) => {
                       className="appearance-none mt-2 w-full border rounded-md p-2 max-sm:text-[12px] outline-0 "
                       placeholder="Select Doors"
                       ref={doorRef}
-                      value={carData.door || ""}
+                      value={carData.doors || ""}
                       onChange={(e) =>
                         setCarData({ ...carData, door: e.target.value })
                       }
@@ -1305,7 +1357,7 @@ const EditListingForm = ({ carId }) => {
                   <label htmlFor="vin" className="w-full">
                     <p>Vin</p>
                     <input
-                      type="text"
+                      type="number"
                       id="vin"
                       ref={vinRef}
                       className="mt-2 w-full border rounded-md p-2 max-sm:text-[12px]"
@@ -1365,9 +1417,9 @@ const EditListingForm = ({ carId }) => {
                     id="description"
                     ref={descriptionRef}
                     className="mt-2 w-full h-[250px] max-md:h-[200px] max-sm:h-[150px] border rounded-md p-2"
-                    value={carData.carDescription || ""}
+                    value={carData.description || ""}
                     onChange={(e) =>
-                      setCarData({ ...carData, carDescription: e.target.value })
+                      setCarData({ ...carData, description: e.target.value })
                     }
                   />
                 </label>
@@ -1392,7 +1444,7 @@ const EditListingForm = ({ carId }) => {
                     {/* Custom Button */}
                     <button
                       type="button"
-                      className="bg-neutral-300 border border-r-0 hover:bg-neutral-400 w-[120px] p-3  max-md:w-[100px] max-sm:w-[80px] max-md:text-[14px] max-sm:text-[12px] p-3 max-sm:p-1 rounded-bl-xl rounded-tl-xl shadow-md transition duration-300"
+                      className="bg-neutral-300 border border-r-0 hover:bg-neutral-400 w-[120px] max-md:w-[100px] max-sm:w-[80px] max-md:text-[14px] max-sm:text-[12px] p-3 max-sm:p-1 rounded-bl-xl rounded-tl-xl shadow-md transition duration-300"
                     >
                       Upload File
                     </button>
@@ -1400,8 +1452,10 @@ const EditListingForm = ({ carId }) => {
                     {/* Hidden Input */}
                     <input
                       type="file"
-                      id="featuredImage"
+                      id="featuredImage" 
+                      name="featured_image" 
                       required
+                      accept="image/*" 
                       files={carData.featured_image || ""}
                       onChange={handleFeaturedChange}
                       className={`border rounded-br-xl p-3 max-sm:text-[12px] max-md:text-[14px] rounded-tr-xl w-[90%] ${
@@ -1458,8 +1512,10 @@ const EditListingForm = ({ carId }) => {
                     <input
                       type="file"
                       id="galleryImages"
+                      name="gallery_images"
                       required
                       multiple
+                      accept="image/*" 
                       onChange={handleGalleryChange}
                       className={`border rounded-br-xl p-3 rounded-tr-xl w-[90%] max-sm:text-[12px] max-md:text-[14px]  ${
                         isActive && "border-orange-400"
@@ -1526,6 +1582,8 @@ const EditListingForm = ({ carId }) => {
                     <input
                       type="file"
                       id="attachmentImage"
+                      name="attachment_image"
+                      accept="application/pdf"
                       onChange={handleAttachmentChange}
                       className={`border rounded-br-xl p-3 max-sm:text-[12px] max-md:text-[14px]  rounded-tr-xl w-[90%]  ${
                         isActive && "border-orange-400"
@@ -1594,7 +1652,7 @@ const EditListingForm = ({ carId }) => {
                             value={feature.value}
                             id={feature.value}
                             onChange={(e) =>
-                              handleFeatureChange(e, "allFeatures")
+                              handleFeaturesChange(e, "allFeatures")
                             }
                             checked={carAllFeatures
                               .map((item) => item)
