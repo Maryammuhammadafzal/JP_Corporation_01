@@ -62,47 +62,110 @@ export const getAttachment = async (req, res) => {
                 res.status(400).json({ message: " failed to get attachemt", error: error.message })
         }
 }
+// export const updateAttachment = async (req, res) => {
+//         try {
+//                 const id = req.params.car_id;
+
+//                 if (!id) {
+//                         res.status(400).json("Car_id is not defined");
+//                 }
+
+//                 // Get pdf file
+//                 const file = req.file;
+//                 console.log("Attachment File", file);
+//                 let pdf;
+
+//                 if (file) {
+
+//                         if (file.mimetype !== "application/pdf") {
+//                                 console.log("file not fine");
+
+//                                 res.status(400).json("Only Pdf file is allowed")
+//                         }
+//                         pdf = file.originalname;
+//                         console.log("Get pdf", pdf)
+//                 }
+
+
+//                 if (!file) {
+//                         pdf = req.body.attachment_image;
+//                         console.log("Empty pdf", pdf)
+//                 }
+
+
+//                 const update_attachment = await Attachment.findOneAndUpdate(
+//                         {
+//                                 car_id: id,
+//                                 attachments: pdf
+//                         },
+//                         { new: true }
+//                 );
+
+//                 if (!update_attachment) {
+//                         console.log("Attachment not found");
+//                         return res.status(404).json({ message: 'Attachment not found' });
+//                 }
+
+//                 console.log("Update Attachment", update_attachment);
+
+//                 res.status(200).json({
+//                         message: 'Attachment updated successfully',
+//                         data: update_attachment,
+//                 });
+
+//         } catch (error) {
+//                 console.log("Attachment Error", error.message);
+//                 res.status(400).json({ message: "Failed To update Attachment", error: error.message });
+//         }
+// }
 export const updateAttachment = async (req, res) => {
         try {
-                const id = req.params.car_id;
+                const car_id = req.params.car_id;
 
-                if (!id) {
-                        res.status(400).json("Car_id is not defined");
+                if (!car_id) {
+                        return res.status(400).json({ message: "Car ID is required" });
                 }
 
-                // Get pdf file
                 const file = req.file;
-                let pdf;
 
-                if (!file) {
-                        pdf = "";
+                // CASE 1: User uploads new images
+                if (file && file.length > 0) {
+                        // Delete previous images for the car
+                        await Attachment.deleteMany({ car_id });
+
+                        const count = await Attachment.countDocuments();
+
+                        // Map new images
+                        const new_attachment = file.map((file) => ({
+                                _id: `mongodb_generated_id_${count + 1}`,
+                                attachments: file.originalname,
+                                car_id
+                        }));
+
+                        const update_attachment = await Attachment(new_attachment);
+
+                        const update_attachment_data = await update_attachment.save();
+
+                        return res.status(200).json({
+                                message: "Attachment updated successfully with new files",
+                                data: update_attachment_data,
+                        });
                 }
 
-                if (file.mimetype !== "application/pdf") {
-                        res.status(400).json("Only Pdf file is allowed")
+                // CASE 2: No new Attachments — keep existing ones
+                const existing_attachment = await Attachment.find({ car_id });
+
+                if (!existing_attachment || existing_attachment.length === 0) {
+                        return res.status(404).json({ message: "No existing attachment found for this car" });
                 }
 
-                pdf = file.filename;
-
-                const update_attachment = await Attachment.findOneAndUpdate(
-                        {
-                                car_id: id,
-                                attachments: pdf
-                        },
-                        { new: true }
-                );
-
-                if (!update_attachment) {
-                        return res.status(404).json({ message: 'Attachment not found' });
-                }
-
-                res.status(200).json({
-                        message: 'Attachment updated successfully',
-                        data: update_attachment,
+                return res.status(200).json({
+                        message: "No new attachment provided, old attachment retained",
+                        data: existing_attachment,
                 });
-
         } catch (error) {
-                res.status(400).json({ message : "Failed To update Attachment" , error : error.message});
+                console.error("Update attachment Error:", error.message);
+                res.status(500).json({ message: "Failed to update attachments", error: error.message });
         }
 }
 export const deleteAttachment = async (req, res) => {

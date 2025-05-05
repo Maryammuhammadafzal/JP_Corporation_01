@@ -5,9 +5,10 @@ import AllFeatures from "../../../../Components/AllFeatures.js";
 import { safetyFeatures } from "../../../../Components/safetyFeatures.js";
 import Copyright from "../../../../Components/Copyright/Copyright.jsx";
 import AdminButton from "../../../../Components/AdminButton/AdminButton.jsx";
+import pdfImage from "../../../../assets/Images/pdfimage.webp"
 
 const EditListingForm = () => {
-  let [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [featuredImage, setFeaturedImage] = useState(null);
   const [attachmentImage, setAttachmentImage] = useState(null);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -19,11 +20,14 @@ const EditListingForm = () => {
   const [loading, setLoading] = useState(true);
   const [make, setMake] = useState(null);
   const [modals, setModals] = useState([]);
-  // const [selectedModel, setSelectedModel] = useState(carData.modelID || "");
+
+  // Edit Car Listing Id
+  let editId = localStorage.getItem("EditId");
+
+  // Verification Token
+  let token = localStorage.getItem("adminToken");
 
   // Fetch car data by id
-  let editId = localStorage.getItem("EditId");
-  let token = localStorage.getItem("adminToken");
   useEffect(() => {
     const fetchCar = async () => {
       try {
@@ -69,9 +73,9 @@ const EditListingForm = () => {
       };
       fetchGalleryImages();
     }
-  }, [carData.list_id]);
+  }, [id]);
 
-  //Fetch gallery Image
+  //Fetch Attachment Image
   useEffect(() => {
     if (id) {
       const fetchAttachmentImages = async () => {
@@ -85,11 +89,11 @@ const EditListingForm = () => {
             }
           );
           const attachment = res.data.data;
-          let pdfAttachment = attachment.map(
-            (attachment) => attachment.attachments
-          );
+          // let pdfAttachment = attachment.map(
+          //   (attachment) => attachment.attachments
+          // );
 
-          setAttachmentData(pdfAttachment[0]);
+          setAttachmentData(attachment);
           setLoading(false);
         } catch (err) {
           console.error(err);
@@ -97,7 +101,7 @@ const EditListingForm = () => {
       };
       fetchAttachmentImages();
     }
-  }, [carData.list_id]);
+  }, [id]);
 
   useEffect(() => {
     if (carData) {
@@ -106,14 +110,15 @@ const EditListingForm = () => {
   }, [carData]);
   useEffect(() => {
     if (imageData) {
-      setGalleryImages(imageData);
+     let images = imageData.map(image => image.images);
+      setGalleryImages(images);
     }
   }, [imageData]);
-  console.log(galleryImages);
-  
+
   useEffect(() => {
     if (attachmentData) {
-      setAttachmentImage(attachmentData.attachments);
+      let attachment = attachmentData.map(attachment => attachment.attachments)
+      setAttachmentImage(attachment);
     }
   }, [attachmentData]);
 
@@ -176,7 +181,7 @@ const EditListingForm = () => {
   let newAttachmentImage = null;
   let newGalleryImages = [];
   // Handle Images
-  const handleFeaturedChange = (e ) => {
+  const handleFeaturedChange = (e) => {
     newFeaturedImage = e.target.files[0];
     if (newFeaturedImage !== null) {
       setFeaturedImage(newFeaturedImage);
@@ -192,21 +197,20 @@ const EditListingForm = () => {
       let image = document.getElementById("showAttachmentImage");
       image.classList.add("hidden");
     }
-    setAttachmentImage(attachmentData.attachments);
+    console.log(newAttachmentImage);
+    
+    setAttachmentImage(newAttachmentImage);
   };
-  
-  console.log(imageData);
-  
+
   const handleGalleryChange = (e) => {
     newGalleryImages = [...e.target.files];
-    
+
     if (newGalleryImages.length > 0) {
       setGalleryImages(newGalleryImages);
       let images = document.getElementById("showGalleryImages");
       images.classList.add("hidden");
     }
     setGalleryImages(imageData);
- 
   };
 
   // Show & Hide Images
@@ -251,7 +255,6 @@ const EditListingForm = () => {
     }
   };
 
-
   // Fetch Modal By Make Api Call
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
@@ -263,26 +266,27 @@ const EditListingForm = () => {
   };
 
   useEffect(() => {
-   
     if ((!modals || modals.length === 0) && carData.makeID) {
-      
       const fetchModels = async () => {
         const id = parseInt(carData.makeID);
-        
+
         try {
-          const response = await axios.get(`http://localhost:5000/api/model/getModalByMake/${id}`);
+          const response = await axios.get(
+            `http://localhost:5000/api/model/getModalByMake/${id}`
+          );
           const data = await response.data;
-            setModals(data); 
+          setModals(data);
         } catch (error) {
           console.error("Error fetching models:", error);
         }
       };
-  
+
       fetchModels();
     }
   }, [carData.makeID]);
 
   const handleMake = (e) => {
+    setCarData({ ...carData, makeID: e.target.value })
     setMake(e.target.value);
     fetchModalByMake(e.target.value);
   };
@@ -438,9 +442,9 @@ const EditListingForm = () => {
         const imageData = new FormData();
 
         if (galleryImages && galleryImages.length != 0) {
-
           for (let i = 0; i < galleryImages.length; i++) {
-            imageData.append("gallery_images", galleryImages[i].images);
+            imageData.append("gallery_images", galleryImages[i]);
+            
           }
         }
 
@@ -460,6 +464,7 @@ const EditListingForm = () => {
         console.log("Success" + JSON.stringify(gallery_images_response.data));
 
         const attachmentData = new FormData();
+        
         attachmentData.append("attachment_image", attachmentImage);
         const attachment_pdf_response = await axios.put(
           `http://localhost:5000/api/attachment/update/${id}`,
@@ -866,7 +871,7 @@ const EditListingForm = () => {
                       onChange={(e) =>
                         setCarData({ ...carData, modelID: e.target.value })
                       }
-                      >
+                    >
                       {makeRef.current === null ? (
                         <option
                           value=""
@@ -886,8 +891,8 @@ const EditListingForm = () => {
                           >
                             Select Model
                           </option>
-                          { modals && 
-                            modals.map(({ model , model_id }, index) => (
+                          {modals &&
+                            modals.map(({ model, model_id }, index) => (
                               <option
                                 key={index}
                                 value={model_id}
@@ -1452,10 +1457,10 @@ const EditListingForm = () => {
                     {/* Hidden Input */}
                     <input
                       type="file"
-                      id="featuredImage" 
-                      name="featured_image" 
+                      id="featuredImage"
+                      name="featured_image"
                       required
-                      accept="image/*" 
+                      accept="image/*"
                       files={carData.featured_image || ""}
                       onChange={handleFeaturedChange}
                       className={`border rounded-br-xl p-3 max-sm:text-[12px] max-md:text-[14px] rounded-tr-xl w-[90%] ${
@@ -1515,7 +1520,7 @@ const EditListingForm = () => {
                       name="gallery_images"
                       required
                       multiple
-                      accept="image/*" 
+                      accept="image/*"
                       onChange={handleGalleryChange}
                       className={`border rounded-br-xl p-3 rounded-tr-xl w-[90%] max-sm:text-[12px] max-md:text-[14px]  ${
                         isActive && "border-orange-400"
@@ -1593,7 +1598,7 @@ const EditListingForm = () => {
                 </div>
 
                 {/* Image Preview */}
-                {attachmentData == [] ? (
+                {attachmentImage == null ? (
                   <>
                     <h3 className="text-neutral-700 pt-3 text-2xl max-sm:text-[14px] font-bold">
                       Uploaded Image{" "}
@@ -1606,20 +1611,17 @@ const EditListingForm = () => {
                   <>
                     <div
                       id="showAttachmentImage"
-                      className="showImage p-3 w-[200px] mt-5 h-[200px] flex justify-center items-center relative"
+                      className="showImage p-3 w-[150px] mt-5 h-[100px] flex justify-center items-center relative"
                     >
-                      <div
-                        className="crossBtn  text-xl p-1 shadow-lg h-auto w-auto rounded-full bg-white hover:bg-red-400 cursor-pointer  absolute top-0 right-0 z-10"
-                        onClick={hiddenAttachmentImage}
-                      >
-                        ❌
-                      </div>
+                      
+                      <a href={`../../../../admin/public/uploads/${attachmentImage[0]}`} download target="_blank" rel="noopener noreferrer">
                       <img
                         loading="lazy"
-                        src={`../../../../admin/public/uploads/${attachmentData}`}
+                        src={pdfImage}
                         alt="image"
-                        className="w-[160px] h-[160px] rounded-lg"
+                        className="w-[150px] h-[100px] rounded-lg"
                       />
+                      </a>
                     </div>
                   </>
                 )}

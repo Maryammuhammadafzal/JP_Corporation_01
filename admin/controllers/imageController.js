@@ -48,73 +48,59 @@ export const getImage = async (req, res) => {
                 res.status(500).json({ message: "failed to get Images", error: error.message });
         }
 }
+
+
 export const updateImage = async (req, res) => {
         try {
+                const car_id = req.params.car_id;
 
-                const id = req.params.car_id;
-
-                if (!id) {
-                        console.log("Images Id Not Found");
-                      return  res.status(400).json("Images Id Not Found");
+                if (!car_id) {
+                        return res.status(400).json({ message: "Car ID is required" });
                 }
-
-                const { gallery_images, car_id } = req.body;
-                console.log("image body" , gallery_images , car_id);
 
                 const files = req.files;
-                console.log("image file" ,files);
 
+                // CASE 1: User uploads new images
+                if (files && files.length > 0) {
+                        // Delete previous images for the car
+                        await Image.deleteMany({ car_id });
 
-                let images;
-                if (!files || files.length === 0) {
-                console.log("run");
-                        
-                        images = {
-                                images: gallery_images,
-                                car_id,
-                        };
-                        console.log("run Image" , images);
-                        
+                        const count = await Image.countDocuments();
 
-                }
-                const count = await Image.countDocuments();
-                if (files) {
-                console.log("runnn");
-                
-                        // Creating images data 
-                        images = files.map((file, index) => ({
+                        // Map new images
+                        const newImages = files.map((file, index) => ({
+                                img_id: count + index + 1,
                                 images: file.filename,
                                 order_id: index + 1,
-                                img_id: count + index + 1,
-                                car_id,
+                                car_id: parseInt(car_id),
                         }));
 
-                console.log("runnn images" , images);
+                        const addedImages = await Image.insertMany(newImages);
 
+                        return res.status(200).json({
+                                message: "Images updated successfully with new files",
+                                data: addedImages,
+                        });
                 }
 
-                console.log(images);
+                // CASE 2: No new images — keep existing ones
+                const existingImages = await Image.find({ car_id });
 
-                const update_images = await Image.findOneAndUpdate({
-                        ...images
-                }, { new: true });
-                console.log("Updated" , update_images);
-
-                if (!update_images) {
-                        console.log("images are not updated");
-                        
-                      return res.status(400).json("Images Not Updated")
+                if (!existingImages || existingImages.length === 0) {
+                        return res.status(404).json({ message: "No existing images found for this car" });
                 }
 
-                res.status(200).json({ message: "Images Updated Successfully", data: update_images });
-
+                return res.status(200).json({
+                        message: "No new images provided, old images retained",
+                        data: existingImages,
+                });
         } catch (error) {
-                console.log("update image err" , error.message);
-                
-                res.status(400).json({ message: "Failed to Updated  Images", error: error.message });
-
+                console.error("Update Image Error:", error.message);
+                res.status(500).json({ message: "Failed to update images", error: error.message });
         }
-}
+};
+
+
 export const deleteImage = async (req, res) => {
         try {
 
