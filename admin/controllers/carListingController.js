@@ -1,4 +1,3 @@
-import { log } from "console";
 import CarListing from "../models/CarListingModel.js";
 
 export const addCarListing = async (req, res) => {
@@ -98,17 +97,18 @@ export const getCarListing = async (req, res) => {
 
         try {
 
-                // const page = parseInt(req.query.page || 1);
-                // const limit = parseInt(req.query.limit || 100);
+                const page = parseInt(req.query.page || 1);
+                const limit = parseInt(req.query.limit || 100);
 
                 // Get All Car Listing 
                 const get_car_listing_data = await CarListing.find()
                         .sort({ created_at: -1 })
-                // .skip((page - 1) * limit)
-                // .limit(limit);
+                        .skip((page - 1) * limit)
+                        .limit(limit);
 
                 res.status(200).json({ message: "Success", data: get_car_listing_data });
         } catch (error) {
+                console.log(error.message);
 
                 res.status(400).json({ message: "Invalid Credentials", error });
         }
@@ -117,12 +117,67 @@ export const getCarListing = async (req, res) => {
 }
 export const getCarListingById = async (req, res) => {
         const { id } = req.params;
+        console.log(id);
+        
 
         try {
                 const get_car_listing_data_by_id = await CarListing.findById(id);
 
                 res.status(200).json({ message: "Success", data: get_car_listing_data_by_id });
         } catch (error) {
+
+                res.status(400).json({ message: "Invalid Credentials", error });
+        }
+
+
+}
+export const getCarListingByType = async (req, res) => {
+
+        try {
+                const { type } = req.query;
+
+                const get_car_listing_data_by_type = await CarListing.find({ type });
+
+                res.status(200).json({ message: "Success", data: get_car_listing_data_by_type });
+        } catch (error) {
+
+                res.status(400).json({ message: "Invalid Credentials", error });
+        }
+
+
+}
+export const getCarListingByQuery = async (req, res) => {
+
+        try {
+                const { type, make, minPrice, maxPrice, condition , maxyear , minyear , model } = req.query;
+                console.log('queries', type, make, minPrice, maxPrice, condition , maxyear , minyear , model);
+
+                // Build query
+                let query = {};
+
+                if (type) query.type = type;
+                if (make) query.makeID = make;
+                if (condition) query.condition = condition;
+                if (model) query.modelID = model;
+                if (minPrice || maxPrice) {
+                        query.price = {};
+                        if (minPrice) query.price.$gte = Number(minPrice);
+                        if (maxPrice) query.price.$lte = Number(maxPrice);
+                }
+                if (minyear || maxyear) {
+                        query.year = {};
+                        if (minyear) query.year.$gte = Number(minyear);
+                        if (maxyear) query.year.$lte = Number(maxyear);
+                      }
+                      
+
+                const get_car_listing_data_by_query = await CarListing.find( query );
+                console.log("found", get_car_listing_data_by_query);
+
+
+                res.status(200).json({ message: "Success", data: get_car_listing_data_by_query });
+        } catch (error) {
+                console.log("query error ", error.message);
 
                 res.status(400).json({ message: "Invalid Credentials", error });
         }
@@ -158,7 +213,6 @@ export const updateCarListing = async (req, res) => {
                         description,
                         features,
                         safety_features,
-                        featured_image
                 } = req.body
 
                 console.log("Body", req.body);
@@ -174,17 +228,18 @@ export const updateCarListing = async (req, res) => {
                 let featuredImagePath;
 
                 const file = req.file;
-                console.log(file);
+                console.log("Featured File", file);
 
 
                 // Check Files
-                if (!file || Object.keys(file).length === 0) {
-                        featuredImagePath = featured_image;
+                if (!file || Object.keys(file).length === 0 || file === undefined) {
+                        featuredImagePath = req.body.featured_image;
                         console.log("get", featuredImagePath);
 
                 }
 
                 if (file) {
+                        console.log("get File", file);
                         // Check File Format
                         const allowedFileFormat = ["image/png", "image/jpg", "image/jpeg"];
                         if (!allowedFileFormat.includes(req.file.mimetype)) {

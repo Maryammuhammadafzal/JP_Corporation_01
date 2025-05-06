@@ -5,7 +5,7 @@ import AllFeatures from "../../../../Components/AllFeatures.js";
 import { safetyFeatures } from "../../../../Components/safetyFeatures.js";
 import Copyright from "../../../../Components/Copyright/Copyright.jsx";
 import AdminButton from "../../../../Components/AdminButton/AdminButton.jsx";
-import pdfImage from "../../../../assets/Images/pdfimage.webp"
+import pdfImage from "../../../../assets/Images/pdfimage.webp";
 
 const EditListingForm = () => {
   const [isActive, setIsActive] = useState(false);
@@ -32,13 +32,7 @@ const EditListingForm = () => {
     const fetchCar = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/carListing/getById/${editId}`,
-          {
-            headers: {
-              Authorization: `Barear ${token}`,
-            },
-          }
-        );
+          `http://localhost:5000/api/carListing/getById/${editId}`);
         const car = res.data.data;
         setCarData(car);
         setLoading(false);
@@ -56,13 +50,7 @@ const EditListingForm = () => {
       const fetchGalleryImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/images/get/${id}`,
-            {
-              headers: {
-                Authorization: `Barear ${token}`,
-              },
-            }
-          );
+            `http://localhost:5000/api/images/get/${id}`);
           const images = res.data.data;
 
           setImageData(images);
@@ -81,13 +69,7 @@ const EditListingForm = () => {
       const fetchAttachmentImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/attachment/get/${id}`,
-            {
-              headers: {
-                Authorization: `Barear ${token}`,
-              },
-            }
-          );
+            `http://localhost:5000/api/attachment/get/${id}`);
           const attachment = res.data.data;
           // let pdfAttachment = attachment.map(
           //   (attachment) => attachment.attachments
@@ -110,14 +92,16 @@ const EditListingForm = () => {
   }, [carData]);
   useEffect(() => {
     if (imageData) {
-     let images = imageData.map(image => image.images);
+      let images = imageData.map((image) => image.images);
       setGalleryImages(images);
     }
   }, [imageData]);
 
   useEffect(() => {
     if (attachmentData) {
-      let attachment = attachmentData.map(attachment => attachment.attachments)
+      let attachment = attachmentData.map(
+        (attachment) => attachment.attachments
+      );
       setAttachmentImage(attachment);
     }
   }, [attachmentData]);
@@ -183,23 +167,25 @@ const EditListingForm = () => {
   // Handle Images
   const handleFeaturedChange = (e) => {
     newFeaturedImage = e.target.files[0];
-    if (newFeaturedImage !== null) {
+    if (newFeaturedImage) {
       setFeaturedImage(newFeaturedImage);
       let image = document.getElementById("showFeaturedImage");
       image.classList.add("hidden");
+    } else {
+      setFeaturedImage(carData.featured_image);
     }
-    setFeaturedImage(carData.featured_image);
   };
   const handleAttachmentChange = (e) => {
     newAttachmentImage = e.target.files[0];
-    if (newAttachmentImage !== null) {
+    if (newAttachmentImage) {
+      console.log(newAttachmentImage);
+      
       setAttachmentImage(newAttachmentImage);
       let image = document.getElementById("showAttachmentImage");
       image.classList.add("hidden");
-    }
-    console.log(newAttachmentImage);
-    
+    } else {
     setAttachmentImage(newAttachmentImage);
+    }
   };
 
   const handleGalleryChange = (e) => {
@@ -209,8 +195,9 @@ const EditListingForm = () => {
       setGalleryImages(newGalleryImages);
       let images = document.getElementById("showGalleryImages");
       images.classList.add("hidden");
-    }
+    } else {
     setGalleryImages(imageData);
+    }
   };
 
   // Show & Hide Images
@@ -220,10 +207,6 @@ const EditListingForm = () => {
   };
   const hiddenGalleryImage = (e) => {
     let image = e.target.parentElement;
-    image.classList.add("hidden");
-  };
-  const hiddenAttachmentImage = () => {
-    let image = document.getElementById("showAttachmentImage");
     image.classList.add("hidden");
   };
 
@@ -259,8 +242,7 @@ const EditListingForm = () => {
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
     const response = await axios.get(
-      `http://localhost:5000/api/model/getModalByMake/${makeId}`
-    );
+      `http://localhost:5000/api/model/getModalByMake/${makeId}` );
     const data = await response.data;
     setModals(data);
   };
@@ -272,8 +254,7 @@ const EditListingForm = () => {
 
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/model/getModalByMake/${id}`
-          );
+            `http://localhost:5000/api/model/getModalByMake/${id}`);
           const data = await response.data;
           setModals(data);
         } catch (error) {
@@ -286,7 +267,7 @@ const EditListingForm = () => {
   }, [carData.makeID]);
 
   const handleMake = (e) => {
-    setCarData({ ...carData, makeID: e.target.value })
+    setCarData({ ...carData, makeID: e.target.value });
     setMake(e.target.value);
     fetchModalByMake(e.target.value);
   };
@@ -388,6 +369,10 @@ const EditListingForm = () => {
       });
       availabilityRef.current.focus();
       setIsActive("availability");
+    } else if (!featuredImage && featuredImage.length === 0){
+      setIsActive("featured_image")
+     } else if (!galleryImages && galleryImages.length === 0){
+     setIsActive("gallery_images")
     } else {
       const formData = new FormData();
 
@@ -411,18 +396,9 @@ const EditListingForm = () => {
       formData.append("description", descriptionRef.current.value);
       formData.append("features", carAllFeatures.toString());
       formData.append("safety_features", carSafetyFeatures.toString());
+      console.log(featuredImage);
+      
       formData.append("featured_image", featuredImage);
-
-      // // Add features arrays as JSON strings
-      // formData.append("features", JSON.stringify(carAllFeatures));
-      // formData.append("safety_features", JSON.stringify(carSafetyFeatures));
-
-      // Images
-
-      // formData.append("attachmentImage", attachmentImage);
-      // for (let i = 0; i < galleryImages.length; i++) {
-      //   formData.append("galleryImages", galleryImages[i]);
-      // }
 
       // Edit Listing Api Call
       try {
@@ -444,41 +420,44 @@ const EditListingForm = () => {
         if (galleryImages && galleryImages.length != 0) {
           for (let i = 0; i < galleryImages.length; i++) {
             imageData.append("gallery_images", galleryImages[i]);
-            
           }
+
+          imageData.append("car_id", id);
+
+          const gallery_images_response = await axios.put(
+            `http://localhost:5000/api/images/update/${id}`,
+            imageData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          console.log("Success" + JSON.stringify(gallery_images_response.data));
+        } else {
+          alert("Gallery Images are required");
         }
+console.log(attachmentImage);
 
-        imageData.append("car_id", id);
+        if (attachmentImage) {
+          const attachmentData = new FormData();
 
-        const gallery_images_response = await axios.put(
-          `http://localhost:5000/api/images/update/${id}`,
-          imageData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+          attachmentData.append("attachment_image", attachmentImage);
+          const attachment_pdf_response = await axios.put(
+            `http://localhost:5000/api/attachment/update/${id}`,
+            attachmentData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
 
-        console.log("Success" + JSON.stringify(gallery_images_response.data));
-
-        const attachmentData = new FormData();
-        
-        attachmentData.append("attachment_image", attachmentImage);
-        const attachment_pdf_response = await axios.put(
-          `http://localhost:5000/api/attachment/update/${id}`,
-          attachmentData,
-          {
-            headers: {
-              "Content-Type": "multipart/form-data",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        console.log("Success" + JSON.stringify(attachment_pdf_response.data));
-
+          console.log("Success" + JSON.stringify(attachment_pdf_response.data));
+        }
         alert("Updated Succesfully");
 
         // reset car features
@@ -1613,14 +1592,18 @@ const EditListingForm = () => {
                       id="showAttachmentImage"
                       className="showImage p-3 w-[150px] mt-5 h-[100px] flex justify-center items-center relative"
                     >
-                      
-                      <a href={`../../../../admin/public/uploads/${attachmentImage[0]}`} download target="_blank" rel="noopener noreferrer">
-                      <img
-                        loading="lazy"
-                        src={pdfImage}
-                        alt="image"
-                        className="w-[150px] h-[100px] rounded-lg"
-                      />
+                      <a
+                        href={`../../../../admin/public/uploads/${attachmentImage[0]}`}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <img
+                          loading="lazy"
+                          src={pdfImage}
+                          alt="image"
+                          className="w-[150px] h-[100px] rounded-lg"
+                        />
                       </a>
                     </div>
                   </>

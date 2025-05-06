@@ -1,33 +1,72 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import Navbar from "../../Components/Navbar/Navbar";
 import { IoSearch } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const HeroSection = () => {
   const navigate = useNavigate();
-  const [selectedMakes, setSelectedMakes] = useState("All Makes");
-  const [selectedModels, setSelectedModles] = useState("All Models");
-  const [selectedFromYear, setSelectedFromYear] = useState("Year");
-  const [selectedToYear, setSelectedToYear] = useState("year");
+  const [selectedMakes, setSelectedMakes] = useState("");
+  const [selectedModels, setSelectedModels] = useState("");
+  const [selectedFromYear, setSelectedFromYear] = useState("");
+  const [selectedToYear, setSelectedToYear] = useState("");
+  const [modals, setModals] = useState("");
 
-  console.log(selectedMakes , selectedModels, selectedFromYear, selectedToYear);
-  
-const handleSearch = ()=>{
-  if (!selectedMakes || !selectedModels || !selectedFromYear || !selectedToYear) {
-    alert("Please select at least one option!");
-    return;
-  }
-  
-  navigate(
-      `/search?make=${selectedMakes}&model=${selectedModels}&minYear=${selectedFromYear}&maxYear=${selectedToYear}`
+  let makeRef = useRef(null);
+  let modelRef = useRef(null);
+  let fromYearRef = useRef(null);
+  let toYearRef = useRef(null);
+
+  // Fetch Modal By Make Api Call
+  const fetchModalByMake = async (make) => {
+    let makeId = parseInt(make);
+    const response = await axios.get(
+      `http://localhost:5000/api/model/getModalByMake/${makeId}`
     );
+    const data = await response.data;
+    setModals(data);
+  };
 
+  const handleMake = (e) => {
+    setSelectedMakes(e.target.value);
+    fetchModalByMake(e.target.value);
+  };
 
-}
-  const handleCarClick = (type)=> {
+  // console.log(makeRef.current.value, modelRef.current.value, fromYearRef.current.value, toYearRef.current.value);
+
+  
+  
+  const handleSearch = () => {
+  
+    if (
+      !makeRef.current.value &&
+      !modelRef.current.value &&
+      !fromYearRef.current.value &&
+      !toYearRef.current.value
+    ) {
+      alert("Please select at least one option!");
+      return;
+    }
+
+   
+    const query = [];
+    if (selectedMakes) query.push(`make=${makeRef.current.value}`);
+    if (selectedModels) query.push(`model=${modelRef.current.value}`);
+    if (selectedFromYear) query.push(`minyear=${fromYearRef.current.value}`);
+    if (selectedToYear) query.push(`maxyear=${toYearRef.current.value}`);
+  
+    const queryString = query.join("&");
+    console.log(queryString || null);
+
+    navigate(
+      `/search?${queryString}`
+    );
+  
+  };
+  const handleCarClick = (type) => {
     navigate(`/search/?type=${type}`);
-  }
+  };
   return (
     <div className="hero w-full h-auto  justify-center flex-col gap-3   items-center  p-4 flex ">
       <div className="heading w-fit h-fit my-3">
@@ -38,181 +77,81 @@ const handleSearch = ()=>{
       <div className="input w-[700px] h-[100px]  max-[550px]:w-[97%] my-5 max-[900px]:h-auto  max-[900px]:w-[500px]">
         <div className="bg-white shadow-[0px_12px_1px_rgba(0,0,0,0.1)] max-[900px]:py-5 max-[900px]:px-3  shadow-gray-300 w-full h-full rounded-2xl flex max-[900px]:flex-col max-[900px]:h-auto justify-center gap-3 items-center">
           <select
-            name="makes"
-            id="makes"
-            value={selectedMakes}
-              onChange={(e) => setSelectedMakes(e.target.value)}
+            name="make"
+            id="make"
+            ref={makeRef}
+            onChange={(e) => handleMake(e)}
             aria-label="Select Make"
             className="form-select border-2 max-[900px]:w-[90%] border-gray-200 rounded-lg p-3 focus:border-blue-200 focus:shadow-md focus:shadow-blue-200"
           >
-            <option
-             
-              disabled
-              
-            >
-              All Makes
-            </option>
-            <option value="AUDI">AUDI </option>
-            <option value="SEDAN">SEDAN </option>
-            <option value="BENTLEY">BENTLEY </option>
-            <option value="BMW">BMW </option>
-            <option value="CADILLAC">CADILLAC </option>
-            <option value="CHEVROLET">CHEVROLET </option>
-            <option value="FERRARI">FERRARI </option>
-            <option value="FORD">FORD </option>
-            <option value="HINO">HINO </option>
-            <option value="HONDA">HONDA </option>
-            <option value="ISUZU">ISUZU </option>
-            <option value="LEXUS">LEXUS </option>
-            <option value="MAZDA">MAZDA </option>
-            <option value="MERCEDES-BENZ">MERCEDES-BENZ </option>
-            <option value="MITSUBISHI">MITSUBISHI </option>
-            <option value="NISSAN">NISSAN </option>
-            <option value="PORCHE">PORCHE </option>
-            <option value="SUBARU">SUBARU </option>
-            <option value="SUZUKI">SUZUKI </option>
-            <option value="TOYOTA">TOYOTA </option>
+            <option selected value="">All Makes</option>
+            <option value="1">AUDI </option>
+            <option value="2">BENTLEY</option>
+            <option value="3">BMW </option>
+            <option value="4">CADILLAC </option>
+            <option value="5">CHEVROLET </option>
+            <option value="6">FERRARI </option>
+            <option value="7">FORD </option>
+            <option value="8">HINO </option>
+            <option value="9">HONDA </option>
+            <option value="10">ISUZU </option>
+            <option value="11">LEXUS </option>
+            <option value="12">MAZDA </option>
+            <option value="13">MERCEDES-BENZ </option>
+            <option value="14">MITSUBISHI </option>
+            <option value="15">NISSAN </option>
+            <option value="16">PORCHE </option>
+            <option value="17">SUBARU </option>
+            <option value="18">SUZUKI </option>
+            <option value="19">TOYOTA </option>
           </select>
           <select
             name="model"
-            value={selectedModels}
-              onChange={(e) => setSelectedModles(e.target.value)}
+            ref={modelRef}
+            onChange={(e) => setSelectedModels(e.target.value)}
             aria-label="Select Model"
             className="form-select max-[900px]:w-[90%] border-2 border-gray-200 rounded-lg p-3 focus:border-blue-200 focus:shadow-md focus:shadow-blue-200"
           >
-            <option
-              disabled="disabled"
-              
-            >
-              All Models
-            </option>
-            <option value="A3">A3 </option> <option value="A4">A4 </option>
-            <option value="A5">A5 </option> <option value="A6">A6 </option>
-            <option value="A7">A7 </option> <option value="A8">A8 </option>
-            <option value="e-tron">e-tron </option>
-            <option value="Q2">Q2 </option> <option value="Q3">Q3 </option>
-            <option value="Q5">Q5 </option>
-            <option value="Q7">Q7 </option>
-            <option value="Q8">Q8 </option>
-            <option value="TT">TT </option>
-            <option value="Continental">Continental </option>
-            <option value="Mulsanne">Mulsanne </option>
-            <option value="1-Serie">1-Serie </option>
-            <option value="2-Serie">2-Serie </option>
-            <option value="3-Serie">3-Serie </option>
-            <option value="4-Serie">4-Serie </option>
-            <option value="5-Serie">5-Serie </option>
-            <option value="6-Serie">6-Serie </option>
-            <option value="7-Serie">7-Serie </option>
-            <option value="8-Serie">8-Serie </option>
-            <option value="i3">i3 </option>
-            <option value="i8">i8 </option>
-            <option value="iX3">iX3 </option>
-            <option value="PHEV">PHEV </option>
-            <option value="X1">X1 </option>
-            <option value="X2">X2 </option>
-            <option value="X3">X3 </option>
-            <option value="X4">X4 </option>
-            <option value="X5">X5 </option>
-            <option value="X6">X6 </option>
-            <option value="X7">X7 </option> <option value="Z">Z </option>
-            <option value="ATS">ATS </option>
-            <option value="CT6">CT6 </option>
-            <option value="CTS">CTS </option>
-            <option value="Escalade">Escalade </option>
-            <option value="XT5">XT5 </option>
-            <option value="Camaro">Camaro </option>
-            <option value="Corvette">Corvette </option>
-            <option value="488 Spider">488 Spider </option>
-            <option value="F12 Berlinetta">F12 Berlinetta </option>
-            <option value="GTC4">GTC4 </option>
-            <option value="LaFerrari">LaFerrari </option>
-            <option value="Portofino">Portofino </option>
-            <option value="Edge">Edge </option>
-            <option value="Mustang">Mustang </option>
-            <option value="Raptor">Raptor </option>
-            <option value="Dutro">Dutro </option>
-            <option value="RANGER">RANGER </option>
-            <option value="CR-V">CR-V </option>
-            <option value="FIT">FIT </option>
-            <option value="VEZEL">VEZEL </option>
-            <option value="Elf">Elf </option>
-            <option value="Forward">Forward </option>
-            <option value="Giga">Giga </option>
-            <option value="RX">RX </option>
-            <option value="BONGO VAN">BONGO VAN </option>
-            <option value="CX-5">CX-5 </option>
-            <option value="Demio">Demio </option>
-            <option value="Titan 3T">Titan 3T </option>
-            <option value="Actors">Actors </option>
-            <option value="AMG GT">AMG GT </option>
-            <option value="C-class">C-class </option>
-            <option value="E-class">E-class </option>
-            <option value="EQC">EQC </option>
-            <option value="GLE">GLE </option>
-            <option value="GLS">GLS </option>
-            <option value="S-class">S-class </option>
-            <option value="CANTER">CANTER </option>
-            <option value="FUSO FIGHTER">FUSO FIGHTER </option>
-            <option value="AD">AD </option>
-            <option value="juke">juke </option>
-            <option value="NV200 Vanette Van">NV200 Vanette Van </option>
-            <option value="VY12-253667">VY12-253667 </option>
-            <option value="X-TRAIL">X-TRAIL </option>
-            <option value="YF15-601990">YF15-601990 </option>
-            <option value="718 Cayman">718 Cayman </option>
-            <option value="Cayenne">Cayenne </option>
-            <option value="Macan">Macan </option>
-            <option value="Panamera">Panamera </option>
-            <option value="IMPREZA">IMPREZA </option>
-            <option value="JB23W-737087">JB23W-737087 </option>
-            <option value="ALLION">ALLION </option>
-            <option value="ALPHARD">ALPHARD </option>
-            <option value="CAMRY">CAMRY </option>
-            <option value="CHR">CHR </option>
-            <option value="COASTER">COASTER </option>
-            <option value="COROLLA AXIO">COROLLA AXIO </option>
-            <option value="COROLLA FIELDER">COROLLA FIELDER </option>
-            <option value="CROWN">CROWN </option>
-            <option value="HARRIER">HARRIER </option>
-            <option value="HIAZCE VAN">HIAZCE VAN </option>
-            <option value="HILUX">HILUX </option>
-            <option value="LAND CRUISER">LAND CRUISER </option>
-            <option value="NOAH">NOAH </option>
-            <option value="PREMIO">PREMIO </option>
-            <option value="PROBOX">PROBOX </option>
-            <option value="SUCCEED">SUCCEED </option>
-            <option value="VOXY">VOXY </option>
-            <option value="RACTICS">RACTICS </option>
-            <option value="IST">IST </option>
-            <option value="RX200">RX200 </option>
-            <option value="GT-R">GT-R </option>
-            <option value="G-CLASS">G-CLASS </option>
-            <option value="LX570">LX570 </option>
-            <option value="PORTE FTV">PORTE FTV </option>
-            <option value="RVR">RVR </option>
-            <option value="CRV">CRV </option>
-            <option value="XV">XV </option>
-            <option value="HIACE VAN">HIACE VAN </option>
-            <option value="MARK X">MARK X </option>
-            <option value="VEZEL Z">VEZEL Z </option>
-            <option value="SERENA">SERENA </option>
-            <option value="TREZIA">TREZIA </option>
-            <option value="IS250 VERSION S">IS250 VERSION S </option>
+            {makeRef.current === null ? (
+              <option
+                value=""
+                selected
+                disabled
+                className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 p-2"
+              >
+                Select Make First
+              </option>
+            ) : (
+              <>
+                <option
+                  value=""
+                  selected
+                  disabled
+                  className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 p-2"
+                >
+                  All Models
+                </option>
+                {modals &&
+                  modals.map(({ make_id, model_id, model }, index) => (
+                    <option
+                      key={index}
+                      value={model_id}
+                      className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+                    >
+                      {model}
+                    </option>
+                  ))}
+              </>
+            )}
+          
           </select>
           <select
-            name="from_year"
+            name="fromYear"
             aria-label="From Year"
-            value={selectedFromYear}
-              onChange={(e) => setSelectedFromYear(e.target.value)}
+            ref={fromYearRef}
             className="form-select max-[900px]:w-[90%]  border-2 border-gray-200 rounded-lg p-3 focus:border-blue-200 focus:shadow-md focus:shadow-blue-200 "
           >
-            <option
-              disabled
-              
-            >
-              Year
-            </option>
+            <option selected value="">Year</option>
             <option value="1992">1992 </option>
             <option value="1993">1993 </option>
             <option value="1994">1994 </option>
@@ -250,17 +189,12 @@ const handleSearch = ()=>{
             <option value="2026">2026 </option>
           </select>
           <select
-            name="to_year"
+            name="toYear"
             aria-label="To Year"
             value={selectedToYear}
-             onChange={(e) => setSelectedToYear(e.target.value)}
             className="form-select max-[900px]:w-[90%] border-2 border-gray-200 rounded-lg p-3 focus:border-blue-200 focus:shadow-md focus:shadow-blue-200 "
           >
-            <option
-              selected
-            >
-              Year
-            </option>
+            <option selected value="">Year</option>
             <option value="1992">1992 </option>
             <option value="1993">1993 </option>
             <option value="1994">1994 </option>
@@ -297,7 +231,10 @@ const handleSearch = ()=>{
             <option value="2025">2025 </option>
             <option value="2026">2026 </option>
           </select>
-          <div onClick={handleSearch} className="searchButton max-[900px]:hidden bg-orange-600 rounded-lg p-3 text-white">
+          <div
+            onClick={handleSearch}
+            className="searchButton max-[900px]:hidden bg-orange-600 rounded-lg p-3 text-white"
+          >
             <IoSearch fontSize={20} />
           </div>
           <div className="searchButton min-[900px]:hidden flex w-[90%] justify-center items-center text-xl gap-3 font-bold bg-orange-600 rounded-lg p-3 text-white">
@@ -309,10 +246,10 @@ const handleSearch = ()=>{
       <div className="CarsCard w-[600px] h-auto my-4 max-[900px]:w-auto max-[900px]:h-auto flex flex-wrap justify-between max-[550px]:flex max-[572px]:justify-center ">
         {/* Card 1 */}
         <div className="card1 w-fit h-[180px] p-3 max-[900px]:h-[130px]  flex flex-col items-center justify-between">
-          <div  className="cardImage cur border-2 w-[80px] h-[80px]  hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
+          <div className="cardImage cur border-2 w-[80px] h-[80px]  hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
             <button
-              onClick={()=>{
-                handleCarClick("sedan")
+              onClick={() => {
+                handleCarClick("sedan");
               }}
               className="elementor-icon elementor-animation- "
               tabIndex="-1"
@@ -378,8 +315,8 @@ const handleSearch = ()=>{
         <div className="card2 w-fit h-[180px] p-3 max-[900px]:h-[130px]  flex flex-col items-center justify-between">
           <div className="cardImage border-2 w-[80px] h-[80px] hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
             <button
-               onClick={()=>{
-                handleCarClick("coupe")
+              onClick={() => {
+                handleCarClick("coupe");
               }}
               className="elementor-icon elementor-animation-"
               tabIndex="-1"
@@ -463,8 +400,8 @@ const handleSearch = ()=>{
         <div className="card3 w-fit h-[180px] p-3 max-[900px]:h-[130px]  flex flex-col items-center justify-between">
           <div className="cardImage border-2 w-[80px] h-[80px] hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
             <button
-               onClick={()=>{
-                handleCarClick("suv")
+              onClick={() => {
+                handleCarClick("suv");
               }}
               className="elementor-icon elementor-animation-"
               tabIndex="-1"
@@ -534,8 +471,8 @@ const handleSearch = ()=>{
         <div className="card4 w-fit h-[180px] p-3 max-[900px]:h-[130px]  flex flex-col items-center justify-between">
           <div className="cardImage border-2 w-[80px] h-[80px] hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
             <button
-              onClick={()=>{
-                handleCarClick("hatchback")
+              onClick={() => {
+                handleCarClick("hatchback");
               }}
               className="elementor-icon elementor-animation-"
               tabIndex="-1"
@@ -612,8 +549,8 @@ const handleSearch = ()=>{
         <div className="card5 w-fit h-[180px] p-3 max-[900px]:h-[130px]  flex flex-col items-center justify-between">
           <div className="cardImage border-2 w-[80px] h-[80px] hover:border hover:border-orange-500  border-white rounded-full flex justify-center items-center">
             <button
-               onClick={()=>{
-                handleCarClick("convertible")
+              onClick={() => {
+                handleCarClick("convertible");
               }}
               className="elementor-icon elementor-animation-"
               tabIndex="-1"

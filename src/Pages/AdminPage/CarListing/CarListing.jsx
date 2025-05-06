@@ -14,11 +14,7 @@ const CarListings = () => {
   const fetchCarData = async () => {
     let token = localStorage.getItem("adminToken");
     try {
-      const res = await axios.get("http://localhost:5000/api/carListing/get" , {
-        headers : {
-          "Authorization" : `Barear ${token}`
-        }
-      });
+      const res = await axios.get("http://localhost:5000/api/carListing/get" );
       const data = await res.data.data;
       setCarData(data);
       
@@ -35,11 +31,7 @@ const CarListings = () => {
   const fetchCarMake = async () => {
     let token = localStorage.getItem("adminToken");
     try {
-      const res = await axios.get("http://localhost:5000/api/make/" , {
-        headers : {
-          "Authorization" : `Barear ${token}`
-        }
-      });
+      const res = await axios.get("http://localhost:5000/api/make/" );
       const data = await res.data.data;
       setMakeData(data);
    

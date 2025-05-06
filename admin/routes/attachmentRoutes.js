@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post("/add" , verifyToken , attachmentPdfUpload.single("attachment_image") , addAttachment);
-router.get("/get/:car_id" , verifyToken ,  getAttachment);
+router.get("/get/:car_id" ,  getAttachment);
 router.put("/update/:car_id" , verifyToken , attachmentPdfUpload.single("attachment_image") , updateAttachment);
 router.delete("/delete" , deleteAttachment);
 

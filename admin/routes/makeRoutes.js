@@ -4,7 +4,7 @@ import verifyToken from "../middlewares/tokenVerify.js";
 const router = express.Router();
 
 router.post("/add" , addMake);
-router.get("/" , verifyToken, getMake);
+router.get("/" , getMake);
 router.put("/update" , updateMake);
 router.delete("/delete" , deleteMake);
 

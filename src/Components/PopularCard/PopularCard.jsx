@@ -14,9 +14,13 @@ const PopularCard = () => {
   const navigate = useNavigate();
 
   const fetchCarData = async()=> {
-   let res = await axios.get("/api/dashboard?page=1&limit=2")
-    .then((res) => setCards(res.data))
-    .catch((err) => console.error(err));
+    try {
+      const res = await axios.get("http://localhost:5000/api/carListing/get?page=1&limit=2" );
+      const data = await res.data.data;
+      setCards(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
   }
   useEffect( () => {
 fetchCarData()
@@ -39,7 +43,7 @@ fetchCarData()
   
   return (
     <>
-      {cards.map(({ _id, carTitle, featuredImage, carAvailability, carYear , carFuelType , carMileage , carPrice, carTransmission, carModel }) => (
+      {cards.map(({ _id, title, featured_image, availability, year , fuel_type , mileage , price, transmission }) => (
         <div
           key={_id}
           onClick={() => handleCardClick(_id)}
@@ -47,29 +51,29 @@ fetchCarData()
         >
           <div className="carImage relative overflow-hidden w-auto h-auto">
             <img
-              src={`http://localhost:8800/${featuredImage}`}
+              src={`../../../../admin/public/uploads/${featured_image}`}
               className="cardImage relative max-[1160px]:h-[200px] max-[900px]:h-[230px] max-[600px]:h-[280px] w-full h-[200px] rounded-2xl"
               alt="Card image"
             />
             <span className="absolute top-[15px] -left-[30px] -rotate-45 w-[130px] text-center z-10 bg-green-600 py-[1vh] px-[1vw] text-white text-[12px]" >
-              {carAvailability}
+              {availability}
             </span>
           </div>
           <div className="cardContent w-full h-auto flex flex-col">
             <div className="cardbody w-full h-auto flex p-4 gap-2 flex-col border-b border-b-gray-600 justify-center">
               <h3 id="carName" className="carName text-lg font-semibold tracking-wider ">
                 {" "}
-                {truncateText(carTitle, 30)}{" "}
+                {truncateText(title, 30)}{" "}
               </h3>
-              <p className="carPrice font-extrabold text-2xl ">${carPrice}</p>
+              <p className="carPrice font-extrabold text-2xl ">${price}</p>
             </div>
             <div className="cardfooter w-full h-auto flex p-4  items-center gap-5">
               <button className="w-fit h-fit py-2 px-3 font-semibold text-md text-white bg-orange-600 rounded-lg">
-                {carYear}
+                {year}
               </button>
-              <p className="miles text-gray-500">{carMileage} miles</p>
-              <p className="transmission text-gray-500">{carTransmission}</p>
-              <p className="transmission text-gray-500">{carFuelType}</p>
+              <p className="miles text-gray-500">{mileage} miles</p>
+              <p className="transmission text-gray-500">{transmission}</p>
+              <p className="transmission text-gray-500">{fuel_type}</p>
             </div>
           </div>
         </div>

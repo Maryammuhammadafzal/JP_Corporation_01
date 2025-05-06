@@ -247,7 +247,11 @@ const AddListingForm = () => {
             },
           }
         );
+        console.log("Success" + JSON.stringify(gallery_images_response.data));
 
+        if (attachmentImage) {
+
+        
         const attachmentData = new FormData();
         attachmentData.append( "car_id" , response?.data?.data?.list_id)
         attachmentData.append( "attachment_image" , attachmentImage)
@@ -261,10 +265,9 @@ const AddListingForm = () => {
             },
           }
         );
-
-        alert("Added Succesfully");
-        console.log("Success" + JSON.stringify(gallery_images_response.data));
         console.log("Success" + JSON.stringify(attachment_pdf_response.data));
+      }
+        alert("Added Succesfully");
         // Reset refs
         titleRef.current.value = "";
         typeRef.current.value = "";

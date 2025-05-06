@@ -13,15 +13,11 @@ const ManageListing = () => {
   const [makeData, setMakeData] = useState([]);
 
   // Get Verification Token
-  const token = localStorage.getItem("adminToken");
+
 
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/model/", {
-        headers: {
-          Authorization: `Barear ${token}`,
-        },
-      });
+      const res = await axios.get("http://localhost:5000/api/model/");
       const data = await res.data;
       setModalData(data);
     } catch (error) {
@@ -35,11 +31,7 @@ const ManageListing = () => {
 let allMake;
   const fetchMakeData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/make/", {
-        headers: {
-          Authorization: `Barear ${token}`,
-        },
-      });
+      const res = await axios.get("http://localhost:5000/api/make/");
       const data = await res.data.data;
       setMakeData(data);
     } catch (error) {

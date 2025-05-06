@@ -121,52 +121,51 @@ export const getAttachment = async (req, res) => {
 export const updateAttachment = async (req, res) => {
         try {
                 const car_id = req.params.car_id;
-
+            
                 if (!car_id) {
-                        return res.status(400).json({ message: "Car ID is required" });
+                    return res.status(400).json({ message: "Car ID is required" });
                 }
-
-                const file = req.file;
-
-                // CASE 1: User uploads new images
-                if (file && file.length > 0) {
-                        // Delete previous images for the car
-                        await Attachment.deleteMany({ car_id });
-
-                        const count = await Attachment.countDocuments();
-
-                        // Map new images
-                        const new_attachment = file.map((file) => ({
-                                _id: `mongodb_generated_id_${count + 1}`,
-                                attachments: file.originalname,
-                                car_id
-                        }));
-
-                        const update_attachment = await Attachment(new_attachment);
-
-                        const update_attachment_data = await update_attachment.save();
-
-                        return res.status(200).json({
-                                message: "Attachment updated successfully with new files",
-                                data: update_attachment_data,
-                        });
+            
+                const file = req.file; // For single file. Use req.files if multiple.
+            
+                // CASE 1: New attachment is uploaded
+                if (file) {
+                    // Update existing document (if exists) or insert new one
+                    const updatedAttachment = await Attachment.findOneAndUpdate(
+                        { car_id },
+                        {
+                            $set: {
+                                attachments: file.filename,
+                            },
+                        },
+                        {
+                            new: true,
+                            upsert: true, // Insert if not found
+                        }
+                    );
+            
+                    return res.status(200).json({
+                        message: "Attachment updated successfully",
+                        data: updatedAttachment,
+                    });
                 }
-
-                // CASE 2: No new Attachments — keep existing ones
-                const existing_attachment = await Attachment.find({ car_id });
-
-                if (!existing_attachment || existing_attachment.length === 0) {
-                        return res.status(404).json({ message: "No existing attachment found for this car" });
+            
+                // CASE 2: No file provided, return existing data
+                const existingAttachment = await Attachment.findOne({ car_id });
+            
+                if (!existingAttachment) {
+                    return res.status(404).json({ message: "No existing attachment found for this car" });
                 }
-
+            
                 return res.status(200).json({
-                        message: "No new attachment provided, old attachment retained",
-                        data: existing_attachment,
+                    message: "No new attachment provided, old attachment retained",
+                    data: existingAttachment,
                 });
-        } catch (error) {
+            } catch (error) {
                 console.error("Update attachment Error:", error.message);
-                res.status(500).json({ message: "Failed to update attachments", error: error.message });
-        }
+                res.status(500).json({ message: "Failed to update attachment", error: error.message });
+            }
+            
 }
 export const deleteAttachment = async (req, res) => {
         try {

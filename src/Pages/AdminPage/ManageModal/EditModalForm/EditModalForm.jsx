@@ -15,8 +15,7 @@ const EditModalForm = () => {
     const fetchModalById = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/model/get/${EditId}`
-        );
+          `http://localhost:5000/api/model/get/${EditId}`);
         const modal = await res.data.data;
 
         setModalData(modal);

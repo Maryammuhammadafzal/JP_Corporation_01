@@ -59,47 +59,55 @@ export const updateImage = async (req, res) => {
                 }
 
                 const files = req.files;
+                let updatedImages = [];
 
-                // CASE 1: User uploads new images
                 if (files && files.length > 0) {
-                        // Delete previous images for the car
-                        await Image.deleteMany({ car_id });
+                        // Step 1: Delete previous images
+                        await Image.deleteMany({ car_id: parseInt(car_id) });
 
+                        const lastImage = await Image.find({ car_id: parseInt(car_id) })
+                                .sort({ img_id: -1 }) 
+                                .limit(1);
+                                console.log(lastImage);
+                                
+
+                        let lastImgId = lastImage.length > 0 ? lastImage[0].img_id : 0;
+                        console.log("last Image id" , lastImgId);
+                        
+
+                        // Step 2: Get total count of documents for img_id generation
                         const count = await Image.countDocuments();
+                        console.log(count);
 
-                        // Map new images
-                        const newImages = files.map((file, index) => ({
+                        // Step 3: Add new images
+                        updatedImages = files.map((file, index) => ({
                                 img_id: count + index + 1,
                                 images: file.filename,
                                 order_id: index + 1,
                                 car_id: parseInt(car_id),
                         }));
 
-                        const addedImages = await Image.insertMany(newImages);
+                        // Step 4: Save to DB
+                        const addedImages = await Image.insertMany(updatedImages);
 
                         return res.status(200).json({
                                 message: "Images updated successfully with new files",
                                 data: addedImages,
                         });
+                } else {
+                        // No new files, just return current images
+                        const existingImages = await Image.find({ car_id: parseInt(car_id) });
+
+                        return res.status(200).json({
+                                message: "No new images uploaded. Returning existing images.",
+                                data: existingImages,
+                        });
                 }
-
-                // CASE 2: No new images — keep existing ones
-                const existingImages = await Image.find({ car_id });
-
-                if (!existingImages || existingImages.length === 0) {
-                        return res.status(404).json({ message: "No existing images found for this car" });
-                }
-
-                return res.status(200).json({
-                        message: "No new images provided, old images retained",
-                        data: existingImages,
-                });
         } catch (error) {
                 console.error("Update Image Error:", error.message);
                 res.status(500).json({ message: "Failed to update images", error: error.message });
         }
 };
-
 
 export const deleteImage = async (req, res) => {
         try {

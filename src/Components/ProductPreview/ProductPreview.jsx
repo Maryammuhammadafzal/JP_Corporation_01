@@ -11,21 +11,29 @@ import CardCarousel from "../CardCarousel/CardCarousel";
 import { FaEnvelope } from "react-icons/fa";
 import axios from "axios";
 import ImagePreview from "../ImagePreview/ImagePreview";
+import pdfImage from "../../assets/Images/pdfimage.webp";
 
 import SendButton from "../SendButton/SendButton";
 
 const ProductPreview = () => {
   let cardId = localStorage.getItem("cardId");
+  console.log(cardId);
+
+  const [loading, setLoading] = useState(false);
   const [cardData, setCardData] = useState([]);
+  const [modalData, setModalData] = useState([]);
+  const [makeData, setMakeData] = useState([]);
+  const [attachmentData, setAttachmentData] = useState([]);
+  const [imageData, setImageData] = useState([]);
 
   // Fetch car data on mount
   useEffect(() => {
     const fetchCar = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8800/api/dashboard/get/${cardId}`
+          `http://localhost:5000/api/carListing/getById/${cardId}`
         );
-        const car = await res.data;
+        const car = await res.data.data;
         console.log(car);
         setCardData(car);
       } catch (err) {
@@ -35,15 +43,93 @@ const ProductPreview = () => {
     fetchCar();
   }, [cardId]);
 
-  console.log(cardData);;
+  console.log(cardData);
 
+  // Fetch Models
+  const fetchModalData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/model/");
+      const data = await res.data;
+      setModalData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+  useEffect(() => {
+    fetchModalData();
+  }, []);
+
+  const fetchMakeData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/make/");
+      const data = await res.data.data;
+      setMakeData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchMakeData();
+  }, []);
+
+  let id = cardData.list_id;
+
+  //Fetch Attachment Image
+  useEffect(() => {
+    if (id) {
+      const fetchAttachmentImages = async () => {
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/attachment/get/${id}`
+          );
+          const attachment = res.data.data;
+          // let pdfAttachment = attachment.map(
+          //   (attachment) => attachment.attachments
+          // );
+if (attachment) {
+
+  console.log(attachment[0].attachments);
+  setAttachmentData(attachment[0].attachments);
+}
+
+          setLoading(false);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchAttachmentImages();
+    }
+  }, [id]);
+  //Fetch gallery Image
+  useEffect(() => {
+    console.log(id);
+    
+    if (id) {
+      const fetchGalleryImages = async () => {
+        try {
+          const res = await axios.get(
+            `http://localhost:5000/api/images/get/${id}`);
+          const images = res.data.data;
+
+          setImageData(images);
+          console.log(images);
+          
+          setLoading(false);
+        } catch (err) {
+          console.error(err);
+        }
+      };
+      fetchGalleryImages();
+    }
+  }, [id]);
 
   return (
     <div className="bg-white w-full">
       <div className=" pt-3 max-[1200px]:flex-col flex w-full rounded-lg">
         <div className="min-[1200px]:hidden p-3">
           <h1 className="min-[500px]:text-4xl font-semibold tracking-wide text-gray-900  max-[500px]:text-2xl  max-[360px]:text-2xl">
-            {cardData.carTitle}
+            {cardData.title}
           </h1>
         </div>
 
@@ -51,28 +137,33 @@ const ProductPreview = () => {
         <div className="min-[1200px]:hidden  max-[500px]:my-0 p-3   border-b border-gray-400 ">
           <div className="flex  max-[500px]:my-1 gap-5">
             <li className="text-lg  max-[360px]:text-[14px]  max-[500px]:text-[16px] marker:text-orange-600  tracking-tight text-gray-400">
-              {cardData.carModel}
+              {
+                modalData.find((model) => model.model_id === cardData.modelID)
+                  ?.model
+              }
             </li>
             <li className="text-lg  max-[360px]:text-[14px]  max-[500px]:text-[16px]  marker:text-orange-600 tracking-tight text-gray-400">
-              {cardData.carMake}
+              {makeData.find((make) => make.make_id === cardData.makeID)?.make}
             </li>
             <li className="text-lg  max-[360px]:text-[14px]  max-[500px]:text-[16px]  marker:text-orange-600 tracking-tight text-gray-400">
-              {cardData.carTransmission}
+              {cardData.transmission}
             </li>
           </div>
         </div>
 
         {/* <!-- Image gallery --> */}
 
-
-       <ImagePreview featuredImage={cardData.featuredImage} galleryImages={cardData?.galleryImages}/>
+        <ImagePreview
+          featuredImage={cardData.featured_image}
+          galleryImages={imageData}
+        />
 
         {/* <!-- Product info --> */}
         <div className="px-4 max-[500px]:px-1 gap-3 flex-col  max-[500px]:items-center flex max-[1300px]:w-[40%]  max-[700px]:w-full max-[1200px]:w-[95%] w-[35%] ">
           <div className="w-auto max-[700px]:w-full h-auto p-3 max-[500px]:p-2 gap-3 flex flex-col min-[1200px]:items-start items-center ">
             <div className="max-[1200px]:hidden">
               <h1 className="text-3xl font-semibold tracking-wide text-gray-900 ">
-                {cardData.carTitle}
+                {cardData.title}
               </h1>
             </div>
 
@@ -80,13 +171,17 @@ const ProductPreview = () => {
             <div className=" w-full max-[1200px]:hidden  border-b border-gray-400 ">
               <div className="flex my-4 gap-5">
                 <li className="text-lg marker:text-orange-600  tracking-tight text-gray-400">
-                  {cardData.carModel}
+                  {
+                    modalData.find(
+                      (model) => model.model_id === cardData.modelID
+                    )?.model
+                  }
                 </li>
                 <li className="text-lg  marker:text-orange-600 tracking-tight text-gray-400">
-                  {cardData.carCondition}
+                  {cardData.condition}
                 </li>
                 <li className="text-lg  marker:text-orange-600 tracking-tight text-gray-400">
-                  {cardData.carTransmission}
+                  {cardData.transmission}
                 </li>
               </div>
             </div>
@@ -94,7 +189,7 @@ const ProductPreview = () => {
             <form className="w-full">
               <div className="price w-full">
                 <h3 className="carPrice font-extrabold text-4xl text-orange-600">
-                  ${cardData.carPrice}
+                  ${cardData.price}
                 </h3>
               </div>
               <div className="features w-full mt-4  rounded-2xl bg-blue-50 max-[700px]:p-1 p-3 flex-col flex">
@@ -107,7 +202,11 @@ const ProductPreview = () => {
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
                       {" "}
-                      {cardData.carMake}
+                      {
+                        makeData.find(
+                          (make) => make.make_id === cardData.make_id
+                        )?.make
+                      }
                     </p>
                   </div>
                 </div>
@@ -120,7 +219,7 @@ const ProductPreview = () => {
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
                       {" "}
-                      {cardData.carColour}
+                      {cardData.color}
                     </p>
                   </div>
                 </div>
@@ -133,7 +232,7 @@ const ProductPreview = () => {
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
                       {" "}
-                      {cardData.carTransmission}
+                      {cardData.transmission}
                     </p>
                   </div>
                 </div>
@@ -146,7 +245,7 @@ const ProductPreview = () => {
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
                       {" "}
-                      {cardData.carCondition}
+                      {cardData.condition}
                     </p>
                   </div>
                 </div>
@@ -159,7 +258,7 @@ const ProductPreview = () => {
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
                       {" "}
-                      {cardData.carYear}
+                      {cardData.year}
                     </p>
                   </div>
                 </div>
@@ -171,7 +270,7 @@ const ProductPreview = () => {
                   </div>
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
-                      {cardData.carMileage}
+                      {cardData.mileage}
                     </p>
                   </div>
                 </div>
@@ -183,7 +282,7 @@ const ProductPreview = () => {
                   </div>
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
-                      {cardData.carFuelType}
+                      {cardData.fuel_type}
                     </p>
                   </div>
                 </div>
@@ -195,7 +294,7 @@ const ProductPreview = () => {
                   </div>
                   <div className="w-[50%]">
                     <p className="text-md  max-[500px]:text-[14px] ">
-                      {cardData.carDoor}
+                      {cardData.doors}
                     </p>
                   </div>
                 </div>
@@ -273,12 +372,15 @@ const ProductPreview = () => {
       <div className="features w-full  p-3">
         <h2 className="font-bold text-3xl mt-5 p-3 text-gray-900">Features</h2>
         <ul className="features w-[60%] max-[1200px]:w-full list-disc p-3 marker:text-orange-600 gap-3  grid grid-cols-3 space-x-3 max-md:grid-cols-2 max-sm:text-sm max-sm:grid-cols-1">
-          {cardData && cardData?.carAllFeatures?.map((feature , index) => (
-
-          <li key={index} className="text-md max-[360px]:text-[16px] max-[500px]:text-[18px] w-[200px] mx-5 ">
-            {feature}
-          </li>
-          ))}
+          {cardData.features &&
+            cardData.features.split(",").map((feature, index) => (
+              <li
+                key={index}
+                className="text-md max-[360px]:text-[16px] max-[500px]:text-[18px] w-[200px] mx-5"
+              >
+                {feature.trim()}
+              </li>
+            ))}
         </ul>
       </div>
 
@@ -288,19 +390,27 @@ const ProductPreview = () => {
         </h2>
 
         <div className="flex gap-3 items-center p-3">
-          {cardData.attachmentImage ==  null ? (
+          {attachmentData == null ? (
             <>
-              <img src={Jpg } className="w-[50px]" alt="jpg" />
+              <img src={Jpg} className="w-[50px]" alt="jpg" />
               <p className="text-lg max-[360px]:text-[15px] hover:text-orange-600">
                 No Attachment Found
               </p>
             </>
           ) : (
-            <img
-              src={`http://localhost:8800/${cardData.attachmentImage}`}
-              className="w-[100px]"
-              alt="jpg"
-            />
+            <a
+              href={`../../../../admin/public/uploads/${attachmentData}`}
+              download
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                loading="lazy"
+                src={pdfImage}
+                alt="image"
+                className="w-[150px] h-[100px] rounded-lg"
+              />
+            </a>
           )}
         </div>
       </div>
@@ -313,14 +423,14 @@ const ProductPreview = () => {
           <div className="w-[50%] p-3 max-[900px]:w-[98%] h-[350px]">
             <textarea
               name="message"
-              placeholder={`I'm interested in ${cardData.carTitle}`}
-              value={`I'm interested in ${cardData.carTitle}`}
+              placeholder={`I'm interested in ${cardData.title}`}
+              value={`I'm interested in ${cardData.title}`}
               className="p-3 max-[360px]:text-[14px] border border-gray-100 bg-white rounded-xl w-[90%] max-[1200px]:w-full h-[280px]"
               id="message"
             ></textarea>
             <div className="button w-[90%] max-[900px]:w-[98%] h-auto p-3 flex justify-end">
-          <SendButton/>
-          </div>
+              <SendButton />
+            </div>
           </div>
           <div className="w-[50%] max-[900px]:w-[98%] flex justify-center h-auto p-3  max-[360px]:p-1">
             <div className="w-[74%] max-[1200px]:w-[95%] max-[900px]:w-full h-[300px] bg-white rounded-xl flex flex-col">

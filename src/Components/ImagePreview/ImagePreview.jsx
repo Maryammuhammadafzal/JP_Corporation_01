@@ -3,7 +3,7 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useState, useRef } from "react";
 import { NextArrow, PrevArrow } from "../CustomArrow/CustomArrow"; 
-const GalleryCarousel = ({ galleryImages = [] }) => {
+const GalleryCarousel = ({ galleryImages = []}) => {
   const [nav1, setNav1] = useState(null);
   const [nav2, setNav2] = useState(null);
 
@@ -34,6 +34,9 @@ const GalleryCarousel = ({ galleryImages = [] }) => {
     dots: false,
   };
 
+  console.log(galleryImages);
+  
+
   return (
     <div className="carousel w-[60%] max-[1200px]:w-full h-fit rounded-lg flex flex-col p-3">
       {/* Main Image Slider with arrows */}
@@ -41,9 +44,10 @@ const GalleryCarousel = ({ galleryImages = [] }) => {
         <Slider {...mainSettings} className="w-full">
           {galleryImages.map((image, index) => (
             <div key={index} className="relative w-full h-auto">
+              {console.log(image)}
               <img
-                src={`http://localhost:8800/${image}`}
-                alt={image}
+                src={`../../../../admin/public/uploads/${image.images}`}
+                alt={image.images}
                 className="w-full h-[500px] object-cover rounded-lg"
               />
             </div>
@@ -57,8 +61,8 @@ const GalleryCarousel = ({ galleryImages = [] }) => {
           {galleryImages.map((image, index) => (
             <div key={index} className="px-1">
               <img
-                src={`http://localhost:8800/${image}`}
-                alt={`Thumb ${index}`}
+                src={`../../../../admin/public/uploads/${image.images}`}
+                alt={`Thumb ${image.img_id}`}
                 className="w-full opacity-50 hover:opacity-100 h-[150px] object-cover rounded-lg border-2 active:border-orange-600 border-gray-300 hover:border-orange-600 transition"
               />
             </div>

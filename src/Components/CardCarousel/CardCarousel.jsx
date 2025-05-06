@@ -10,15 +10,21 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const CardCarousel = () => {
+    const [modalData, setModalData] = useState([]);
         const sliderRef = useRef(null);
  
   const [cardData, setCardData] = useState([]);
   const navigate = useNavigate();
 
   const fetchCarData = async()=> {
-   let res = await axios.get("/api/dashboard?page=1&limit=10")
-    .then((res) => setCardData(res.data))
-    .catch((err) => console.error(err));
+try {
+   let res = await axios.get("http://localhost:5000/api/carListing/get?page=1&limit=10")
+   const data = await res.data.data 
+   setCardData(data)
+} catch (error) {
+   console.log("Error " , error.message);
+   
+}
   }
   useEffect( () => {
 fetchCarData()
@@ -27,6 +33,20 @@ fetchCarData()
   const navigateToSearchPage = () => {
     navigate("/search")
   }
+
+  // Fetch Models
+  const fetchModalData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/model/",);
+      const data = await res.data;
+      setModalData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+  useEffect(() => {
+    fetchModalData();
+  }, []);
 
   
   const handleCardClick = (id)=>{
@@ -84,31 +104,35 @@ fetchCarData()
   return (
     <div className="w-full p-3 max-[500px]:p-0 flex flex-col gap-3">
       <Slider ref={sliderRef} {...settings}>
-          {cardData.map(({ _id, carTitle, featuredImage, carAvailability, carFuelType , carMileage, carYear , carPrice, carTransmission, carModel }) => (
+          {cardData.map(({  _id, title, featured_image,  fuel_type , mileage , price, transmission, modelID }) => (
             <div key={_id} 
             onClick={() => handleCardClick(_id)} 
-             className="px-3 max-[360px]:px-1">
+            className="px-3 max-[360px]:px-1">
               <div className="card w-full h-auto bg-gray-800 rounded-2xl shadow-lg text-black flex flex-col overflow-hidden">
                 <div className="relative">
+               
                   <img
                     loading="lazy"
-                    src={`http://localhost:8800/${featuredImage}`}
-                    alt={carTitle}
+                    src={`../../../../admin/public/uploads/${featured_image}`}
+                    alt={title}
                     className="cardImage w-full h-[180px] object-cover"
                   />
                 </div> 
                 <div className="p-4">
                   <div className=" text-white text-md font-semibold">
-                  {truncateText(carTitle, 25)}
+                  {truncateText(title, 25)}
                   </div>
                   <p className="text-2xl font-extrabold text-orange-600">
-                    ${carPrice}
+                    ${price}
                   </p>
                   <div className="flex justify-start gap-5 text-gray-400 text-xs mt-2">
-                    <span>{carMileage}</span>
-                    <span>{carTransmission}</span>
-                    <span>{carModel}</span>
-                    <span>{carFuelType}</span>
+                    <span>{mileage}</span>
+                    <span>{transmission}</span>
+                    <span> {modalData.find(
+                            (model) =>
+                              String(model.model_id) === String(modelID)
+                          )?.model || "Unknown"}</span>
+                    <span>{fuel_type}</span>
                   </div>
                 </div>
               </div>

@@ -6,7 +6,7 @@ const router = express.Router();
 
 
 router.post('/add' , verifyToken, addModal);
-router.get('/' , verifyToken , getModal);
+router.get('/' , getModal);
 router.get('/get/:id' ,  getModalById);
 router.get('/getModalByMake/:makeId' , getModalByMake);
 router.put('/update/:id' , verifyToken , updateModal);
