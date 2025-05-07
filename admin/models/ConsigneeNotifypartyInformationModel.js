@@ -74,8 +74,7 @@ const consigneeNotifyPartySchema = new mongoose.Schema({
     default: null
   },
   cap_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Cap', // Assuming you have a Cap model
+    type: Number,
     required: true
   }
 });

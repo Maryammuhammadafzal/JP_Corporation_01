@@ -21,11 +21,11 @@ const documentInformationSchema = new mongoose.Schema({
   email: { type: String, default: null },
   url: { type: String, default: null },
   other_information: { type: String, default: null },
-  cap_id: { type: mongoose.Schema.Types.ObjectId, ref: 'Cap', required: true }
+  cap_id: { type: Number , required: true }
 }, {
   timestamps: true
 });
 
-const DocumentInformation = mongoose.model('DocumentInformation', documentInformationSchema);
+const DocumentInformation = mongoose.model('DocumentInformation', documentInformationSchema , "document_information");
 
 export default DocumentInformation;

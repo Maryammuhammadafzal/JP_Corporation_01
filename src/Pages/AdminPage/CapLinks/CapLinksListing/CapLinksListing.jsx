@@ -9,11 +9,19 @@ const CapLinksListing = () => {
   const [entriesPerPage, setEntriesPerPage] = useState(10);
   const [currentPage, setCurrentPage] = useState(1);
   const [capLinksData, setCapLinksData] = useState([]);
+  const [shippingInfortionData, setShippingInformationData] = useState([]);
+  const [consigneeData, setConsigneeData] = useState([]);
+  const [productInformationData, setProductInformationData] = useState([]);
+
+  const [productInformation, setProductInformation] = useState("");
+  const [consignee, setConsignee] = useState("");
+  const [shippingInformation, setShippingInformation] = useState("");
 
   const fetchCapLinks = async () => {
     try {
-      const res = await axios.get("/api/capLinks/");
-      const data = await res.data;
+      const res = await axios.get("http://localhost:5000/api/cap/get");
+      const data = await res.data.data;
+      
       setCapLinksData(data);
     } catch (error) {
       console.log("error", error.message);
@@ -23,9 +31,72 @@ const CapLinksListing = () => {
   useEffect(() => {
     fetchCapLinks();
   }, []);
+ 
 
-  // allCapLinks array
-  const allCapLinks = capLinksData;
+  const fetchProductData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/productInformation/get");
+      const data = await res.data.data;
+      console.log(data);
+      
+      setProductInformationData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchProductData();
+  }, []);
+
+  const fetchConsigneeData = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/consigneeNotifyPartyInformation/get");
+      const data = await res.data.data;
+      
+      setConsigneeData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchConsigneeData();
+  }, []);
+
+  const fetchShippingInformation = async () => {
+    try {
+      const res = await axios.get("http://localhost:5000/api/shippingInformation/get");
+      const data = await res.data.data;
+      console.log("shipping Data" , data);
+      
+      
+      setShippingInformationData(data);
+    } catch (error) {
+      console.log("error", error.message);
+    }
+  };
+
+  useEffect(() => {
+    fetchShippingInformation();
+  }, []);
+
+  let allCapLinks;
+  if(capLinksData) {
+    // allCapLinks array
+    allCapLinks = capLinksData;
+  }
+  
+  
+  let image = productInformationData.map(product => product.cap_id === parseInt(allCapLinks.map(capLink => capLink.md5_id)))?.featured_image
+  console.log(image);
+  
+  let myCapLinkData = {
+   company_name : capLinksData.map(capLink => capLink.company_name),
+   forwarder_name : capLinksData.map(capLink => capLink.forwarder_name),
+
+  }
+console.log(myCapLinkData.company_name);
 
   // Filter search
   const filteredCapLinks = allCapLinks.map((capLinks) => {
@@ -43,15 +114,40 @@ const CapLinksListing = () => {
 
   // Delete Cap Link
   const handleDelete = async (id, title) => {
-    const response = await axios.delete(
-      `/api/capLinks/delete/${id}`
+    try {
+    const capResponse = await axios.delete(
+      `http://localhost:5000/api/cap/delete/${id}`
     );
-    if (response.status === 200) {
+   
+    const productInformationResponse = await axios.delete(
+      `http://localhost:5000/api/productInformation/delete/${id}`
+    );
+   
+    const documentInformationResponse = await axios.delete(
+      `http://localhost:5000/api/documentInformation/delete/${id}`
+    );
+    const productImageResponse = await axios.delete(
+      `http://localhost:5000/api/productImage/delete/${id}`
+    );
+    
+    const consigneeResponse = await axios.delete(
+      `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${id}`
+    );
+    
+    const shippingResponse = await axios.delete(
+      `http://localhost:5000/api/shippingInformation/delete/${id}`
+    );
+    if (shippingResponse.status === 200 && capResponse.status === 200  && productInformationResponse.status === 200  && documentInformationResponse.status === 200  && consigneeResponse.status === 200 && productImageResponse.status === 200) {
       alert(`${title} deleted`);
       fetchCapLinks();
-    } else {
-      alert("error");
-    }
+      fetchConsigneeData();
+      fetchConsigneeData();
+      fetchProductData();
+      fetchShippingInformation();
+    } 
+  } catch (error) {
+    console.log("Delete Error" , error.message)
+  }
   };
 
   const handleEdit = async (id) => {
@@ -147,55 +243,47 @@ const CapLinksListing = () => {
               <tbody>
                 {capLinksData &&
                   capLinksData
-                    .filter((capLink) =>
-                      capLink?.departure?.carrierNameRef
-                        ? capLink?.departure?.carrierNameRef
-                            .toLowerCase()
-                            .includes(search.toLowerCase())
-                        : ""
-                    )
+                    // .filter((capLink) => capLink?.departure?.carrierNameRef ? capLink?.departure?.carrierNameRef.toLowerCase().includes(search.toLowerCase()) : "")
                     .slice(0, entriesPerPage)
                     .map((capLink, index) => (
                       <tr key={capLink._id} className="border-b text-sm">
+                        {console.log(capLink)}
                         <td className="p-2 text-center">
                           {indexOfFirstCapLinks + index + 1}
                         </td>
                         <td className="p-2 ">
                           <img
-                            src={`../../../../../admin/${capLink.productFeatureImageRef}`}
+                            src={`../../../../../admin/public/${productInformationData.find(product=> parseInt(product.cap_id) === parseInt(capLink.md5_id))?.featured_image}`}
                             alt="capLinks"
                             className="w-10 h-10 object-cover"
                           />
                         </td>
 
                         <td className="p-2 text-start ">
-                          {capLink.departure.carrierNameRef}
+                          {shippingInfortionData.find(ship => ship.cap_id === capLink.md5_id)?.carrier}
                         </td>
                         <td className="p-2 text-center">
-                          {capLink.companyName}
+                          {capLink.company_name}
                         </td>
                         <td className="p-2 text-center">
-                          {capLink.forwarderName}
+                          {capLink.forwarder_name}
                         </td>
                         <td className="p-2 text-center">
-                          {
-                            capLink.notifyParty
-                              .manufactureYearORMonthRef
-                          }
+                          {productInformationData.find(product => product.cap_id === capLink.md5_id)?.manufacture_year_month }
                         </td>
                         <td className="p-2 text-center">
-                          {capLink.createdAt.slice(0, 10)}
+                          {capLink.created_at.slice(0, 10)}
                         </td>
                         <td className="p-2 justify-center flex space-x-2">
                           <button
                             className="text-white p-1 rounded bg-emerald-500 "
-                            onClick={() => handleEdit(capLink._id)}
+                            onClick={() => handleEdit(capLink.md5_id)}
                           >
                             <FaEye size={15} />
                           </button>
                           <button
                             className="text-white p-1 rounded bg-orange-400"
-                            onClick={() => handleEdit(capLink._id)}
+                            onClick={() => handleEdit(capLink.md5_id)}
                           >
                             <FaEdit size={15} />
                           </button>
@@ -203,8 +291,8 @@ const CapLinksListing = () => {
                             className="text-white p-1 rounded bg-red-500"
                             onClick={() =>
                               handleDelete(
-                                capLink._id,
-                                capLink.departure.carrierNameRef
+                                capLink.md5_id,
+                                // capLink.departure.carrierNameRef
                               )
                             }
                           >

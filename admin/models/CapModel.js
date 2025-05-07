@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const capSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    required: true,
+  },
   company_name: {
     type: String,
     required: true,
@@ -18,7 +22,7 @@ const capSchema = new mongoose.Schema({
   },
   md5_id: {
     type: String,
-    required: true
+    required: true,
   },
   created_at: {
     type: Date,
@@ -26,6 +30,6 @@ const capSchema = new mongoose.Schema({
   }
 });
 
-const Cap = mongoose.model('Cap', capSchema);
+const Cap = mongoose.model('Cap', capSchema, "cap");
 
 export default Cap;

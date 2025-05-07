@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 // Product Information Schema
 const productInformationSchema = new mongoose.Schema({
+  product_id: {
+    type: Number,
+    required: true
+  },
   product_name: {
     type: String,
     required: true
@@ -71,8 +75,8 @@ const productInformationSchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-}, { timestamps: true });
+}, { versionKey: false });
 
-const ProductInformation = mongoose.model('ProductInformation', productInformationSchema);
+const ProductInformation = mongoose.model('ProductInformation', productInformationSchema , "product_information");
 
 export default ProductInformation;

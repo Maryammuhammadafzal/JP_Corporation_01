@@ -1,12 +1,13 @@
 import express from "express"
-import {addCar , getCar , updateCar , deleteCar} from "../controllers/carController.js"
+import {addCap , getCap , updateCap , deleteCap} from "../controllers/capController.js"
+import verifyToken from "../middlewares/tokenVerify.js";
 const router = express.Router();
 
 
-router.post("/add" , addCar);
-router.get("/get" , getCar);
-router.put("/update" , updateCar);
-router.delete("/delete" , deleteCar);
+router.post("/add" , verifyToken , addCap);
+router.get("/get" , getCap);
+router.put("/update" , updateCap);
+router.delete("/delete/:id" , deleteCap);
 
 // Export Router
 export default router;

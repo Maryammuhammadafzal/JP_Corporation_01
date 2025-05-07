@@ -2,6 +2,10 @@ import mongoose from 'mongoose';
 
 // Shipping Information Schema
 const shippingInformationSchema = new mongoose.Schema({
+  shipping_id: {
+    type: Number,
+    required: true
+  },
   carrier: {
     type: String,
     default: null
@@ -58,8 +62,8 @@ const shippingInformationSchema = new mongoose.Schema({
     type: Number,
     required: true
   }
-}, { timestamps: true });
+}, { versionKey: false });
 
-const ShippingInformation = mongoose.model('ShippingInformation', shippingInformationSchema);
+const ShippingInformation = mongoose.model('ShippingInformation', shippingInformationSchema , "shipping_information");
 
 export default ShippingInformation;

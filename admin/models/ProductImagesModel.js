@@ -12,6 +12,6 @@ const productImageSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-const ProductImage = mongoose.model('ProductImage', productImageSchema);
+const ProductImage = mongoose.model('ProductImage', productImageSchema , "product_images");
 
 export default ProductImage;
