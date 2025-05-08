@@ -1,27 +1,9 @@
 import ProductInformation from "../models/ProductInformationModel.js";
 
-export const addProductInformation =  async (req, res) => {
+// Add Product Information
+export const addProductInformation = async (req, res) => {
         try {
-                const { product_name, reference_no, mileage, modelCode, registeration_year_month, manufacture_year_month, modelGrade, chassis, engine_size, drive, seats, doors, engine_no, options, cap_id } = req.body;
-
-
-                if (!cap_id) {
-                        console.log("Document id not Found");
-                        return res.status(400).json({ message: "cap_id is required" });
-
-                }
-
-                const file = req.file;
-                console.log(file);
-                
-                let featured_image = file ? file.filename : null;
-
-
-                const count = await ProductInformation.countDocuments();
-
-                // Create new Cap
-                const new_document_information = await ProductInformation.create({
-                        product_id : count + 1,
+                const {
                         product_name,
                         reference_no,
                         mileage,
@@ -36,70 +18,153 @@ export const addProductInformation =  async (req, res) => {
                         doors,
                         engine_no,
                         options,
-                        featured_image,
                         cap_id
-                })
+                } = req.body;
 
-                if (!new_document_information) {
-                        console.log({ message: "Data Not Found" });
-                        return res.status(400).json({ message: "Data Not Found" });
+                if (!cap_id) {
+                        return res.status(400).json({ message: "cap_id is required" });
                 }
 
-                const add_document_information = await new_document_information.save();
+                const parsedDoors = isNaN(parseInt(doors)) ? null : parseInt(doors);
+                const featured_image = req.file ? req.file.filename : null;
 
-                res.status(200).json({ message: "Document Added Successfully", data: add_document_information });
+                const count = await ProductInformation.countDocuments();
 
+                const newProduct = await ProductInformation.create({
+                        product_id: count + 1,
+                        product_name,
+                        reference_no,
+                        mileage,
+                        modelCode,
+                        registeration_year_month,
+                        manufacture_year_month,
+                        modelGrade,
+                        chassis,
+                        engine_size,
+                        drive,
+                        seats,
+                        doors: parsedDoors,
+                        engine_no,
+                        options,
+                        featured_image,
+                        cap_id
+                });
+
+                res.status(201).json({ message: "Product information added successfully", data: newProduct });
         } catch (error) {
-                console.log("Document Add error", error.message);
-                res.status(400).json({ message: "Failed To Add document", error: error.message });
-
+                console.error("Add Product Error:", error.message);
+                res.status(500).json({ message: "Failed to add product information", error: error.message });
         }
-}
-export const getProductInformation =  async (req, res) => {
+};
+
+// Get All Product Information (Paginated)
+export const getProductInformation = async (req, res) => {
         try {
+                const page = parseInt(req.query.page) || 1;
+                const limit = parseInt(req.query.limit) || 100;
 
-                const page = parseInt(req.query.page || 1);
-                const limit = parseInt(req.query.limit || 100);
-
-                // Get All Car Listing 
-                const get_product_data = await ProductInformation.find()
+                const products = await ProductInformation.find()
                         .sort({ created_at: -1 })
                         .skip((page - 1) * limit)
                         .limit(limit);
 
-                res.status(200).json({ message: "Success", data: get_product_data });
+                res.status(200).json({ message: "Product information fetched successfully", data: products });
         } catch (error) {
-                console.log(error.message);
-
-                res.status(400).json({ message: "Invalid Credentials", error });
+                console.error("Get Product Error:", error.message);
+                res.status(500).json({ message: "Failed to fetch product information", error: error.message });
         }
+};
 
-}
-export const updateProductInformation =  async (req, res) => {
+// Get All Product Information (Paginated)
+export const getProductInformationById = async (req, res) => {
         try {
-            
+                let cap_id = req.params.id
+
+                const products = await ProductInformation.findOne({ cap_id })
+
+                res.status(200).json({ message: "Product information fetched successfully", data: products });
         } catch (error) {
-                
+                console.error("Get Product Error:", error.message);
+                res.status(500).json({ message: "Failed to fetch product information", error: error.message });
         }
-}
-export const deleteProductInformation =  async (req, res) => {
+};
+
+// Update Product Information
+export const updateProductInformation = async (req, res) => {
+        try {
                 const { id } = req.params;
-        
-                try {
-                        const delete_product_information = await ProductInformation.findOneAndDelete({cap_id : id});
-        
-                        if (!delete_product_information) {
-                                console.log("not Found");
-        
-                                return res.status(404).json({ message: "product_information not found" });
-                        }
-                        res.status(200).json({ message: "product_information deleted Succesfully", data: delete_product_information })
-        
-                } catch (error) {
-                        console.log(error.message);
-                        res.status(400).json({ message: "Failed Deleting product_information", error: error.message })
-        
-        
+
+                const existingProduct = await ProductInformation.findOne({ cap_id: id });
+
+                if (!existingProduct) {
+                        return res.status(404).json({ message: "Product information not found" });
                 }
-        
-}
+
+                const {
+                        product_name,
+                        reference_no,
+                        mileage,
+                        modelCode,
+                        registeration_year_month,
+                        manufacture_year_month,
+                        modelGrade,
+                        chassis,
+                        engine_size,
+                        drive,
+                        seats,
+                        doors,
+                        engine_no,
+                        options,
+                        cap_id
+                } = req.body;
+
+                const parsedDoors = isNaN(parseInt(doors)) ? existingProduct.doors : parseInt(doors);
+                const featured_image = req.file ? req.file.filename : existingProduct.featured_image;
+
+                const updatedProduct = await ProductInformation.findOneAndUpdate(
+                        { cap_id: id },
+                        {
+                                product_name,
+                                reference_no,
+                                mileage,
+                                modelCode,
+                                registeration_year_month,
+                                manufacture_year_month,
+                                modelGrade,
+                                chassis,
+                                engine_size,
+                                drive,
+                                seats,
+                                doors: parsedDoors,
+                                engine_no,
+                                options,
+                                featured_image,
+                                cap_id
+                        },
+                        { new: true }
+                );
+
+                res.status(200).json({ message: "Product information updated successfully", data: updatedProduct });
+        } catch (error) {
+                console.error("Update Product Error:", error.message);
+                res.status(500).json({ message: "Failed to update product information", error: error.message });
+        }
+};
+
+// Delete Product Information by cap_id
+export const deleteProductInformation = async (req, res) => {
+        try {
+                const { id } = req.params;
+
+                const deletedProduct = await ProductInformation.findOneAndDelete({ cap_id: id });
+
+                if (!deletedProduct) {
+                        return res.status(404).json({ message: "Product information not found" });
+                }
+
+                res.status(200).json({ message: "Product information deleted successfully", data: deletedProduct });
+        } catch (error) {
+                console.error("Delete Product Error:", error.message);
+                res.status(500).json({ message: "Failed to delete product information", error: error.message });
+        }
+};

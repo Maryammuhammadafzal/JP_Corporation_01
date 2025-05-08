@@ -5,8 +5,8 @@ const router = express.Router();
 
 router.post("/add" , addStatus);
 router.get("/get" , getStatus);
-router.put("/update" , updateStatus);
-router.delete("/delete" , deleteStatus);
+router.put("/update/:id" , updateStatus);
+router.delete("/delete/:id" , deleteStatus);
 
 // Export Router
 export default router;

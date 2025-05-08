@@ -18,11 +18,3 @@ const productImagesUpload = multer({ storage : storage });
 
 
 export default productImagesUpload;
-// fileFilter: (req, file, cb) => {
-//   const ext = path.extname(file.originalname).toLowerCase();
-//   if (ext === '.jpg' || ext === '.png' || ext === '.jpeg') {
-//     cb(null, true);
-//   } else {
-//     cb(new Error('Only images are allowed'));
-//   }
-// }

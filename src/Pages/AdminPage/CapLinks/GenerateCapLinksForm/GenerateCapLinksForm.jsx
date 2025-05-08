@@ -164,32 +164,104 @@ const GenerateCapLinksForm = () => {
   // Submit All Deatails Function
   const GenerateCapLinks = async (e) => {
     e.preventDefault();
-
+    
+    if( !productFeatureImage) {
+      alert ("featured image is required");
+      return;
+    }
+    if( !productImages) {
+      alert ("product images are required");
+      return;
+    }
     if (!refs.departure.carrierNameRef.current.value) {
       refs.departure.carrierNameRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
       refs.departure.carrierNameRef.current.focus();
-      setIsActive("carrierName");
-    } else {
-      const formData = new FormData();
+      setIsActive("carrier");
+      return;
+    }  if (!refs.notifyParty.notifyPartyProductNameRef.current.value) {
+      refs.notifyParty.notifyPartyProductNameRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyProductNameRef.current.focus();
+      setIsActive("product_name");
+      return;
+    }  if (!refs.notifyParty.notifyPartyReferenceNoRef.current.value) {
+      refs.notifyParty.notifyPartyReferenceNoRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyReferenceNoRef.current.focus();
+      setIsActive("reference_no");
+      return;
+    }  if (!refs.document.documentNameRef.current.value) {
+      refs.document.documentNameRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.document.documentNameRef.current.focus();
+      setIsActive("doc_name");
+      return;
+    }  if (!refs.notifyParty.notifyPartyMileageRef.current.value) {
+      refs.notifyParty.notifyPartyMileageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyMileageRef.current.focus();
+      setIsActive("mileage");
+      return;
+    }  if (!refs.notifyParty.notifyPartyModelCodeRef.current.value) {
+      refs.notifyParty.notifyPartyModelCodeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyModelCodeRef.current.focus();
+      setIsActive("modelCode");
+      return;
+    }  if (!refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.value) {
+      refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.focus();
+      setIsActive("registeration_year_month");
+    }  if (!refs.notifyParty.manufactureYearORMonthRef.current.value) {
+      refs.notifyParty.manufactureYearORMonthRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.manufactureYearORMonthRef.current.focus();
+      setIsActive("manufacture_year_month");
+      return;
+    }  if (!refs.notifyParty.notifyPartyModelGradeRef.current.value) {
+      refs.notifyParty.notifyPartyModelGradeRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+      refs.notifyParty.notifyPartyModelGradeRef.current.focus();
+      setIsActive("modelGrade");
+      return;
+    }  else {
 
       // Adding Cap Data
       const capData = new FormData();
+
       capData.append("company_name", selectedNameOption);
       capData.append("forwarder_name", selectedForwarderNameOption);
       if (refs.misc.descriptionRef) {
         capData.append("message", refs.misc.descriptionRef.current.value);
       }
+      const token = localStorage.getItem("adminToken");
+      if (!token) {
+        alert("Admin token missing!");
+        return;
+      }
       let cap_id;
-      try {
-        const token = localStorage.getItem("adminToken");
-        if (!token) {
-          alert("Admin token missing!");
-          return;
-        }
 
+      try {
         const capResponse = await axios.post(
           "http://localhost:5000/api/cap/add",
           capData,
@@ -203,7 +275,6 @@ const GenerateCapLinksForm = () => {
 
         console.log("Success:", capResponse.data.data);
         cap_id = parseInt(capResponse.data.data?.md5_id);
-        console.log(cap_id);
       } catch (error) {
         console.log("Error Cap:", error.message);
       }
@@ -252,11 +323,6 @@ const GenerateCapLinksForm = () => {
         shippingData.append("cap_id", cap_id);
 
         try {
-          const token = localStorage.getItem("adminToken");
-          if (!token) {
-            alert("Admin token missing!");
-            return;
-          }
 
           const shippingResponse = await axios.post(
             "http://localhost:5000/api/shippingInformation/add",
@@ -360,11 +426,6 @@ const GenerateCapLinksForm = () => {
         );
 
         try {
-          const token = localStorage.getItem("adminToken");
-          if (!token) {
-            alert("Admin token missing!");
-            return;
-          }
 
           const documentResponse = await axios.post(
             "http://localhost:5000/api/documentInformation/add",
@@ -460,12 +521,6 @@ const GenerateCapLinksForm = () => {
         );
 
         try {
-          const token = localStorage.getItem("adminToken");
-          if (!token) {
-            alert("Admin token missing!");
-            return;
-          }
-
           const consigneeResponse = await axios.post(
             "http://localhost:5000/api/consigneeNotifyPartyInformation/add",
             consigneeData,
@@ -491,12 +546,6 @@ const GenerateCapLinksForm = () => {
             productImageData.append("product_images", productImages[i]);
           }
           try {
-            const token = localStorage.getItem("adminToken");
-            if (!token) {
-              alert("Admin token missing!");
-              return;
-            }
-  
           const product_images_response = await axios.post(
             "http://localhost:5000/api/productImage/add",
             productImageData,
@@ -592,21 +641,15 @@ const GenerateCapLinksForm = () => {
           "options",
           optionFeatures.map((feature) => feature.value).toString()
         );
-        productData.append("product_featured_image", productFeatureImage);
+        productData.append("featured_image", productFeatureImage);
 
         try {
-          const token = localStorage.getItem("adminToken");
-          if (!token) {
-            alert("Admin token missing!");
-            return;
-          }
-
           const productResponse = await axios.post(
             "http://localhost:5000/api/productInformation/add",
             productData,
             {
               headers: {
-                "Content-Type": "application/json",
+                "Content-Type": "multipart/form-data",
                 Authorization: `Bearer ${token}`,
               },
             }
@@ -665,7 +708,7 @@ const GenerateCapLinksForm = () => {
                     >
                       <input
                         type="radio"
-                        name="companyName"
+                        name="company_name"
                         id="beForward"
                         value="Be Forward"
                         checked={selectedNameOption === "Be Forward"}
@@ -680,7 +723,7 @@ const GenerateCapLinksForm = () => {
                     >
                       <input
                         type="radio"
-                        name="companyName"
+                        name="company_name"
                         id="jpCorporation"
                         value="JP Corporation"
                         checked={selectedNameOption === "JP Corporation"}
@@ -702,7 +745,7 @@ const GenerateCapLinksForm = () => {
                     >
                       <input
                         type="radio"
-                        name="forwarderName"
+                        name="forwarder_name"
                         id="Satish"
                         value="Satish"
                         checked={selectedForwarderNameOption === "Satish"}
@@ -718,7 +761,7 @@ const GenerateCapLinksForm = () => {
                     >
                       <input
                         type="radio"
-                        name="forwarderName"
+                        name="forwarder_name"
                         id="Vova"
                         value="Vova"
                         checked={selectedForwarderNameOption === "Vova"}
@@ -734,7 +777,7 @@ const GenerateCapLinksForm = () => {
                     >
                       <input
                         type="radio"
-                        name="forwarderName"
+                        name="forwarder_name"
                         id="Kaytee"
                         value="Kaytee"
                         checked={selectedForwarderNameOption === "Kaytee"}
@@ -750,6 +793,7 @@ const GenerateCapLinksForm = () => {
                   <h3 className="text-md font-bold max-sm:text-xs">Message</h3>
                   <textarea
                     id="description"
+                    name="description"
                     ref={refs.misc.descriptionRef}
                     className="mt-2 w-full h-[150px] max-sm:h-[120px] border-neutral-500 border rounded-md p-2"
                   />
@@ -828,6 +872,7 @@ const GenerateCapLinksForm = () => {
                       <input
                         type="text"
                         id="carrierName"
+                        name="carrier"
                         ref={refs.departure.carrierNameRef}
                         className={` border-neutral-500 border w-full rounded-md p-3 max-sm:p-2 ${
                           isActive && "border-orange-400"
@@ -1147,6 +1192,7 @@ const GenerateCapLinksForm = () => {
                       <input
                         type="text"
                         id="documentName"
+                        name="doc_name"
                         ref={refs.document.documentNameRef}
                         className="mt-2 w-full border-neutral-500 border rounded-md p-2"
                         placeholder="Enter name Here"
@@ -1859,6 +1905,7 @@ const GenerateCapLinksForm = () => {
                       <input
                         type="text"
                         id="notifyPartyProductName"
+                        name="product_name"
                         ref={refs.notifyParty.notifyPartyProductNameRef}
                         className="mt-2 w-full border-neutral-500 border rounded-md p-2"
                         placeholder="Enter Product Name Here"
@@ -1876,6 +1923,7 @@ const GenerateCapLinksForm = () => {
                         <input
                           type="text"
                           id="notifyPartyReferenceNo"
+                          name="reference_no"
                           ref={refs.notifyParty.notifyPartyReferenceNoRef}
                           className=" border-neutral-500 border w-full rounded-md p-3 max-sm:p-2"
                           placeholder=" Reference No"
@@ -1891,6 +1939,7 @@ const GenerateCapLinksForm = () => {
                         <input
                           type="text"
                           id="notifyPartyMileage"
+                          name="mileage"
                           ref={refs.notifyParty.notifyPartyMileageRef}
                           className=" border-neutral-500 border w-full rounded-md p-3 max-sm:p-2"
                           placeholder=" Mileage"
@@ -1910,6 +1959,7 @@ const GenerateCapLinksForm = () => {
                         <input
                           type="text"
                           id="notifyPartyModelCode"
+                          name="modelCode"
                           ref={refs.notifyParty.notifyPartyModelCodeRef}
                           className=" border-neutral-500 border w-full rounded-md p-3 max-sm:p-2"
                           placeholder=" Model Code"
@@ -1925,6 +1975,7 @@ const GenerateCapLinksForm = () => {
                         <input
                           type="text"
                           id="notifyPartyRegistrationYear/Month"
+                          name="registeration_year_month"
                           ref={
                             refs.notifyParty
                               .notifyPartyRegistrationYearORMonthRef
@@ -1945,8 +1996,9 @@ const GenerateCapLinksForm = () => {
                       >
                         <p>Manufacture Year/Month</p>
                         <input
-                          type="number"
+                          type="text"
                           id="manufactureYear/Month"
+                          name="manufacture_year_month"
                           ref={refs.notifyParty.manufactureYearORMonthRef}
                           className={`border-neutral-500 border w-full rounded-md p-3 max-sm:p-2 ${
                             isActive && "border-orange-400"
@@ -1964,6 +2016,7 @@ const GenerateCapLinksForm = () => {
                         <input
                           type="text"
                           id="notifyPartyModelGrade"
+                          name="modelGrade"
                           ref={refs.notifyParty.notifyPartyModelGradeRef}
                           className=" border-neutral-500 border w-full rounded-md p-3 max-sm:p-2"
                           placeholder=" Model Grade"
@@ -2311,9 +2364,9 @@ const GenerateCapLinksForm = () => {
                           {/* Hidden Input */}
                           <input
                             type="file"
-                            id="productFeatureImage"
-                            name="product_featured_image"
                             required
+                            id="productFeatureImage"
+                            name="featured_image"
                             onChange={(e) =>
                               handleProductionFeaturedImageChange(e)
                             }

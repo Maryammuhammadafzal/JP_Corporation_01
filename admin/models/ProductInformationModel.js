@@ -39,37 +39,48 @@ const productInformationSchema = new mongoose.Schema({
     default: ''
   },
   engine_size: {
-    type: Number
+    type: Number,
+    default : null
   },
   drive: {
-    type: String
+    type: String,
+    default : null
   },
   ext_color: {
-    type: String
+    type: String,
+    default : null
   },
   steering: {
-    type: String
+    type: String,
+    default : null
   },
   transmission: {
-    type: String
+    type: String,
+    default : null
   },
   fuel: {
-    type: String
+    type: String,
+    default : null
   },
   seats: {
-    type: Number
+    type: Number,
+    default : null
   },
   doors: {
-    type: Number
+    type: Number,
+    default : null
   },
   engine_no: {
-    type: String
+    type: String,
+    default : null
   },
   options: {
-    type: String
+    type: String,
+    default : null
   },
   featured_image: {
-    type: String
+    type: String,
+    default : null
   },
   cap_id: {
     type: Number,

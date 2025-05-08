@@ -21,7 +21,7 @@ const CapLinksListing = () => {
     try {
       const res = await axios.get("http://localhost:5000/api/cap/get");
       const data = await res.data.data;
-      
+
       setCapLinksData(data);
     } catch (error) {
       console.log("error", error.message);
@@ -31,14 +31,15 @@ const CapLinksListing = () => {
   useEffect(() => {
     fetchCapLinks();
   }, []);
- 
 
   const fetchProductData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/productInformation/get");
+      const res = await axios.get(
+        "http://localhost:5000/api/productInformation/get"
+      );
       const data = await res.data.data;
       console.log(data);
-      
+
       setProductInformationData(data);
     } catch (error) {
       console.log("error", error.message);
@@ -51,9 +52,11 @@ const CapLinksListing = () => {
 
   const fetchConsigneeData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/consigneeNotifyPartyInformation/get");
+      const res = await axios.get(
+        "http://localhost:5000/api/consigneeNotifyPartyInformation/get"
+      );
       const data = await res.data.data;
-      
+
       setConsigneeData(data);
     } catch (error) {
       console.log("error", error.message);
@@ -66,11 +69,12 @@ const CapLinksListing = () => {
 
   const fetchShippingInformation = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/shippingInformation/get");
+      const res = await axios.get(
+        "http://localhost:5000/api/shippingInformation/get"
+      );
       const data = await res.data.data;
-      console.log("shipping Data" , data);
-      
-      
+      console.log("shipping Data", data);
+
       setShippingInformationData(data);
     } catch (error) {
       console.log("error", error.message);
@@ -82,21 +86,22 @@ const CapLinksListing = () => {
   }, []);
 
   let allCapLinks;
-  if(capLinksData) {
+  if (capLinksData) {
     // allCapLinks array
     allCapLinks = capLinksData;
   }
-  
-  
-  let image = productInformationData.map(product => product.cap_id === parseInt(allCapLinks.map(capLink => capLink.md5_id)))?.featured_image
-  console.log(image);
-  
-  let myCapLinkData = {
-   company_name : capLinksData.map(capLink => capLink.company_name),
-   forwarder_name : capLinksData.map(capLink => capLink.forwarder_name),
 
-  }
-console.log(myCapLinkData.company_name);
+  let image = productInformationData.map(
+    (product) =>
+      product.cap_id === parseInt(allCapLinks.map((capLink) => capLink.md5_id))
+  )?.featured_image;
+  console.log(image);
+
+  let myCapLinkData = {
+    company_name: capLinksData.map((capLink) => capLink.company_name),
+    forwarder_name: capLinksData.map((capLink) => capLink.forwarder_name),
+  };
+  console.log(myCapLinkData.company_name);
 
   // Filter search
   const filteredCapLinks = allCapLinks.map((capLinks) => {
@@ -113,41 +118,46 @@ console.log(myCapLinkData.company_name);
   const totalPages = Math.ceil(filteredCapLinks.length / entriesPerPage);
 
   // Delete Cap Link
-  const handleDelete = async (id, title) => {
+  const handleDelete = async (id) => {
+    let del_id = parseInt(id);
     try {
-    const capResponse = await axios.delete(
-      `http://localhost:5000/api/cap/delete/${id}`
-    );
-   
-    const productInformationResponse = await axios.delete(
-      `http://localhost:5000/api/productInformation/delete/${id}`
-    );
-   
-    const documentInformationResponse = await axios.delete(
-      `http://localhost:5000/api/documentInformation/delete/${id}`
-    );
-    const productImageResponse = await axios.delete(
-      `http://localhost:5000/api/productImage/delete/${id}`
-    );
-    
-    const consigneeResponse = await axios.delete(
-      `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${id}`
-    );
-    
-    const shippingResponse = await axios.delete(
-      `http://localhost:5000/api/shippingInformation/delete/${id}`
-    );
-    if (shippingResponse.status === 200 && capResponse.status === 200  && productInformationResponse.status === 200  && documentInformationResponse.status === 200  && consigneeResponse.status === 200 && productImageResponse.status === 200) {
-      alert(`${title} deleted`);
-      fetchCapLinks();
-      fetchConsigneeData();
-      fetchConsigneeData();
-      fetchProductData();
-      fetchShippingInformation();
-    } 
-  } catch (error) {
-    console.log("Delete Error" , error.message)
-  }
+      const productImageResponse = await axios.delete(
+        `http://localhost:5000/api/productImage/delete/${del_id}`
+      );
+      const shippingResponse = await axios.delete(
+        `http://localhost:5000/api/shippingInformation/delete/${del_id}`
+      );
+      const consigneeResponse = await axios.delete(
+        `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${del_id}`
+      );
+      const productInformationResponse = await axios.delete(
+        `http://localhost:5000/api/productInformation/delete/${del_id}`
+      );
+      const documentInformationResponse = await axios.delete(
+        `http://localhost:5000/api/documentInformation/delete/${del_id}`
+      );
+      const capResponse = await axios.delete(
+        `http://localhost:5000/api/cap/delete/${del_id}`
+      );
+
+      if (
+        shippingResponse.status === 200 &&
+        capResponse.status === 200 &&
+        productInformationResponse.status === 200 &&
+        documentInformationResponse.status === 200 &&
+        consigneeResponse.status === 200 &&
+        productImageResponse.status === 200
+      ) {
+        alert(`${title} deleted`);
+        fetchCapLinks();
+        fetchConsigneeData();
+        fetchConsigneeData();
+        fetchProductData();
+        fetchShippingInformation();
+      }
+    } catch (error) {
+      console.log("Delete Error", error.message);
+    }
   };
 
   const handleEdit = async (id) => {
@@ -253,14 +263,28 @@ console.log(myCapLinkData.company_name);
                         </td>
                         <td className="p-2 ">
                           <img
-                            src={`../../../../../admin/public/${productInformationData.find(product=> parseInt(product.cap_id) === parseInt(capLink.md5_id))?.featured_image}`}
+                            src={`../../../../../admin/public/uploads/${
+                              productInformationData.find(
+                                (product) =>
+                                  parseInt(product.cap_id) ===
+                                  parseInt(capLink.md5_id)
+                              )?.featured_image
+                            }`}
                             alt="capLinks"
                             className="w-10 h-10 object-cover"
                           />
                         </td>
-
+                        {console.log(
+                          productInformationData.find((ship) => ship)
+                        )}
                         <td className="p-2 text-start ">
-                          {shippingInfortionData.find(ship => ship.cap_id === capLink.md5_id)?.carrier}
+                          {
+                            shippingInfortionData.find(
+                              (ship) =>
+                                parseInt(ship.cap_id) ===
+                                parseInt(capLink.md5_id)
+                            )?.carrier
+                          }
                         </td>
                         <td className="p-2 text-center">
                           {capLink.company_name}
@@ -269,7 +293,13 @@ console.log(myCapLinkData.company_name);
                           {capLink.forwarder_name}
                         </td>
                         <td className="p-2 text-center">
-                          {productInformationData.find(product => product.cap_id === capLink.md5_id)?.manufacture_year_month }
+                          {
+                            productInformationData.find(
+                              (product) =>
+                                parseInt(product.cap_id) ===
+                                parseInt(capLink.md5_id)
+                            )?.manufacture_year_month
+                          }
                         </td>
                         <td className="p-2 text-center">
                           {capLink.created_at.slice(0, 10)}
@@ -277,24 +307,19 @@ console.log(myCapLinkData.company_name);
                         <td className="p-2 justify-center flex space-x-2">
                           <button
                             className="text-white p-1 rounded bg-emerald-500 "
-                            onClick={() => handleEdit(capLink.md5_id)}
+                            onClick={() => handleEdit(parseInt(capLink.md5_id))}
                           >
                             <FaEye size={15} />
                           </button>
                           <button
                             className="text-white p-1 rounded bg-orange-400"
-                            onClick={() => handleEdit(capLink.md5_id)}
+                            onClick={() => handleEdit(parseInt(capLink.md5_id))}
                           >
                             <FaEdit size={15} />
                           </button>
                           <button
-                            className="text-white p-1 rounded bg-red-500"
-                            onClick={() =>
-                              handleDelete(
-                                capLink.md5_id,
-                                // capLink.departure.carrierNameRef
-                              )
-                            }
+                            className="text-white p-1 rounded bg-red-500 cursor-pointer"
+                            onClick={() => handleDelete(capLink.md5_id)}
                           >
                             <FaTrash size={15} />
                           </button>
@@ -309,13 +334,13 @@ console.log(myCapLinkData.company_name);
             <div className="dataNumber w-auto text-sm max-sm:text-xs text-neutral-600 flex justify-start font-semibold ">
               <p>{`Showing ${indexOfFirstCapLinks} to ${indexOfLastCapLinks} of ${allCapLinks.length} entries`}</p>
             </div>
-            <Pagination 
-          currentPage={currentPage}
-          totalPages={totalPages}
-          goToPage={goToPage}
-          goToPreviousPage={goToPreviousPage}
-          goToNextPage={goToNextPage}/>
-          
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              goToPage={goToPage}
+              goToPreviousPage={goToPreviousPage}
+              goToNextPage={goToNextPage}
+            />
           </div>
         </div>
 
