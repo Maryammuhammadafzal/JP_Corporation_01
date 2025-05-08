@@ -82,7 +82,6 @@ export const getConsigneeNotifypartInformationById = async (req, res) => {
         const cap_id = req.params.id;
 
         const data = await ConsigneeNotifypartInformation.findOne({ cap_id });
-console.log(data);
 
         if (!data) {
             return res.status(404).json({ message: "No data found for this cap_id" });

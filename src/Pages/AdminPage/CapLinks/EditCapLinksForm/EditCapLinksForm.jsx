@@ -8,169 +8,209 @@ import { EditFileInput } from "../../../../Components/EditFileInput/EditFileInpu
 import EditSelectFeild from "../../../../Components/EditSelectFeild/EditSelectFeild.jsx";
 import EditInputFeild from "../../../../Components/EditInputFeild/EditInputFeild.jsx";
 import Copyright from "../../../../Components/Copyright/Copyright.jsx";
-let capLinkEditId = localStorage.getItem("EditCapLinksId");
 
 const EditCapLinksForm = () => {
+  const capLinkEditId = localStorage.getItem("EditCapLinksId");
   const [isActive, setIsActive] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [capLink, setCapLink] = useState([]);
-  const [consigneeData, setConsigneeData] = useState([]);
+  const [capLink, setCapLink] = useState({});
+  const [consigneeData, setConsigneeData] = useState({});
   const [productImagesData, setProductImagesData] = useState([]);
-  const [productInfo, setProductInfo] = useState([]);
-  const [documentInfo, setDocumentInfo] = useState([]);
-  const [shippingInfo, setShippingInfo] = useState([]);
-  const [productFeatureImage, setproductFeatureImage] = useState(null);
-  const [productImages, setproductImages] = useState(null);
+  const [productInfo, setProductInfo] = useState({});
+  const [documentInfo, setDocumentInfo] = useState({});
+  const [shippingInfo, setShippingInfo] = useState({});
+  const [productFeatureImage, setProductFeatureImage] = useState(null);
+  const [productImages, setProductImages] = useState([]);
   const [blImage, setBLImage] = useState(null);
   const [certificateImage, setCertificateImage] = useState(null);
   const [invoiceImage, setInvoiceImage] = useState(null);
-  const [englishCertificateImage, setEnglishCerticateImage] = useState(null);
+  const [englishCertificateImage, setEnglishCertificateImage] = useState(null);
   const [inspectionImage, setInspectionImage] = useState(null);
   const [selectedStatusFeatures, setSelectedStatusFeatures] = useState([]);
-  const [selectedOptionFeatures, setselectedOptionFeatures] = useState([]);
+  const [selectedOptionFeatures, setSelectedOptionFeatures] = useState([]);
   const [selectedNameOption, setSelectedNameOption] = useState("");
-  const [selectedForwarderNameOption, setSelectedForwarderNameOption] =
-    useState("");
+  const [selectedForwarderNameOption, setSelectedForwarderNameOption] = useState("");
 
-  // Fetch car data on mount
+  // Initialize refs
+  const refs = {
+    departure: {
+      carrierNameRef: useRef(null),
+      departureVesselRef: useRef(null),
+      departurePartsOfLandingRef: useRef(null),
+      departureETDRef: useRef(null),
+    },
+    arrival: {
+      arrivalVesselRef: useRef(null),
+      ArrivalPartOfDischargeRef: useRef(null),
+      arrivalETDRef: useRef(null),
+    },
+    document: {
+      documentNameRef: useRef(null),
+      documentAddressRef: useRef(null),
+      documentCityRef: useRef(null),
+      documentCountryRef: useRef(null),
+      documentFaxNumberRef: useRef(null),
+      documentTrackingNumberRef: useRef(null),
+      documentPhoneNumber1Ref: useRef(null),
+      documentPhoneNumber2Ref: useRef(null),
+      documentPhoneNumber3Ref: useRef(null),
+      documentCellPhoneNumberOREmailRef: useRef(null),
+      documentenrollementRef: useRef(null),
+    },
+    documentCenter: {
+      documentCenterNameRef: useRef(null),
+      documentCenterAddressRef: useRef(null),
+      documentCenterCityRef: useRef(null),
+      documentCenterCountryRef: useRef(null),
+      documentCenterPhoneNumber1Ref: useRef(null),
+      documentCenterPhoneNumber2Ref: useRef(null),
+      documentCenterPhoneNumber3Ref: useRef(null),
+      documentCenterEmailRef: useRef(null),
+      documentCenterUrlRef: useRef(null),
+      documentCenterOtherInformationRef: useRef(null),
+    },
+    consignee: {
+      consigneeNameRef: useRef(null),
+      consigneeCityRef: useRef(null),
+      consigneeAddressRef: useRef(null),
+      consigneeCountryRef: useRef(null),
+      consigneeFaxNumberRef: useRef(null),
+      consigneePhoneNumber1Ref: useRef(null),
+      consigneePhoneNumber2Ref: useRef(null),
+      consigneePhoneNumber3Ref: useRef(null),
+      consigneeCellPhoneNumberOREmailRef: useRef(null),
+    },
+    notifyParty: {
+      notifyPartyNameRef: useRef(null),
+      notifyPartyCityRef: useRef(null),
+      notifyPartyCountryRef: useRef(null),
+      notifyPartyAddressRef: useRef(null),
+      notifyPartyChassisRef: useRef(null),
+      notifyPartyDoorRef: useRef(null),
+      notifyPartytransmissionRef: useRef(null),
+      notifyPartySteeringRef: useRef(null),
+      notifyPartySeatsRef: useRef(null),
+      notifyPartyRegistrationYearORMonthRef: useRef(null),
+      notifyPartyCellPhoneNumberOREmailRef: useRef(null),
+      notifyPartyReferenceNoRef: useRef(null),
+      notifyPartyEngineNoRef: useRef(null),
+      notifyPartyDriveRef: useRef(null),
+      notifyPartyEngineSizeRef: useRef(null),
+      notifyPartyExtColorRef: useRef(null),
+      notifyPartyFuelRef: useRef(null),
+      notifyPartyFaxNumberRef: useRef(null),
+      notifyPartyMileageRef: useRef(null),
+      notifyPartyModelCodeRef: useRef(null),
+      notifyPartyModelGradeRef: useRef(null),
+      notifyPartyPhoneNumber1Ref: useRef(null),
+      notifyPartyPhoneNumber2Ref: useRef(null),
+      notifyPartyPhoneNumber3Ref: useRef(null),
+      notifyPartyProductNameRef: useRef(null),
+      manufactureYearORMonthRef: useRef(null),
+    },
+    misc: {
+      descriptionRef: useRef(null),
+    },
+  };
+
+  // Fetch data on mount
   useEffect(() => {
-    const fetchCapLink = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5000/api/cap/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setCapLink(data);
+        setLoading(true);
+        
+        // Fetch all data in parallel
+        const [
+          capRes, 
+          consigneeRes, 
+          productImagesRes, 
+          productInfoRes, 
+          documentInfoRes, 
+          shippingInfoRes
+        ] = await Promise.all([
+          axios.get(`http://localhost:5000/api/cap/getbyid/${capLinkEditId}`),
+          axios.get(`http://localhost:5000/api/consigneeNotifyPartyInformation/getbyid/${capLinkEditId}`),
+          axios.get(`http://localhost:5000/api/productImage/getbyid/${capLinkEditId}`),
+          axios.get(`http://localhost:5000/api/productInformation/getbyid/${capLinkEditId}`),
+          axios.get(`http://localhost:5000/api/documentInformation/getbyid/${capLinkEditId}`),
+          axios.get(`http://localhost:5000/api/shippingInformation/getbyid/${capLinkEditId}`)
+        ]);
+
+        // Set all states
+        setCapLink(capRes.data?.data || {});
+        setConsigneeData(consigneeRes.data?.data || {});
+        setProductImagesData(productImagesRes.data?.data || []);
+        setProductInfo(productInfoRes.data?.data || {});
+        setDocumentInfo(documentInfoRes.data?.data || {});
+        setShippingInfo(shippingInfoRes.data?.data || {});
+
+        // Set initial option features
+        if (productInfoRes.data?.data?.options) {
+          const options = Array.isArray(productInfoRes.data.data.options) 
+            ? productInfoRes.data.data.options 
+            : productInfoRes.data.data.options.split(",");
+          setSelectedOptionFeatures(options);
+        }
+
+        // Set initial status features
+        if (capRes.data?.data?.statusFeatures?.length > 0) {
+          const parsedStatus = capRes.data.data.statusFeatures[0]
+            .split(".,")
+            .map(item => item.slice(-1) !== "." ? item + ".".trim() : item.trim());
+          setSelectedStatusFeatures(parsedStatus);
+        }
+
         setLoading(false);
       } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchCapLink();
-  }, [capLinkEditId]);
-
-  useEffect(() => {
-    const fetchConsignee = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/consigneeNotifyPartyInformation/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setConsigneeData(data);
-
+        console.error("Error fetching data:", err);
         setLoading(false);
-      } catch (err) {
-        console.error(err);
       }
     };
-    fetchConsignee();
+
+    fetchData();
   }, [capLinkEditId]);
 
+  // Update derived states when data changes
   useEffect(() => {
-    const fetchproductImages = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/productImage/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setProductImagesData(data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchproductImages();
-  }, [capLinkEditId]);
+    if (capLink?.company_name) {
+      setSelectedNameOption(capLink.company_name);
+    }
+    if (capLink?.forwarder_name) {
+      setSelectedForwarderNameOption(capLink.forwarder_name);
+    }
+  }, [capLink]);
 
   useEffect(() => {
-    const fetchproductInfo = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/productInformation/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setProductInfo(data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchproductInfo();
-  }, [capLinkEditId]);
-
-  useEffect(() => {
-    const fetchDocumentInfo = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/documentInformation/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setDocumentInfo(data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchDocumentInfo();
-  }, [capLinkEditId]);
+    if (shippingInfo?.bl) {
+      setBLImage(shippingInfo.bl);
+    }
+    if (shippingInfo?.inspection) {
+      setInspectionImage(shippingInfo.inspection);
+    }
+    if (shippingInfo?.export_certificate) {
+      setCertificateImage(shippingInfo.export_certificate);
+    }
+    if (shippingInfo?.english_export_certificate) {
+      setEnglishCertificateImage(shippingInfo.english_export_certificate);
+    }
+    if (shippingInfo?.invoice) {
+      setInvoiceImage(shippingInfo.invoice);
+    }
+  }, [shippingInfo]);
 
   useEffect(() => {
-    const fetchShippingInfo = async () => {
-      try {
-        const res = await axios.get(
-          `http://localhost:5000/api/shippingInformation/getbyid/${capLinkEditId}`
-        );
-        const data = res.data?.data;
-        setShippingInfo(data);
-
-        setLoading(false);
-      } catch (err) {
-        console.error(err);
-      }
-    };
-    fetchShippingInfo();
-  }, [capLinkEditId]);
-
-  let featuresArray = [];
-  useEffect(() => {
-    if (productInfo) {
-      // If productInfo.features exists
-      if (Array.isArray(productInfo?.options)) {
-        featuresArray = productInfo?.options;
-      } else if (typeof productInfo?.options === "string") {
-        featuresArray = productInfo?.options.split(",");
-      } else {
-        featuresArray = []; // Default fallback if null or unexpected type
-      }
-
-      // Set Call All Features
-      setselectedOptionFeatures(featuresArray);
+    if (productInfo?.featured_image) {
+      setProductFeatureImage(productInfo.featured_image);
     }
   }, [productInfo]);
 
   useEffect(() => {
-    if (capLink?.statusFeatures?.length > 0) {
-      const parsedStatus = capLink.statusFeatures[0]
-        .split(".,")
-        .map((item) =>
-          item.slice(-1) !== "." ? item + ".".trim() : item.trim()
-        );
-      setSelectedStatusFeatures(parsedStatus);
+    if (productImagesData?.length > 0) {
+      setProductImages(productImagesData.map(img => img.img_url));
     }
-  }, [capLink]);
+  }, [productImagesData]);
 
-  // useEffect(() => {
-  //   if (capLink?.optionFeatures?.length > 0) {
-  //     const parsedOptions = capLink.optionFeatures[0]
-  //       .split(",")
-  //       .map((item) => item.trim());
-  //     setselectedOptionFeatures(parsedOptions);
-  //   }
-  // }, [capLink]);
-
+  // Input data configurations
   const notifyInputData = [
     {
       label: "Name",
@@ -348,274 +388,79 @@ const EditCapLinksForm = () => {
     },
   ];
 
-  useEffect(() => {
-    if (capLink) {
-      setSelectedNameOption(capLink?.company_name || "");
-    }
-  }, [capLink]);
-
-  useEffect(() => {
-    if (capLink) {
-      setSelectedForwarderNameOption(capLink?.forwarder_name || "");
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setselectedOptionFeatures(capLink.optionFeatures);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setBLImage(capLink.bLFileRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setInspectionImage(capLink.inspectionFileRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setCertificateImage(capLink.certificateFileRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setEnglishCerticateImage(capLink.englishCertificateFileRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setInvoiceImage(capLink.invoiceFileRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (capLink) {
-      setproductFeatureImage(capLink.productFeatureImageRef);
-    }
-  }, [capLink]);
-  useEffect(() => {
-    if (productImagesData) {
-      setproductImages(productImagesData ? productImagesData?.map(images => images.img_url) : []);
-    }
-  }, [productImagesData]);
-
-  // Refrence Object
-  const refs = {
-    departure: {
-      // Departure Ref
-      carrierNameRef: useRef(null),
-      departureVesselRef: useRef(null),
-      departurePartsOfLandingRef: useRef(null),
-      departureETDRef: useRef(null),
-    },
-    arrival: {
-      arrivalVesselRef: useRef(null),
-      ArrivalPartOfDischargeRef: useRef(null),
-      arrivalETDRef: useRef(null),
-    },
-    document: {
-      documentNameRef: useRef(null),
-      documentAddressRef: useRef(null),
-      documentCityRef: useRef(null),
-      documentCountryRef: useRef(null),
-      documentFaxNumberRef: useRef(null),
-      documentTrackingNumberRef: useRef(null),
-      documentPhoneNumber1Ref: useRef(null),
-      documentPhoneNumber2Ref: useRef(null),
-      documentPhoneNumber3Ref: useRef(null),
-      documentCellPhoneNumberOREmailRef: useRef(null),
-      documentenrollementRef: useRef(null),
-    },
-    documentCenter: {
-      documentCenterNameRef: useRef(null),
-      documentCenterAddressRef: useRef(null),
-      documentCenterCityRef: useRef(null),
-      documentCenterCountryRef: useRef(null),
-      documentCenterPhoneNumber1Ref: useRef(null),
-      documentCenterPhoneNumber2Ref: useRef(null),
-      documentCenterPhoneNumber3Ref: useRef(null),
-      documentCenterEmailRef: useRef(null),
-      documentCenterUrlRef: useRef(null),
-      documentCenterOtherInformationRef: useRef(null),
-    },
-    consignee: {
-      consigneeNameRef: useRef(null),
-      consigneeCityRef: useRef(null),
-      consigneeAddressRef: useRef(null),
-      consigneeCountryRef: useRef(null),
-      consigneeFaxNumberRef: useRef(null),
-      consigneePhoneNumber1Ref: useRef(null),
-      consigneePhoneNumber2Ref: useRef(null),
-      consigneePhoneNumber3Ref: useRef(null),
-      consigneeCellPhoneNumberOREmailRef: useRef(null),
-    },
-    notifyParty: {
-      notifyPartyNameRef: useRef(null),
-      notifyPartyCityRef: useRef(null),
-      notifyPartyCountryRef: useRef(null),
-      notifyPartyAddressRef: useRef(null),
-      notifyPartyChassisRef: useRef(null),
-      notifyPartyDoorRef: useRef(null),
-      notifyPartytransmissionRef: useRef(null),
-      notifyPartySteeringRef: useRef(null),
-      notifyPartySeatsRef: useRef(null),
-      notifyPartyRegistrationYearORMonthRef: useRef(null),
-      notifyPartyCellPhoneNumberOREmailRef: useRef(null),
-      notifyPartyReferenceNoRef: useRef(null),
-      notifyPartyEngineNoRef: useRef(null),
-      notifyPartyDriveRef: useRef(null),
-      notifyPartyEngineSizeRef: useRef(null),
-      notifyPartyExtColorRef: useRef(null),
-      notifyPartyFuelRef: useRef(null),
-      notifyPartyFaxNumberRef: useRef(null),
-      notifyPartyMileageRef: useRef(null),
-      notifyPartyModelCodeRef: useRef(null),
-      notifyPartyModelGradeRef: useRef(null),
-      notifyPartyPhoneNumber1Ref: useRef(null),
-      notifyPartyPhoneNumber2Ref: useRef(null),
-      notifyPartyPhoneNumber3Ref: useRef(null),
-      notifyPartyProductNameRef: useRef(null),
-      manufactureYearORMonthRef: useRef(null),
-    },
-    misc: {
-      descriptionRef: useRef(null),
-    },
-  };
-
-  // Toggle Status CheckBox Function
+  // Handler functions
   const toggleCheckbox = (id) => {
-    setCapLink((prevData) => {
-      const updatedStatusFeatures = prevData.statusFeatures.includes(id)
-        ? prevData.statusFeatures.filter((item) => item !== id)
-        : [...prevData.statusFeatures, id];
-
-      return {
-        ...prevData,
-        statusFeatures: updatedStatusFeatures,
-      };
-    });
-  };
-  const toggleOptionCheckbox = (id) => {
-    setCapLink((prevData) => {
-      const updatedOptionFeatures = prevData.optionFeatures.includes(id)
-        ? prevData.optionFeatures.filter((item) => item !== id)
-        : [...prevData.optionFeatures, id];
-
-      return {
-        ...prevData,
-        optionFeatures: updatedOptionFeatures,
-      };
-    });
-  };
-  let newProductImages = [];
-  // File handlers
-  const handleProductImageChange = (e) => {
-    newProductImages = [...e.target.files];
-
-    if (newProductImages.length > 0) {
-      setproductImages(newProductImages);
-      let images = document.getElementById("showProductImages");
-      images.classList.add("hidden");
-    } 
-  };
-  
-  const handleProductionFeaturedImageChange = (e) => {
-    let file = e.target.files[0];
-    if (file.length > 0) {
-      setproductFeatureImage(file);
-      let images = document.getElementById("showFeaturedImage");
-      images.classList.add("hidden");
-  }
-  }
-
-  const handleBLFileChange = (e) => {
-    let file = e.target.files[0];
-    setBLImage(file);
-  };
-  const handleCertificateChange = (e) => {
-    let file = e.target.files[0];
-    setCertificateImage(file);
-  };
-  const handleEnglishCertificateChange = (e) => {
-    let file = e.target.files[0];
-    setEnglishCerticateImage(file);
-  };
-  const handleInvoiceChange = (e) => {
-    let file = e.target.files[0];
-    setInvoiceImage(file);
-  };
-  const handleInspectionFileChange = (e) => {
-    let file = e.target.files[0];
-    setInspectionImage(file);
-  };
-
-  const hiddenProductImage = (e) => {
-    let image = e.target.parentElement;
-    image.classList.add("hidden");
-  };
-
-  // Radio Button Function
-  const handleNameRadioChange = (e) => {
-    setSelectedNameOption(e.target.value);
-  };
-  const handleForwarderNameRadioChange = (e) => {
-    setSelectedForwarderNameOption(e.target.value);
-  };
-
-  const handleChange = (feild, value) => {
-    setCapLink((prevData) => ({
-      ...prevData,
-      notifyParty: {
-        ...prevData.notifyParty,
-        [feild]: value,
-      },
+    setCapLink(prev => ({
+      ...prev,
+      statusFeatures: prev.statusFeatures.includes(id)
+        ? prev.statusFeatures.filter(item => item !== id)
+        : [...prev.statusFeatures, id]
     }));
   };
 
-  // Handle Status Features Change
-  const handleStatusFeatureChange = (e, type) => {
-    const { value, checked } = e.target;
+  const toggleOptionCheckbox = (id) => {
+    setCapLink(prev => ({
+      ...prev,
+      optionFeatures: prev.optionFeatures.includes(id)
+        ? prev.optionFeatures.filter(item => item !== id)
+        : [...prev.optionFeatures, id]
+    }));
+  };
 
-    if (type === "statusFeatures") {
-      setSelectedStatusFeatures((prevStatusFeatures) => {
-        if (checked) {
-          return [...prevStatusFeatures, value]; //update/${capLinkEditId}`d ,If Checked
-        } else {
-          return prevStatusFeatures.filter((item) => item !== value); // Removed ,If Not Checked
-        }
-      });
+  const handleProductImageChange = (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length > 0) {
+      setProductImages(files);
+      document.getElementById("showProductImages")?.classList.add("hidden");
     }
   };
 
-  // Handle Option Features Change
-  const handleOptionFeatureChange = (e, type) => {
-    const { value, checked } = e.target;
-
-    if (type === "optionFeatures") {
-      setselectedOptionFeatures((prevOptionFeatures) => {
-        if (checked) {
-          return [...prevOptionFeatures, value]; //update/${capLinkEditId}`d ,If Checked
-        } else {
-          return prevOptionFeatures.filter((item) => item !== value); // Removed ,If Not Checked
-        }
-      });
+  const handleProductionFeaturedImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProductFeatureImage(file);
+      document.getElementById("showFeaturedImage")?.classList.add("hidden");
     }
   };
 
-  //  Update Function
+  const handleBLFileChange = (e) => setBLImage(e.target.files[0]);
+  const handleCertificateChange = (e) => setCertificateImage(e.target.files[0]);
+  const handleEnglishCertificateChange = (e) => setEnglishCertificateImage(e.target.files[0]);
+  const handleInvoiceChange = (e) => setInvoiceImage(e.target.files[0]);
+  const handleInspectionFileChange = (e) => setInspectionImage(e.target.files[0]);
+
+  const hiddenProductImage = (e) => {
+    e.target.parentElement?.classList.add("hidden");
+  };
+
+  const handleNameRadioChange = (e) => setSelectedNameOption(e.target.value);
+  const handleForwarderNameRadioChange = (e) => setSelectedForwarderNameOption(e.target.value);
+
+  const handleStatusFeatureChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectedStatusFeatures(prev => 
+      checked ? [...prev, value] : prev.filter(item => item !== value))
+  };
+
+  const handleOptionFeatureChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectedOptionFeatures(prev => 
+      checked ? [...prev, value] : prev.filter(item => item !== value))
+  };
+
   const updateCapLinksData = async (e) => {
     e.preventDefault();
 
+    // Validation
     if (!productFeatureImage) {
-      alert("featured image is required");
+      alert("Featured image is required");
       return;
     }
-    if (!productImages) {
-      alert("product images are required");
+    if (!productImages.length) {
+      alert("Product images are required");
       return;
     }
-    if (!refs.departure.carrierNameRef.current.value) {
+    if (!refs.departure.carrierNameRef.current?.value) {
       refs.departure.carrierNameRef.current.scrollIntoView({
         behavior: "smooth",
         block: "center",
@@ -624,94 +469,88 @@ const EditCapLinksForm = () => {
       setIsActive("carrier");
       return;
     }
-    if (!refs.notifyParty.notifyPartyProductNameRef.current.value) {
-      refs.notifyParty.notifyPartyProductNameRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.notifyPartyProductNameRef.current.focus();
-      setIsActive("product_name");
-      return;
-    }
-    if (!refs.notifyParty.notifyPartyReferenceNoRef.current.value) {
-      refs.notifyParty.notifyPartyReferenceNoRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.notifyPartyReferenceNoRef.current.focus();
-      setIsActive("reference_no");
-      return;
-    }
-    if (!refs.document.documentNameRef.current.value) {
-      refs.document.documentNameRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.document.documentNameRef.current.focus();
-      setIsActive("doc_name");
-      return;
-    }
-    if (!refs.notifyParty.notifyPartyMileageRef.current.value) {
-      refs.notifyParty.notifyPartyMileageRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.notifyPartyMileageRef.current.focus();
-      setIsActive("mileage");
-      return;
-    }
-    if (!refs.notifyParty.notifyPartyModelCodeRef.current.value) {
-      refs.notifyParty.notifyPartyModelCodeRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.notifyPartyModelCodeRef.current.focus();
-      setIsActive("modelCode");
-      return;
-    }
-    if (!refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.value) {
-      refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.scrollIntoView(
+
+    const token = localStorage.getItem("adminToken");
+    
+    try {
+      // Update CAP data
+      const capData = {
+        company_name: selectedNameOption,
+        forwarder_name: selectedForwarderNameOption,
+        message: refs.misc.descriptionRef.current?.value || "",
+        statusFeatures: selectedStatusFeatures,
+        optionFeatures: selectedOptionFeatures
+      };
+
+      const capResponse = await axios.put(
+        `http://localhost:5000/api/cap/update/${capLinkEditId}`,
+        capData,
         {
-          behavior: "smooth",
-          block: "center",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
-      refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.focus();
-      setIsActive("registeration_year_month");
-    }
-    if (!refs.notifyParty.manufactureYearORMonthRef.current.value) {
-      refs.notifyParty.manufactureYearORMonthRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.manufactureYearORMonthRef.current.focus();
-      setIsActive("manufacture_year_month");
-      return;
-    }
-    if (!refs.notifyParty.notifyPartyModelGradeRef.current.value) {
-      refs.notifyParty.notifyPartyModelGradeRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-      refs.notifyParty.notifyPartyModelGradeRef.current.focus();
-      setIsActive("modelGrade");
-      return;
-    } else {
-      const token = localStorage.getItem("adminToken");
-      // "Content-Type": "multipart/form-data",
-      const capData = new FormData();
 
-      capData.append("company_name", selectedNameOption);
-      capData.append("forwarder_name", selectedForwarderNameOption);
-      if (refs.misc.descriptionRef) {
-        capData.append("message", refs.misc.descriptionRef.current.value);
-      }
-      let cap_id;
+      const capId = capResponse.data.data?.md5_id;
 
-      try {
-        const capResponse = await axios.put(
-          `http://localhost:5000/api/cap/update/${capLinkEditId}`,
-          capData,
+      if (capId) {
+        // Update shipping information
+        const shippingFormData = new FormData();
+        shippingFormData.append("carrier", refs.departure.carrierNameRef.current?.value || "");
+        shippingFormData.append("dep_vessel_name", refs.departure.departureVesselRef.current?.value || "");
+        shippingFormData.append("port_of_loading", refs.departure.departurePartsOfLandingRef.current?.value || "");
+        shippingFormData.append("etd", refs.departure.departureETDRef.current?.value || "");
+        shippingFormData.append("arrive_vessel_name", refs.arrival.arrivalVesselRef.current?.value || "");
+        shippingFormData.append("port_of_discharge", refs.arrival.ArrivalPartOfDischargeRef.current?.value || "");
+        shippingFormData.append("eta", refs.arrival.arrivalETDRef.current?.value || "");
+        shippingFormData.append("enrollment", refs.document.documentenrollementRef.current?.value || "");
+        
+        if (blImage) shippingFormData.append("bl", blImage);
+        if (inspectionImage) shippingFormData.append("inspection", inspectionImage);
+        if (certificateImage) shippingFormData.append("export_certificate", certificateImage);
+        if (englishCertificateImage) shippingFormData.append("english_export_certificate", englishCertificateImage);
+        if (invoiceImage) shippingFormData.append("invoice", invoiceImage);
+
+        await axios.put(
+          `http://localhost:5000/api/shippingInformation/update/${capLinkEditId}`,
+          shippingFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        // Update document information
+        const documentData = {
+          doc_name: refs.document.documentNameRef.current?.value || "",
+          doc_address: refs.document.documentAddressRef.current?.value || "",
+          doc_city: refs.document.documentCityRef.current?.value || "",
+          doc_country: refs.document.documentCountryRef.current?.value || "",
+          doc_phone1: refs.document.documentPhoneNumber1Ref.current?.value || "",
+          doc_phone2: refs.document.documentPhoneNumber2Ref.current?.value || "",
+          doc_phone3: refs.document.documentPhoneNumber3Ref.current?.value || "",
+          doc_faxno: refs.document.documentFaxNumberRef.current?.value || "",
+          cellphone_no_email: refs.document.documentCellPhoneNumberOREmailRef.current?.value || "",
+          tracking_no: refs.document.documentTrackingNumberRef.current?.value || "",
+          docCenter_name: refs.documentCenter.documentCenterNameRef.current?.value || "",
+          docCenter_address: refs.documentCenter.documentCenterAddressRef.current?.value || "",
+          docCenter_city: refs.documentCenter.documentCenterCityRef.current?.value || "",
+          docCenter_country: refs.documentCenter.documentCenterCountryRef.current?.value || "",
+          docCenter_phone1: refs.documentCenter.documentCenterPhoneNumber1Ref.current?.value || "",
+          docCenter_phone2: refs.documentCenter.documentCenterPhoneNumber2Ref.current?.value || "",
+          docCenter_phone3: refs.documentCenter.documentCenterPhoneNumber3Ref.current?.value || "",
+          email: refs.documentCenter.documentCenterEmailRef.current?.value || "",
+          url: refs.documentCenter.documentCenterUrlRef.current?.value || "",
+          other_information: refs.documentCenter.documentCenterOtherInformationRef.current?.value || "",
+        };
+
+        await axios.put(
+          `http://localhost:5000/api/documentInformation/update/${capLinkEditId}`,
+          documentData,
           {
             headers: {
               "Content-Type": "application/json",
@@ -720,59 +559,48 @@ const EditCapLinksForm = () => {
           }
         );
 
-        console.log("Success:", capResponse.data.data);
-        cap_id = parseInt(capResponse.data.data?.md5_id);
-      } catch (error) {
-        console.log("Error Cap:", error.message);
-      }
+        // Update consignee data
+        const consigneeFormData = new FormData();
+        consigneeFormData.append("consignee_name", refs.consignee.consigneeNameRef.current?.value || "");
+        consigneeFormData.append("consignee_address", refs.consignee.consigneeAddressRef.current?.value || "");
+        consigneeFormData.append("consignee_city", refs.consignee.consigneeCityRef.current?.value || "");
+        consigneeFormData.append("consignee_country", refs.consignee.consigneeCountryRef.current?.value || "");
+        consigneeFormData.append("consignee_phone1", refs.consignee.consigneePhoneNumber1Ref.current?.value || "");
+        consigneeFormData.append("consignee_phone2", refs.consignee.consigneePhoneNumber2Ref.current?.value || "");
+        consigneeFormData.append("consignee_phone3", refs.consignee.consigneePhoneNumber3Ref.current?.value || "");
+        consigneeFormData.append("consignee_faxno", refs.consignee.consigneeFaxNumberRef.current?.value || "");
+        consigneeFormData.append("consignee_phoneno_email", refs.consignee.consigneeCellPhoneNumberOREmailRef.current?.value || "");
+        consigneeFormData.append("notifyParty_name", refs.notifyParty.notifyPartyNameRef.current?.value || "");
+        consigneeFormData.append("notifyParty_address", refs.notifyParty.notifyPartyAddressRef.current?.value || "");
+        consigneeFormData.append("notifyParty_city", refs.notifyParty.notifyPartyCityRef.current?.value || "");
+        consigneeFormData.append("notifyParty_country", refs.notifyParty.notifyPartyCountryRef.current?.value || "");
+        consigneeFormData.append("notifyParty_phone1", refs.notifyParty.notifyPartyPhoneNumber1Ref.current?.value || "");
+        consigneeFormData.append("notifyParty_phone2", refs.notifyParty.notifyPartyPhoneNumber2Ref.current?.value || "");
+        consigneeFormData.append("notifyParty_phone3", refs.notifyParty.notifyPartyPhoneNumber3Ref.current?.value || "");
+        consigneeFormData.append("notifyParty_faxno", refs.notifyParty.notifyPartyFaxNumberRef.current?.value || "");
+        consigneeFormData.append("notifyParty_phoneno_email", refs.notifyParty.notifyPartyCellPhoneNumberOREmailRef.current?.value || "");
 
-      if (cap_id) {
-        // Adding Shipping Data
-        const shippingData = new FormData();
-        shippingData.append(
-          "carrier",
-          refs.departure.carrierNameRef.current.value
-        );
-        shippingData.append(
-          "dep_vessel_name",
-          refs.departure.departureVesselRef.current.value
-        );
-        shippingData.append(
-          "port_of_loading",
-          refs.departure.departurePartsOfLandingRef.current.value
-        );
-        shippingData.append(
-          "etd",
-          refs.departure.departureETDRef.current.value
-        );
-        shippingData.append(
-          "arrive_vessel_name",
-          refs.arrival.arrivalVesselRef.current.value
-        );
-        shippingData.append(
-          "port_of_discharge",
-          refs.arrival.arrivalPartOfDischargeRef.current.value
-        );
-        shippingData.append("eta", refs.arrival.arrivalETDRef.current.value);
-        shippingData.append("bl", blImage);
-        shippingData.append("inspection", inspectionImage);
-        shippingData.append("export_certificate", certificateImage);
-        shippingData.append(
-          "english_export_certificate",
-          englishCertificateImage
-        );
-        shippingData.append("invoice", invoiceImage);
-        shippingData.append(
-          "enrollment",
-          refs.document.documentenrollementRef.current.value
+        await axios.put(
+          `http://localhost:5000/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
+          consigneeFormData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
         );
 
-        shippingData.append("cap_id", cap_id);
+        // Update product images if changed
+        if (productImages.length) {
+          const productImageFormData = new FormData();
+          productImages.forEach((image, index) => {
+            productImageFormData.append(`product_images_${index}`, image);
+          });
 
-        try {
-          const shippingResponse = await axios.put(
-            `http://localhost:5000/api/shippingInformation/update/${capLinkEditId}`,
-            shippingData,
+          await axios.put(
+            `http://localhost:5000/api/productImage/update/${capLinkEditId}`,
+            productImageFormData,
             {
               headers: {
                 "Content-Type": "multipart/form-data",
@@ -780,349 +608,56 @@ const EditCapLinksForm = () => {
               },
             }
           );
-
-          console.log("Success:", shippingResponse.data.data);
-        } catch (error) {
-          console.log("Error Shipping:", error.message);
         }
 
-        const documentData = new FormData();
-
-        documentData.append("cap_id", cap_id);
-
-        documentData.append(
-          "doc_name",
-          refs.document.documentNameRef.current.value
-        );
-        documentData.append(
-          "doc_address",
-          refs.document.documentAddressRef.current.value
-        );
-        documentData.append(
-          "doc_city",
-          refs.document.documentCityRef.current.value
-        );
-        documentData.append(
-          "doc_country",
-          refs.document.documentCountryRef.current.value
-        );
-        documentData.append(
-          "doc_phone1",
-          refs.document.documentPhoneNumber1Ref.current.value
-        );
-        documentData.append(
-          "doc_phone2",
-          refs.document.documentPhoneNumber2Ref.current.value
-        );
-        documentData.append(
-          "doc_phone3",
-          refs.document.documentPhoneNumber3Ref.current.value
-        );
-        documentData.append(
-          "doc_faxno",
-          refs.document.documentFaxNumberRef.current.value
-        );
-        documentData.append(
-          "cellphone_no_email",
-          refs.document.documentCellPhoneNumberOREmailRef.current.value
-        );
-        documentData.append(
-          "tracking_no",
-          refs.document.documentTrackingNumberRef.current.value
-        );
-        documentData.append(
-          "docCenter_name",
-          refs.documentCenter.documentCenterNameRef.current.value
-        );
-        documentData.append(
-          "docCenter_address",
-          refs.documentCenter.documentCenterAddressRef.current.value
-        );
-        documentData.append(
-          "docCenter_city",
-          refs.documentCenter.documentCenterCityRef.current.value
-        );
-        documentData.append(
-          "docCenter_country",
-          refs.documentCenter.documentCenterCountryRef.current.value
-        );
-        documentData.append(
-          "docCenter_phone1",
-          refs.documentCenter.documentCenterPhoneNumber1Ref.current.value
-        );
-        documentData.append(
-          "docCenter_phone2",
-          refs.documentCenter.documentCenterPhoneNumber2Ref.current.value
-        );
-        documentData.append(
-          "docCenter_phone3",
-          refs.documentCenter.documentCenterPhoneNumber3Ref.current.value
-        );
-        documentData.append(
-          "email",
-          refs.documentCenter.documentCenterEmailRef.current.value
-        );
-        documentData.append(
-          "url",
-          refs.documentCenter.documentCenterUrlRef.current.value
-        );
-        documentData.append(
-          "other_information",
-          refs.documentCenter.documentCenterOtherInformationRef.current.value
-        );
-
-        try {
-          const documentResponse = await axios.put(
-            `http://localhost:5000/api/documentInformation/update/${capLinkEditId}`,
-            documentData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          console.log("Success:", documentResponse.data.data);
-        } catch (error) {
-          console.log("Error Document:", error.message);
+        // Update product information
+        const productFormData = new FormData();
+        productFormData.append("product_name", refs.notifyParty.notifyPartyProductNameRef.current?.value || "");
+        productFormData.append("reference_no", refs.notifyParty.notifyPartyReferenceNoRef.current?.value || "");
+        productFormData.append("mileage", refs.notifyParty.notifyPartyMileageRef.current?.value || "");
+        productFormData.append("modelCode", refs.notifyParty.notifyPartyModelCodeRef.current?.value || "");
+        productFormData.append("registeration_year_month", refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current?.value || "");
+        productFormData.append("manufacture_year_month", refs.notifyParty.manufactureYearORMonthRef.current?.value || "");
+        productFormData.append("modelGrade", refs.notifyParty.notifyPartyModelGradeRef.current?.value || "");
+        productFormData.append("chassis", refs.notifyParty.notifyPartyChassisRef.current?.value || "");
+        productFormData.append("engine_size", refs.notifyParty.notifyPartyEngineSizeRef.current?.value || "");
+        productFormData.append("drive", refs.notifyParty.notifyPartyDriveRef.current?.value || "");
+        productFormData.append("ext_color", refs.notifyParty.notifyPartyExtColorRef.current?.value || "");
+        productFormData.append("steering", refs.notifyParty.notifyPartySteeringRef.current?.value || "");
+        productFormData.append("transmission", refs.notifyParty.notifyPartytransmissionRef.current?.value || "");
+        productFormData.append("fuel", refs.notifyParty.notifyPartyFuelRef.current?.value || "");
+        productFormData.append("seats", refs.notifyParty.notifyPartySeatsRef.current?.value || "");
+        productFormData.append("doors", refs.notifyParty.notifyPartyDoorRef.current?.value || "");
+        productFormData.append("engine_no", refs.notifyParty.notifyPartyEngineNoRef.current?.value || "");
+        productFormData.append("options", selectedOptionFeatures.join(","));
+        
+        if (productFeatureImage) {
+          productFormData.append("featured_image", productFeatureImage);
         }
 
-        const consigneeData = new FormData();
-
-        consigneeData.append("cap_id", cap_id);
-
-        consigneeData.append(
-          "consignee_name",
-          refs.consignee.consigneeNameRef.current.value
-        );
-        consigneeData.append(
-          "consignee_address",
-          refs.consignee.consigneeAddressRef.current.value
-        );
-        consigneeData.append(
-          "consignee_city",
-          refs.consignee.consigneeCityRef.current.value
-        );
-        consigneeData.append(
-          "consignee_country",
-          refs.consignee.consigneeCountryRef.current.value
-        );
-        consigneeData.append(
-          "consignee_phone1",
-          refs.consignee.consigneePhoneNumber1Ref.current.value
-        );
-        consigneeData.append(
-          "consignee_phone2",
-          refs.consignee.consigneePhoneNumber2Ref.current.value
-        );
-        consigneeData.append(
-          "consignee_phone3",
-          refs.consignee.consigneePhoneNumber3Ref.current.value
-        );
-        consigneeData.append(
-          "consignee_faxno",
-          refs.consignee.consigneeFaxNumberRef.current.value
-        );
-        consigneeData.append(
-          "consignee_phoneno_email",
-          refs.consignee.consigneeCellPhoneNumberOREmailRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_name",
-          refs.notifyParty.notifyPartyNameRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_address",
-          refs.notifyParty.notifyPartyAddressRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_city",
-          refs.notifyParty.notifyPartyCityRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_country",
-          refs.notifyParty.notifyPartyCountryRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_phone1",
-          refs.notifyParty.notifyPartyPhoneNumber1Ref.current.value
-        );
-        consigneeData.append(
-          "notifyParty_phone2",
-          refs.notifyParty.notifyPartyPhoneNumber2Ref.current.value
-        );
-        consigneeData.append(
-          "notifyParty_phone3",
-          refs.notifyParty.notifyPartyPhoneNumber3Ref.current.value
-        );
-        consigneeData.append(
-          "notifyParty_faxno",
-          refs.notifyParty.notifyPartyFaxNumberRef.current.value
-        );
-        consigneeData.append(
-          "notifyParty_phoneno_email",
-          refs.notifyParty.notifyPartyCellPhoneNumberOREmailRef.current.value
-        );
-
-        try {
-          const consigneeResponse = await axios.put(
-            `http://localhost:5000/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
-            consigneeData,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          console.log("Success:", consigneeResponse.data.data);
-        } catch (error) {
-          console.log("Error consignee:", error.message);
-        }
-        if (productImages) {
-          const productImageData = new FormData();
-
-          productImageData.append("productID", cap_id);
-
-          for (let i = 0; i < productImages.length; i++) {
-            productImageData.append("product_images", productImages[i]);
+        await axios.put(
+          `http://localhost:5000/api/productInformation/update/${capLinkEditId}`,
+          productFormData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              Authorization: `Bearer ${token}`,
+            },
           }
-          try {
-            const product_images_response = await axios.put(
-              `http://localhost:5000/api/productImage/update/${capLinkEditId}`,
-              productImageData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            );
-
-            console.log(
-              "Success" + JSON.stringify(product_images_response.data)
-            );
-          } catch (error) {
-            console.log("Failed to add Product images", error.message);
-          }
-        }
-
-        const productData = new FormData();
-
-        productData.append("cap_id", cap_id);
-
-        productData.append(
-          "product_name",
-          refs.notifyParty.notifyPartyProductNameRef.current.value
-        );
-        productData.append(
-          "reference_no",
-          refs.notifyParty.notifyPartyReferenceNoRef.current.value
-        );
-        productData.append(
-          "mileage",
-          refs.notifyParty.notifyPartyMileageRef.current.value
-        );
-        productData.append(
-          "modelCode",
-          refs.notifyParty.notifyPartyModelCodeRef.current.value
-        );
-        productData.append(
-          "registeration_year_month",
-          refs.notifyParty.notifyPartyRegistrationYearORMonthRef.current.value
-        );
-        productData.append(
-          "manufacture_year_month",
-          refs.notifyParty.manufactureYearORMonthRef.current.value
-        );
-        productData.append(
-          "modelGrade",
-          refs.notifyParty.notifyPartyModelGradeRef.current.value
-        );
-        productData.append(
-          "chassis",
-          refs.notifyParty.notifyPartyChassisRef.current.value
-        );
-        productData.append(
-          "engine_size",
-          refs.notifyParty.notifyPartyEngineSizeRef.current.value
-        );
-        productData.append(
-          "drive",
-          refs.notifyParty.notifyPartyDriveRef.current.value
-        );
-        productData.append(
-          "ext_color",
-          refs.notifyParty.notifyPartyExtColorRef.current.value
-        );
-        productData.append(
-          "steering",
-          refs.notifyParty.notifyPartySteeringRef.current.value
-        );
-        productData.append(
-          "transmission",
-          refs.notifyParty.notifyPartytransmissionRef.current.value
-        );
-        productData.append(
-          "fuel",
-          refs.notifyParty.notifyPartyFuelRef.current.value
-        );
-        productData.append(
-          "seats",
-          refs.notifyParty.notifyPartySeatsRef.current.value
-        );
-        productData.append(
-          "doors",
-          parseInt(refs.notifyParty.notifyPartyDoorRef.current.value)
-        );
-        productData.append(
-          "engine_no",
-          refs.notifyParty.notifyPartyEngineNoRef.current.value
         );
 
-        productData.append(
-          "options",
-          optionFeatures.map((feature) => feature.value).toString()
-        );
-        productData.append("featured_image", productFeatureImage);
-
-        try {
-          const productResponse = await axios.put(
-            `http://localhost:5000/api/productInformation/update/${capLinkEditId}`,
-            productData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-
-          console.log("Success:", productResponse.data.data);
-
-          //  Reset checkboxes
-          document
-            .querySelectorAll("input[type='checkbox']")
-            .forEach((checkbox) => {
-              checkbox.checked = false;
-            });
-          // Reset radio
-          document
-            .querySelectorAll("input[type='radio']")
-            .forEach((checkbox) => {
-              checkbox.checked = false;
-            });
-
-          window.location.replace("/dashboard/cap-links");
-        } catch (error) {
-          console.error(error);
-          alert("Error updating the data");
-        }
+        // Reset form and redirect
+        window.location.replace("/dashboard/cap-links");
       }
+    } catch (error) {
+      console.error("Error updating data:", error);
+      alert("Error updating the data");
     }
   };
+
+  if (loading) {
+    return <div className="w-full h-screen flex items-center justify-center">Loading...</div>;
+  }
 
   return (
     <div className="w-full max-h-auto min-h-screen rounded-tr-[50px]  flex flex-col overflow-y-auto ">
@@ -1233,6 +768,7 @@ const EditCapLinksForm = () => {
                   </h3>
                   <textarea
                     id="description"
+                    ref={refs.misc.descriptionRef}
                     value={capLink?.message || ""}
                     onChange={(e) =>
                       setCapLink({
@@ -1319,6 +855,7 @@ const EditCapLinksForm = () => {
                       <p>Carrier</p>
                       <input
                         type="text"
+                        ref={refs.departure.carrierNameRef}
                         id="CarrierName"
                         value={shippingInfo.carrier || ""}
                         onChange={(e) =>
@@ -1342,7 +879,7 @@ const EditCapLinksForm = () => {
                     Departure Section
                   </h3>
                   {/* Vessel Name */}
-                  <div className="w-full h-auto justify-start items-center grid grid-cols-2 max-md:grid-cols-1 gap-5 ">
+                  <div className="w-full h-auto justify-start items-center grid grid-cols-1 max-md:grid-cols-1 gap-5 ">
                     <label
                       htmlFor="VesselName"
                       className="w-full gap-3 flex flex-col justify-center items-start max-sm:text-xs"
@@ -1351,6 +888,7 @@ const EditCapLinksForm = () => {
                       <input
                         type="text"
                         id="VesselName"
+                        ref={refs.departure.departureVesselRef}
                         value={shippingInfo.dep_vessel_name || ""}
                         onChange={(e) =>
                           setShippingInfo({
@@ -1375,6 +913,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="text"
                           id="PartOfLoading"
+                          ref={refs.departure.departurePartsOfLandingRef}
                           value={shippingInfo.port_of_loading || ""}
                           onChange={(e) =>
                             setShippingInfo({
@@ -1396,6 +935,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="date"
                           id="ETD(Estimated Time of Departure)"
+                          ref={refs.departure.departureETDRef}
                           value={shippingInfo.etd || ""}
                           onChange={(e) =>
                             setShippingInfo({
@@ -1416,7 +956,7 @@ const EditCapLinksForm = () => {
                   <h3 className="text-md font-bold max-sm:text-xs max-md:text-sm ">
                     Arrival Section
                   </h3>
-                  <div className="w-full h-auto justify-start items-center grid grid-cols-2 max-md:grid-cols-1 gap-5 ">
+                  <div className="w-full h-auto justify-start items-center grid grid-cols-1 max-md:grid-cols-1 gap-5 ">
                     <label
                       htmlFor="VesselName"
                       className="w-full gap-3 flex flex-col justify-center items-start"
@@ -1426,6 +966,7 @@ const EditCapLinksForm = () => {
                       <input
                         type="text"
                         id="VesselName"
+                        ref={refs.departure.arrivalVesselRef}
                         value={shippingInfo.arrive_vessel_name || ""}
                         onChange={(e) =>
                           setShippingInfo({
@@ -1450,6 +991,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="text"
                           id="PartOfDischarge"
+                          ref={refs.departure.arrivalPartOfDischargeRef}
                           value={shippingInfo.port_of_discharge || ""}
                           onChange={(e) =>
                             setShippingInfo({
@@ -1471,6 +1013,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="date"
                           id="ArrivalETD"
+                          ref={refs.departure.arrivalETDRef}
                           value={shippingInfo.eta || ""}
                           onChange={(e) =>
                             setShippingInfo({
@@ -1556,6 +1099,7 @@ const EditCapLinksForm = () => {
                               type="text"
                               id="Enrollement"
                               name="enrollment"
+                              ref={refs.document.documentenrollementRef}
                               className="border-neutral-500 border w-full rounded-md p-3 max-sm:p-2 max-sm:text-xs"
                               placeholder="Enrollment"
                               value={shippingInfo.enrollment || ""}
@@ -1599,6 +1143,7 @@ const EditCapLinksForm = () => {
                       <input
                         type="text"
                         id="documentName"
+                        ref={refs.document.documentNameRef}
                         value={documentInfo.doc_name || ""}
                         onChange={(e) =>
                           setDocumentInfo({
@@ -1622,6 +1167,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="text"
                           id="documentAddress"
+                          ref={refs.document.documentAddressRef}
                           value={documentInfo.doc_address || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1643,6 +1189,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="text"
                           id="documentCity"
+                          ref={refs.document.documentCityRef}
                           value={documentInfo.doc_city || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1668,6 +1215,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="text"
                           id="documentCountry"
+                          ref={refs.document.documentCountryRef}
                           value={documentInfo.doc_country || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1689,6 +1237,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="number"
                           id="documentPhoneNumber1"
+                          ref={refs.document.documentPhoneNumber1Ref}
                           value={documentInfo.doc_phone1 || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1714,6 +1263,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="number"
                           id="documentPhoneNumber2"
+                          ref={refs.document.documentPhoneNumber2Ref}
                           value={documentInfo.doc_phone2 || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1735,6 +1285,7 @@ const EditCapLinksForm = () => {
                         <input
                           type="number"
                           id="documentPhoneNumber3"
+                          ref={refs.document.documentPhoneNumber1Ref}
                           value={documentInfo.doc_phone3 || ""}
                           onChange={(e) =>
                             setDocumentInfo({
@@ -1849,6 +1400,7 @@ const EditCapLinksForm = () => {
                           <input
                             type="text"
                             id="documentCenterName"
+                            ref={refs.documentCenter.documentCenterNameRef}
                             value={documentInfo.docCenter_name}
                             onChange={(e) =>
                               setDocumentInfo({
@@ -2088,7 +1640,6 @@ const EditCapLinksForm = () => {
                   </h3>
 
                   <div className="w-full h-auto grid grid-cols-2 max-md:grid-cols-1 gap-3">
-                    {/* Reusable Input Component for Consignee and Notify Party */}
                     {consigneeInputData.map(
                       ({ label, id, value, onChange }) => (
                         <div
@@ -2168,6 +1719,8 @@ const EditCapLinksForm = () => {
                   <EditInputFeild
                     label="Product Name"
                     id="notifyPartyProductName"
+                    name="product_name"
+                    ref={refs.notifyParty.notifyPartyProductNameRef}
                     value={productInfo.product_name || ""}
                     onChange={(e) =>
                       setProductInfo({
@@ -2183,6 +1736,7 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Reference No"
                       id="notifyPartyReferenceNo"
+                      ref={refs.notifyParty.notifyPartyReferenceNoRef}
                       value={productInfo.reference_no || ""}
                       onChange={(e) =>
                         setProductInfo({
@@ -2195,6 +1749,7 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Mileage"
                       id="notifyPartyMileage"
+                      ref={refs.notifyParty.notifyPartyMileageRef}
                       value={productInfo.mileage || ""}
                       onChange={(e) =>
                         setProductInfo({
@@ -2210,6 +1765,7 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Model Code"
                       id="notifyPartyModelCode"
+                      ref={refs.notifyParty.notifyPartyModelCodeRef}
                       value={productInfo.modelCode || ""}
                       onChange={(e) =>
                         setProductInfo({
@@ -2222,6 +1778,9 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Registration Year/Month"
                       id="notifyPartyRegistrationYearMonth"
+                      ref={
+                        refs.notifyParty.notifyPartyRegistrationYearORMonthRef
+                      }
                       value={productInfo.registeration_year_month || ""}
                       onChange={(e) =>
                         setProductInfo({
@@ -2237,6 +1796,7 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Manufacture Year/Month"
                       id="ManufactureYearMonth"
+                      ref={refs.notifyParty.manufactureYearORMonthRef}
                       type="number"
                       active={isActive}
                       value={productInfo.manufacture_year_month || ""}
@@ -2251,6 +1811,7 @@ const EditCapLinksForm = () => {
                     <EditInputFeild
                       label="Model Grade"
                       id="notifyPartyModelGrade"
+                      ref={refs.notifyParty.notifyPartyModelGradeRef}
                       value={productInfo.modelGrade || ""}
                       onChange={(e) =>
                         setProductInfo({
