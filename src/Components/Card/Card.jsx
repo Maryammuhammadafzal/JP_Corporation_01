@@ -61,7 +61,7 @@ const Card = () => {
             <div className="carImage inline-block relative overflow-hidden w-auto h-auto">
               <img
                 loading="lazy"
-                src={`../../../../admin/public/uploads/${featured_image}`}
+                src={`https://jpcorporation01-production.up.railway.app/uploads/${featured_image}`}
                 className="cardImage cursor-pointer relative max-[1160px]:h-[200px] max-[900px]:h-[230px] max-[600px]:h-[280px] w-full h-[200px] rounded-2xl"
                 alt="Card image"
               />
