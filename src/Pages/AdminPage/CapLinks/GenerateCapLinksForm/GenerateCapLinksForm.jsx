@@ -263,7 +263,7 @@ const GenerateCapLinksForm = () => {
 
       try {
         const capResponse = await axios.post(
-          "http://localhost:5000/api/cap/add",
+          "https://jpcorporation01-production.up.railway.app/api/cap/add",
           capData,
           {
             headers: {
@@ -325,7 +325,7 @@ const GenerateCapLinksForm = () => {
         try {
 
           const shippingResponse = await axios.post(
-            "http://localhost:5000/api/shippingInformation/add",
+            "https://jpcorporation01-production.up.railway.app/api/shippingInformation/add",
             shippingData,
             {
               headers: {
@@ -428,7 +428,7 @@ const GenerateCapLinksForm = () => {
         try {
 
           const documentResponse = await axios.post(
-            "http://localhost:5000/api/documentInformation/add",
+            "https://jpcorporation01-production.up.railway.app/api/documentInformation/add",
             documentData,
             {
               headers: {
@@ -522,7 +522,7 @@ const GenerateCapLinksForm = () => {
 
         try {
           const consigneeResponse = await axios.post(
-            "http://localhost:5000/api/consigneeNotifyPartyInformation/add",
+            "https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/add",
             consigneeData,
             {
               headers: {
@@ -547,7 +547,7 @@ const GenerateCapLinksForm = () => {
           }
           try {
           const product_images_response = await axios.post(
-            "http://localhost:5000/api/productImage/add",
+            "https://jpcorporation01-production.up.railway.app/api/productImage/add",
             productImageData,
             {
               headers: {
@@ -645,7 +645,7 @@ const GenerateCapLinksForm = () => {
 
         try {
           const productResponse = await axios.post(
-            "http://localhost:5000/api/productInformation/add",
+            "https://jpcorporation01-production.up.railway.app/api/productInformation/add",
             productData,
             {
               headers: {

@@ -19,7 +19,7 @@ const CapLinksListing = () => {
 
   const fetchCapLinks = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/cap/get");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/cap/get");
       const data = await res.data.data;
 
       setCapLinksData(data);
@@ -35,7 +35,7 @@ const CapLinksListing = () => {
   const fetchProductData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/productInformation/get"
+        "https://jpcorporation01-production.up.railway.app/api/productInformation/get"
       );
       const data = await res.data.data;
       console.log(data);
@@ -53,7 +53,7 @@ const CapLinksListing = () => {
   const fetchConsigneeData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/consigneeNotifyPartyInformation/get"
+        "https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/get"
       );
       const data = await res.data.data;
 
@@ -70,7 +70,7 @@ const CapLinksListing = () => {
   const fetchShippingInformation = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/shippingInformation/get"
+        "https://jpcorporation01-production.up.railway.app/api/shippingInformation/get"
       );
       const data = await res.data.data;
       console.log("shipping Data", data);
@@ -133,19 +133,19 @@ const CapLinksListing = () => {
         shippingResponse,
         productImageResponse,
       ] = await Promise.all([
-        axios.delete(`http://localhost:5000/api/productImage/delete/${del_id}`),
+        axios.delete(`https://jpcorporation01-production.up.railway.app/api/productImage/delete/${del_id}`),
         axios.delete(
-          `http://localhost:5000/api/shippingInformation/delete/${del_id}`
+          `https://jpcorporation01-production.up.railway.app/api/shippingInformation/delete/${del_id}`
         ),
         axios.delete(
-          `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${del_id}`
+          `https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/delete/${del_id}`
         ),
         axios.delete(
-          `http://localhost:5000/api/productInformation/delete/${del_id}`
+          `https://jpcorporation01-production.up.railway.app/api/productInformation/delete/${del_id}`
         ),
-        axios.delete(`http://localhost:5000/api/cap/delete/${del_id}`),
+        axios.delete(`https://jpcorporation01-production.up.railway.app/api/cap/delete/${del_id}`),
         axios.delete(
-          `http://localhost:5000/api/documentInformation/delete/${del_id}`
+          `https://jpcorporation01-production.up.railway.app/api/documentInformation/delete/${del_id}`
         ),
       ]);
 

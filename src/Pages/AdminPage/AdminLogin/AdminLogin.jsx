@@ -38,7 +38,7 @@ const AdminDashboard = () => {
     
     try {
       
-      const response = await fetch("/api/admin", {
+      const response = await fetch("https://jpcorporation01-production.up.railway.app/api/admin", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

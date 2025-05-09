@@ -32,7 +32,7 @@ const EditListingForm = () => {
     const fetchCar = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/carListing/getById/${editId}`);
+          `https://jpcorporation01-production.up.railway.app/api/carListing/getById/${editId}`);
         const car = res.data.data;
         setCarData(car);
         setLoading(false);
@@ -50,7 +50,7 @@ const EditListingForm = () => {
       const fetchGalleryImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/images/get/${id}`);
+            `https://jpcorporation01-production.up.railway.app/api/images/get/${id}`);
           const images = res.data.data;
 
           setImageData(images);
@@ -69,7 +69,7 @@ const EditListingForm = () => {
       const fetchAttachmentImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/attachment/get/${id}`);
+            `https://jpcorporation01-production.up.railway.app/api/attachment/get/${id}`);
           const attachment = res.data.data;
           // let pdfAttachment = attachment.map(
           //   (attachment) => attachment.attachments
@@ -242,7 +242,7 @@ const EditListingForm = () => {
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
     const response = await axios.get(
-      `http://localhost:5000/api/model/getModalByMake/${makeId}` );
+      `https://jpcorporation01-production.up.railway.app/api/model/getModalByMake/${makeId}` );
     const data = await response.data;
     setModals(data);
   };
@@ -254,7 +254,7 @@ const EditListingForm = () => {
 
         try {
           const response = await axios.get(
-            `http://localhost:5000/api/model/getModalByMake/${id}`);
+            `https://jpcorporation01-production.up.railway.app/api/model/getModalByMake/${id}`);
           const data = await response.data;
           setModals(data);
         } catch (error) {
@@ -403,7 +403,7 @@ const EditListingForm = () => {
       // Edit Listing Api Call
       try {
         const response = await axios.put(
-          `http://localhost:5000/api/carListing/update/${editId}`,
+          `https://jpcorporation01-production.up.railway.app/api/carListing/update/${editId}`,
           formData,
           {
             headers: {
@@ -425,7 +425,7 @@ const EditListingForm = () => {
           imageData.append("car_id", id);
 
           const gallery_images_response = await axios.put(
-            `http://localhost:5000/api/images/update/${id}`,
+            `https://jpcorporation01-production.up.railway.app/api/images/update/${id}`,
             imageData,
             {
               headers: {
@@ -446,7 +446,7 @@ console.log(attachmentImage);
 
           attachmentData.append("attachment_image", attachmentImage);
           const attachment_pdf_response = await axios.put(
-            `http://localhost:5000/api/attachment/update/${id}`,
+            `https://jpcorporation01-production.up.railway.app/api/attachment/update/${id}`,
             attachmentData,
             {
               headers: {
@@ -1462,7 +1462,7 @@ console.log(attachmentImage);
                   </div>
                   <img
                     loading="lazy"
-                    src={`../../../../admin/public/uploads/${carData.featured_image}`}
+                    src={`https://jpcorporation01-production.up.railway.app/uploads/${carData.featured_image}`}
                     alt="image"
                     className="w-[160px] h-[160px] rounded-lg max-[780px]:w-[140px] max-[780px]:h-[140px] object-cover"
                   />
@@ -1527,7 +1527,7 @@ console.log(attachmentImage);
                         </div>
                         <img
                           loading="lazy"
-                          src={`../../../../admin/public/uploads/${images}`}
+                          src={`https://jpcorporation01-production.up.railway.app/uploads/${images}`}
                           alt={`gallery-image-${order_id}`}
                           className="w-[160px] h-[160px] rounded-lg max-[780px]:w-[140px] max-[780px]:h-[140px] object-cover"
                         />
@@ -1593,7 +1593,7 @@ console.log(attachmentImage);
                       className="showImage p-3 w-[150px] mt-5 h-[100px] flex justify-center items-center relative"
                     >
                       <a
-                        href={`../../../../admin/public/uploads/${attachmentImage[0]}`}
+                        href={`https://jpcorporation01-production.up.railway.app/uploads/${attachmentImage[0]}`}
                         download
                         target="_blank"
                         rel="noopener noreferrer"

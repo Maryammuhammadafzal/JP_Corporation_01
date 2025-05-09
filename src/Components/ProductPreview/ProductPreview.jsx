@@ -31,7 +31,7 @@ const ProductPreview = () => {
     const fetchCar = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:5000/api/carListing/getById/${cardId}`
+          `https://jpcorporation01-production.up.railway.app/api/carListing/getById/${cardId}`
         );
         const car = await res.data.data;
         console.log(car);
@@ -48,7 +48,7 @@ const ProductPreview = () => {
   // Fetch Models
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/model/");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/model/");
       const data = await res.data;
       setModalData(data);
     } catch (error) {
@@ -61,7 +61,7 @@ const ProductPreview = () => {
 
   const fetchMakeData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/make/");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/make/");
       const data = await res.data.data;
       setMakeData(data);
     } catch (error) {
@@ -81,7 +81,7 @@ const ProductPreview = () => {
       const fetchAttachmentImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/attachment/get/${id}`
+            `https://jpcorporation01-production.up.railway.app/api/attachment/get/${id}`
           );
           const attachment = res.data.data;
           // let pdfAttachment = attachment.map(
@@ -109,7 +109,7 @@ if (attachment) {
       const fetchGalleryImages = async () => {
         try {
           const res = await axios.get(
-            `http://localhost:5000/api/images/get/${id}`);
+            `https://jpcorporation01-production.up.railway.app/api/images/get/${id}`);
           const images = res.data.data;
 
           setImageData(images);

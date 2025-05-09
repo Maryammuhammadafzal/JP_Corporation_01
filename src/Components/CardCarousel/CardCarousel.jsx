@@ -18,7 +18,7 @@ const CardCarousel = () => {
 
   const fetchCarData = async()=> {
 try {
-   let res = await axios.get("http://localhost:5000/api/carListing/get?page=1&limit=10")
+   let res = await axios.get("https://jpcorporation01-production.up.railway.app/api/carListing/get?page=1&limit=10")
    const data = await res.data.data 
    setCardData(data)
 } catch (error) {
@@ -37,7 +37,7 @@ fetchCarData()
   // Fetch Models
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/model/",);
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/model/",);
       const data = await res.data;
       setModalData(data);
     } catch (error) {

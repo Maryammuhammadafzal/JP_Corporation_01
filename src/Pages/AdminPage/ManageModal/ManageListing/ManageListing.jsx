@@ -17,7 +17,7 @@ const ManageListing = () => {
 
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/model/");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/model/");
       const data = await res.data;
       setModalData(data);
     } catch (error) {
@@ -31,7 +31,7 @@ const ManageListing = () => {
 let allMake;
   const fetchMakeData = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/make/");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/make/");
       const data = await res.data.data;
       setMakeData(data);
     } catch (error) {
@@ -63,7 +63,7 @@ let allMake;
 
   // Delete Model
   const handleDelete = async (id, title) => {
-    const response = await axios.delete(`http://localhost:5000/api/model/delete/${id}` , {
+    const response = await axios.delete(`https://jpcorporation01-production.up.railway.app/api/model/delete/${id}` , {
       headers: {
         Authorization: `Bearer ${token}`,
       },

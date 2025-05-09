@@ -49,7 +49,7 @@ const ContactForm = () => {
 
     try {
       let response = await axios.post(
-        `http://localhost:5000/api/contactUs/add`,
+        `https://jpcorporation01-production.up.railway.app/api/contactUs/add`,
         formData,
         {
           headers: {
@@ -57,7 +57,7 @@ const ContactForm = () => {
           },
         }
       );
-      // const response = await fetch(`http://localhost:5000/api/contact`, {
+      // const response = await fetch(`https://jpcorporation01-production.up.railway.app/api/contact`, {
       //   method: "POST",
       //   headers: { "Content-Type": "application/json" },
       //   body: JSON.stringify(formData),

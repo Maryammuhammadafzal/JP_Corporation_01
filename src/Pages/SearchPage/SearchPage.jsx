@@ -35,7 +35,7 @@ const SearchPage = () => {
     try {
       let token = localStorage.getItem("adminToken");
       const res = await axios.get(
-        `http://localhost:5000/api/carListing/getByType?type=${type}`,
+        `https://jpcorporation01-production.up.railway.app/api/carListing/getByType?type=${type}`,
         {
           headers: {
             Authorization: `Barear ${token}`,
@@ -78,7 +78,7 @@ useEffect( () => {
       try {
         
         const res = await axios.get(
-          `http://localhost:5000/api/carListing/getByQuery?${queryString}`);
+          `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`);
         const data = await res.data.data;
         setFilteredCars(data);
   
@@ -97,7 +97,7 @@ useEffect( () => {
   try {
     
     const res = await axios.get(
-      `http://localhost:5000/api/carListing/getByQuery?${queryString}`);
+      `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`);
     const data = await res.data.data;
     setFilteredCars(data);
 
@@ -110,7 +110,7 @@ useEffect( () => {
   // Fetch Search Api
   let fetchApi = async () => {
     try {
-      const res = await axios.get("http://localhost:5000/api/carListing/get");
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/carListing/get");
       const data = await res.data.data;
       setFilteredCars(data);
       setAllCars(data);
@@ -507,7 +507,7 @@ useEffect( () => {
                   {/* Placeholder for Car Image */}
                   <div className="w-[230px] h-[130px] max-sm:h-auto max-sm:w-full bg-amber-200 rounded-xl">
                     <img
-                      src={`../../../../admin/public/uploads/${car.featured_image}`}
+                      src={`https://jpcorporation01-production.up.railway.app/uploads/${car.featured_image}`}
                       alt="Car image"
                       className="w-full h-full rounded-xl"
                     />

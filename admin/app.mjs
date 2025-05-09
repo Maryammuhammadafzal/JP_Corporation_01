@@ -28,7 +28,7 @@ const app = express();
 dotenv.config();
 
 const allowedOrigins = [
-  // "https://jpcorporation-production.up.railway.app",
+  "https://jpcorporation01-production.up.railway.app/",
   "http://localhost:5173",
   "http://localhost:5174",
   "http://localhost:3000",

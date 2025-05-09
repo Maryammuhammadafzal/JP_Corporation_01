@@ -127,23 +127,23 @@ const EditCapLinksForm = () => {
           documentInfoRes,
           shippingInfoRes,
         ] = await Promise.all([
-          axios.get(`http://localhost:5000/api/cap/getbyid/${capLinkEditId}`),
+          axios.get(`https://jpcorporation01-production.up.railway.app/api/cap/getbyid/${capLinkEditId}`),
           axios.get(
-            `http://localhost:5000/api/consigneeNotifyPartyInformation/getbyid/${capLinkEditId}`
+            `https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/getbyid/${capLinkEditId}`
           ),
           axios.get(
-            `http://localhost:5000/api/productInformation/getbyid/${capLinkEditId}`
+            `https://jpcorporation01-production.up.railway.app/api/productInformation/getbyid/${capLinkEditId}`
           ),
           axios.get(
-            `http://localhost:5000/api/documentInformation/getbyid/${capLinkEditId}`
+            `https://jpcorporation01-production.up.railway.app/api/documentInformation/getbyid/${capLinkEditId}`
           ),
           axios.get(
-            `http://localhost:5000/api/shippingInformation/getbyid/${capLinkEditId}`
+            `https://jpcorporation01-production.up.railway.app/api/shippingInformation/getbyid/${capLinkEditId}`
           ),
         ]);
         
         const productImagesRes = axios.get(
-            `http://localhost:5000/api/productImage/getbyid/${capLinkEditId}`
+            `https://jpcorporation01-production.up.railway.app/api/productImage/getbyid/${capLinkEditId}`
           )
         
         // Set all states
@@ -831,7 +831,7 @@ const EditCapLinksForm = () => {
         // statusFeatures: selectedStatusFeatures,
 
         const capResponse = await axios.put(
-          `http://localhost:5000/api/cap/update/${capLinkEditId}`,
+          `https://jpcorporation01-production.up.railway.app/api/cap/update/${capLinkEditId}`,
           capData,
           {
             headers: {
@@ -897,7 +897,7 @@ const EditCapLinksForm = () => {
             console.log(`${key}: ${value}`);
           }
           await axios.put(
-            `http://localhost:5000/api/shippingInformation/update/${capLinkEditId}`,
+            `https://jpcorporation01-production.up.railway.app/api/shippingInformation/update/${capLinkEditId}`,
             shippingFormData,
             {
               headers: {
@@ -951,7 +951,7 @@ const EditCapLinksForm = () => {
           };
 
           await axios.put(
-            `http://localhost:5000/api/documentInformation/update/${capLinkEditId}`,
+            `https://jpcorporation01-production.up.railway.app/api/documentInformation/update/${capLinkEditId}`,
             documentData,
             {
               headers: {
@@ -1039,7 +1039,7 @@ const EditCapLinksForm = () => {
           );
 
           await axios.put(
-            `http://localhost:5000/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
+            `https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
             consigneeFormData,
             {
               headers: {
@@ -1057,7 +1057,7 @@ const EditCapLinksForm = () => {
             });
 
             await axios.put(
-              `http://localhost:5000/api/productImage/update/${capLinkEditId}`,
+              `https://jpcorporation01-production.up.railway.app/api/productImage/update/${capLinkEditId}`,
               productImageFormData,
               {
                 headers: {
@@ -1146,7 +1146,7 @@ const EditCapLinksForm = () => {
           }
 
           await axios.put(
-            `http://localhost:5000/api/productInformation/update/${capLinkEditId}`,
+            `https://jpcorporation01-production.up.railway.app/api/productInformation/update/${capLinkEditId}`,
             productFormData,
             {
               headers: {
@@ -1197,7 +1197,7 @@ const EditCapLinksForm = () => {
 
   // try {
   //   const capResponse = await axios.put(
-  //     `http://localhost:5000/api/cap/update/${capLinkEditId}`,
+  //     `https://jpcorporation01-production.up.railway.app/api/cap/update/${capLinkEditId}`,
   //     capData,
   //     {
   //       headers: {
@@ -1258,7 +1258,7 @@ const EditCapLinksForm = () => {
 
   //   try {
   //     const shippingResponse = await axios.put(
-  //       `http://localhost:5000/api/shippingInformation/update/${capLinkEditId}`,
+  //       `https://jpcorporation01-production.up.railway.app/api/shippingInformation/update/${capLinkEditId}`,
   //       shippingData,
   //       {
   //         headers: {
@@ -1360,7 +1360,7 @@ const EditCapLinksForm = () => {
 
   //   try {
   //     const documentResponse = await axios.put(
-  //       `http://localhost:5000/api/documentInformation/update/${capLinkEditId}`,
+  //       `https://jpcorporation01-production.up.railway.app/api/documentInformation/update/${capLinkEditId}`,
   //       documentData,
   //       {
   //         headers: {
@@ -1454,7 +1454,7 @@ const EditCapLinksForm = () => {
 
   //   try {
   //     const consigneeResponse = await axios.put(
-  //       `http://localhost:5000/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
+  //       `https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/update/${capLinkEditId}`,
   //       consigneeData,
   //       {
   //         headers: {
@@ -1478,7 +1478,7 @@ const EditCapLinksForm = () => {
   //     }
   //     try {
   //       const product_images_response = await axios.put(
-  //         `http://localhost:5000/api/productImage/update/${capLinkEditId}`,
+  //         `https://jpcorporation01-production.up.railway.app/api/productImage/update/${capLinkEditId}`,
   //         productImageData,
   //         {
   //           headers: {
@@ -1577,7 +1577,7 @@ const EditCapLinksForm = () => {
 
   //   try {
   //     const productResponse = await axios.put(
-  //       `http://localhost:5000/api/productInformation/update/${capLinkEditId}`,
+  //       `https://jpcorporation01-production.up.railway.app/api/productInformation/update/${capLinkEditId}`,
   //       productData,
   //       {
   //         headers: {

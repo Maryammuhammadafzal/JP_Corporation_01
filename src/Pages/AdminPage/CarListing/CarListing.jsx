@@ -14,7 +14,7 @@ const CarListings = () => {
   const fetchCarData = async () => {
     let token = localStorage.getItem("adminToken");
     try {
-      const res = await axios.get("http://localhost:5000/api/carListing/get" );
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/carListing/get" );
       const data = await res.data.data;
       setCarData(data);
       console.log(data);
@@ -32,7 +32,7 @@ const CarListings = () => {
   const fetchCarMake = async () => {
     let token = localStorage.getItem("adminToken");
     try {
-      const res = await axios.get("http://localhost:5000/api/make/" );
+      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/make/" );
       const data = await res.data.data;
       setMakeData(data);
    
@@ -68,13 +68,13 @@ const CarListings = () => {
       
       let token = localStorage.getItem("adminToken");
       const imageResponse = await axios.delete(
-        `http://localhost:5000/api/images/delete/${del_id}` , {
+        `https://jpcorporation01-production.up.railway.app/api/images/delete/${del_id}` , {
           headers : {
             "Authorization" : `Barear ${token}`
           }
         });
       const response = await axios.delete(
-        `http://localhost:5000/api/carListing/delete/${id}` , {
+        `https://jpcorporation01-production.up.railway.app/api/carListing/delete/${id}` , {
           headers : {
             "Authorization" : `Barear ${token}`
           }

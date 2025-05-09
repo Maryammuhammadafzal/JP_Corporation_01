@@ -22,7 +22,7 @@ const HeroSection = () => {
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
     const response = await axios.get(
-      `http://localhost:5000/api/model/getModalByMake/${makeId}`
+      `https://jpcorporation01-production.up.railway.app/api/model/getModalByMake/${makeId}`
     );
     const data = await response.data;
     setModals(data);

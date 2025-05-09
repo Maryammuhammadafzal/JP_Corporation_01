@@ -78,7 +78,7 @@ const AddListingForm = () => {
   const fetchModalByMake = async (make) => {
     let makeId = parseInt(make);
     const response = await axios.get(
-      `http://localhost:5000/api/model/getModalByMake/${makeId}`
+      `https://jpcorporation01-production.up.railway.app/api/model/getModalByMake/${makeId}`
     );
     const data = await response.data;
     setModals(data);
@@ -217,7 +217,7 @@ const AddListingForm = () => {
       try {
         const token = localStorage.getItem("adminToken");
         const response = await axios.post(
-          "http://localhost:5000/api/carListing/add",
+          "https://jpcorporation01-production.up.railway.app/api/carListing/add",
           formData,
           {
             headers: {
@@ -238,7 +238,7 @@ const AddListingForm = () => {
         imageData.append("car_id", response?.data?.data?.list_id);
 
         const gallery_images_response = await axios.post(
-          "http://localhost:5000/api/images/add",
+          "https://jpcorporation01-production.up.railway.app/api/images/add",
           imageData,
           {
             headers: {
@@ -256,7 +256,7 @@ const AddListingForm = () => {
         attachmentData.append( "car_id" , response?.data?.data?.list_id)
         attachmentData.append( "attachment_image" , attachmentImage)
         const attachment_pdf_response = await axios.post(
-          "http://localhost:5000/api/attachment/add",
+          "https://jpcorporation01-production.up.railway.app/api/attachment/add",
           attachmentData,
           {
             headers: {
