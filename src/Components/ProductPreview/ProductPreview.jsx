@@ -399,7 +399,7 @@ if (attachment) {
             </>
           ) : (
             <a
-              href={`../../../../admin/public/uploads/${attachmentData}`}
+              href={`https://jpcorporation01-production.up.railway.app/uploads/${attachmentData}`}
               download
               target="_blank"
               rel="noopener noreferrer"

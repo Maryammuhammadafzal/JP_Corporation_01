@@ -46,7 +46,7 @@ const GalleryCarousel = ({ galleryImages = []}) => {
             <div key={index} className="relative w-full h-auto">
               {console.log(image)}
               <img
-                src={`../../../../admin/public/uploads/${image.images}`}
+                src={`https://jpcorporation01-production.up.railway.app/uploads/${image.images}`}
                 alt={image.images}
                 className="w-full h-[500px] object-cover rounded-lg"
               />
@@ -61,7 +61,7 @@ const GalleryCarousel = ({ galleryImages = []}) => {
           {galleryImages.map((image, index) => (
             <div key={index} className="px-1">
               <img
-                src={`../../../../admin/public/uploads/${image.images}`}
+                src={`https://jpcorporation01-production.up.railway.app/uploads/${image.images}`}
                 alt={`Thumb ${image.img_id}`}
                 className="w-full opacity-50 hover:opacity-100 h-[150px] object-cover rounded-lg border-2 active:border-orange-600 border-gray-300 hover:border-orange-600 transition"
               />

@@ -51,7 +51,7 @@ fetchCarData()
         >
           <div className="carImage relative overflow-hidden w-auto h-auto">
             <img
-              src={`../../../../admin/public/uploads/${featured_image}`}
+              src={`https://jpcorporation01-production.up.railway.app/uploads/${featured_image}`}
               className="cardImage relative max-[1160px]:h-[200px] max-[900px]:h-[230px] max-[600px]:h-[280px] w-full h-[200px] rounded-2xl"
               alt="Card image"
             />

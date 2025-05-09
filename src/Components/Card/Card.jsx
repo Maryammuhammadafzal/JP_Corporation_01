@@ -16,7 +16,7 @@ const Card = () => {
   const fetchCarData = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:5000/api/carListing/get?page=1&limit=4");
+        "https://jpcorporation01-production.up.railway.app/api/carListing/get?page=1&limit=4");
       const data = await res.data.data;
       setCards(data);
     } catch (error) {
