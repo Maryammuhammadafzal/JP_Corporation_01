@@ -3046,7 +3046,7 @@ const EditCapLinksForm = () => {
                           </div>
                           <img
                             loading="lazy"
-                            src={`../../../../../admin/public/uploads/${productInfo.featured_image}`}
+                            src={`https://jpcorporation01-production.up.railway.app/uploads/${productInfo.featured_image}`}
                             alt="Featured"
                             className="w-[160px] h-[160px] object-cover rounded-lg max-sm:w-[130px] max-sm:h-[130px]"
                           />
@@ -3102,7 +3102,7 @@ const EditCapLinksForm = () => {
                                 </div>
                                 <img
                                   loading="lazy"
-                                  src={`../../../../../admin/public/uploads/${productImage.img_url}`}
+                                  src={`https://jpcorporation01-production.up.railway.app/uploads/${productImage.img_url}`}
                                   alt={`Gallery ${index}`}
                                   className="w-[130px] h-[130px] object-cover rounded-md"
                                 />

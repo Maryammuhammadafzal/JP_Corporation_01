@@ -276,7 +276,7 @@ const CapLinksListing = () => {
                         </td>
                         <td className="p-2 ">
                           <img
-                            src={`../../../../../admin/public/uploads/${
+                            src={`https://jpcorporation01-production.up.railway.app/uploads/${
                               productInformationData.find(
                                 (product) =>
                                   parseInt(product.cap_id) ===

@@ -197,7 +197,7 @@ const CarListings = () => {
                         </td>
                         <td className="p-2 ">
                           <img
-                            src={`../../../../admin/public/uploads/${car.featured_image}`}
+                            src={`https://jpcorporation01-production.up.railway.app/uploads/${car.featured_image}`}
                             alt="cars"
                             className="w-12 h-12 rounded-lg object-cover "
                           />

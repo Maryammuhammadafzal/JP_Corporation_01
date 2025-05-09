@@ -39,7 +39,7 @@ export const EditFileInput = ({
           <p>
             Existing {label} File:{" "}
             <Link
-              to={`/${existingFile}`}
+              to={`https://jpcorporation01-production.up.railway.app/${existingFile}`}
               target="_blank"
               rel="noopener noreferrer"
             >
