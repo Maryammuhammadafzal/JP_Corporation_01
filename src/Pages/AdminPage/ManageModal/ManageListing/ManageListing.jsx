@@ -4,7 +4,7 @@ import axios from "axios";
 import Copyright from "../../../../Components/Copyright/Copyright";
 import Pagination from "../../../../Components/Pagination/Pagination";
 
- const token = localStorage.getItem("adminToken");
+const token = localStorage.getItem("adminToken");
 const ManageListing = () => {
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -14,10 +14,11 @@ const ManageListing = () => {
 
   // Get Verification Token
 
-
   const fetchModalData = async () => {
     try {
-      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/model/");
+      const res = await axios.get(
+        "https://jpcorporation01-production.up.railway.app/api/model/"
+      );
       const data = await res.data;
       setModalData(data);
     } catch (error) {
@@ -28,10 +29,12 @@ const ManageListing = () => {
     fetchModalData();
   }, []);
 
-let allMake;
+  let allMake;
   const fetchMakeData = async () => {
     try {
-      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/make/");
+      const res = await axios.get(
+        "https://jpcorporation01-production.up.railway.app/api/make/"
+      );
       const data = await res.data.data;
       setMakeData(data);
     } catch (error) {
@@ -51,23 +54,30 @@ let allMake;
   const allModals = modalData;
 
   // Filter search
-  const filteredModals = allModals.map((car) => {
-    car?.carTitle?.toLowerCase()?.includes(search?.toLowerCase());
-  });
+  const filteredModals = allModals.filter((modal) =>
+  modal?.model?.toLowerCase().includes(search?.toLowerCase())
+);
 
   // Pagination Logic
   const indexOfLastModal = currentPage * entriesPerPage;
   const indexOfFirstModal = indexOfLastModal - entriesPerPage;
-  const currentModal = allModals.slice(indexOfFirstModal, indexOfLastModal);
+  const currentModal =
+    search.trim() !== ""
+      ? filteredModals.slice(indexOfFirstModal, indexOfLastModal)
+      : allModals.slice(indexOfFirstModal, indexOfLastModal);
   const totalPages = Math.ceil(filteredModals.length / entriesPerPage);
+  console.log(currentModal);
 
   // Delete Model
   const handleDelete = async (id, title) => {
-    const response = await axios.delete(`https://jpcorporation01-production.up.railway.app/api/model/delete/${id}` , {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const response = await axios.delete(
+      `https://jpcorporation01-production.up.railway.app/api/model/delete/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
 
     if (response.status === 200) {
       alert(`${title} deleted`);
@@ -165,45 +175,34 @@ let allMake;
               </thead>
 
               <tbody>
-                {currentModal &&
-                  currentModal
-                    .filter((modal) =>
-                      modal.model.toLowerCase().includes(search.toLowerCase())
-                    )
-                    .slice(0, entriesPerPage)
-                    .map((modal, index) => (
-                      <tr key={modal._id} className="border-b ">
-                        <td className="p-4 text-center">
-                          {indexOfFirstModal + index + 1}
-                        </td>
+                {currentModal.map((modal, index) => (
+                  <tr key={modal._id} className="border-b ">
+                    <td className="p-4 text-center">
+                      {indexOfFirstModal + index + 1}
+                    </td>
 
-                        <td className="p-4 text-start">{modal.model}</td>
-                        <td className="p-4 text-start">
-                          {makeData.find(
-                            (make) =>
-                              String(make.make_id) === String(modal.make_id)
-                          )?.make || "Unknown"}
-                        </td>
-                        <td className="p-4 justify-center flex space-x-2">
-                          <button
-                            className="text-white p-1 rounded bg-orange-400"
-                            onClick={() =>
-                              handleEdit(modal._id, modal.model)
-                            }
-                          >
-                            <FaEdit size={13} />
-                          </button>
-                          <button
-                            className="text-white p-1 rounded bg-red-500"
-                            onClick={() =>
-                              handleDelete(modal._id, modal.model)
-                            }
-                          >
-                            <FaTrash size={13} />
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    <td className="p-4 text-start">{modal.model}</td>
+                    <td className="p-4 text-start">
+                      {makeData.find(
+                        (make) => String(make.make_id) === String(modal.make_id)
+                      )?.make || "Unknown"}
+                    </td>
+                    <td className="p-4 justify-center flex space-x-2">
+                      <button
+                        className="text-white p-1 rounded bg-orange-400"
+                        onClick={() => handleEdit(modal._id, modal.model)}
+                      >
+                        <FaEdit size={13} />
+                      </button>
+                      <button
+                        className="text-white p-1 rounded bg-red-500"
+                        onClick={() => handleDelete(modal._id, modal.model)}
+                      >
+                        <FaTrash size={13} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>

@@ -49,18 +49,20 @@ const CarListings = () => {
   const allCars = carData;
 
   // Filter search
-  const filteredCars = allCars.map((car) => {
-    car?.title?.toLowerCase()?.includes(search?.toLowerCase());
-  });
+  const filteredCars = allCars.filter((car) => 
+    car?.title?.toLowerCase()?.includes(search?.toLowerCase())
+  );
 
   // Pagination Logic
   const indexOfLastCar = currentPage * entriesPerPage;
   const indexOfFirstCar = indexOfLastCar - entriesPerPage;
-  const currentCars = allCars.slice(indexOfFirstCar, indexOfLastCar);
+  const currentCars = search.trim() !== "" 
+  ? filteredCars.slice(indexOfFirstCar, indexOfLastCar)
+  : allCars.slice(indexOfFirstCar, indexOfLastCar);
   const totalPages = Math.ceil(filteredCars.length / entriesPerPage);
 
   const handleDelete = async (id, title) => {
-    
+   
     if(id) {
       let car_id = carData.map(car => car.list_id);
       let del_id = parseInt(car_id[0])
@@ -186,10 +188,6 @@ const CarListings = () => {
               <tbody>
                 {currentCars &&
                   currentCars
-                    .filter((car) =>
-                      car.title.toLowerCase().includes(search.toLowerCase())
-                    )
-                    .slice(0, entriesPerPage)
                     .map((car, index) => (
                       <tr key={car._id} className="border-b text-sm">
                         <td className="p-2 text-center">

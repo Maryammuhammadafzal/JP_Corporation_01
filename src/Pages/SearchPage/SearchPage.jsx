@@ -7,20 +7,15 @@ import axios from "axios";
 const SearchPage = () => {
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  
+
   const homeMake = searchParams.get("make");
   const homeModel = searchParams.get("model");
   const homeMinYear = searchParams.get("minyear");
   const homeMaxYear = searchParams.get("maxyear");
 
-  console.log(homeMake , homeModel , homeMaxYear , homeMinYear);
-  
-  
   const queryParams = new URLSearchParams(window.location.search);
   const typeFromQuery = queryParams.get("type");
   let type = typeFromQuery?.toUpperCase();
-  console.log(type);
-  
 
   const [makeFilter, setMakeFilter] = useState("");
   const [typeFilter, setTypeFilter] = useState("");
@@ -49,12 +44,11 @@ const SearchPage = () => {
       console.error(error);
     }
   };
-  if(type) {
-  useEffect(()=> {
-    fetchFromTypeApi()
-  }, [])
-}
-  console.log(makeFilter);
+  if (type) {
+    useEffect(() => {
+      fetchFromTypeApi();
+    }, []);
+  }
 
   const query = [];
   if (makeFilter) query.push(`make=${makeFilter}`);
@@ -67,68 +61,64 @@ const SearchPage = () => {
   if (homeMinYear) query.push(`minyear=${homeMinYear}`);
   if (homeMaxYear) query.push(`maxyear=${homeMaxYear}`);
 
-
   const queryString = query.join("&");
-  console.log(queryString || null);
 
   if (queryString !== null) {
-useEffect( () => {
-    // Fetch Search Api
-    let fetchFromSearchApi = async () => {
-      try {
-        
-        const res = await axios.get(
-          `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`);
-        const data = await res.data.data;
-        setFilteredCars(data);
-  
-        console.log(data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchFromSearchApi();
-    
-} , [])
-}
+    useEffect(() => {
+      // Fetch Search Api
+      let fetchFromSearchApi = async () => {
+        try {
+          const res = await axios.get(
+            `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`
+          );
+          const data = await res.data.data;
+          setFilteredCars(data);
 
- // Fetch Search Api
- let fetchFromSearchApi = async () => {
-  try {
-    
-    const res = await axios.get(
-      `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`);
-    const data = await res.data.data;
-    setFilteredCars(data);
-
-    console.log(data);
-  } catch (error) {
-    console.error(error);
+          console.log(data);
+        } catch (error) {
+          console.error(error);
+        }
+      };
+      fetchFromSearchApi();
+    }, []);
   }
-};
 
   // Fetch Search Api
-  let fetchApi = async () => {
+  let fetchFromSearchApi = async () => {
     try {
-      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/carListing/get");
+      const res = await axios.get(
+        `https://jpcorporation01-production.up.railway.app/api/carListing/getByQuery?${queryString}`
+      );
       const data = await res.data.data;
       setFilteredCars(data);
-      setAllCars(data);
-      console.log(data);
     } catch (error) {
       console.error(error);
     }
   };
-  useEffect(()=> {
-    fetchApi
-  }, [])
+
+  // Fetch Search Api
+  let fetchApi = async () => {
+    try {
+      const res = await axios.get(
+        "https://jpcorporation01-production.up.railway.app/api/carListing/get"
+      );
+      const data = await res.data.data;
+      setFilteredCars(data);
+      setAllCars(data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchApi;
+  }, []);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const carsPerPage = 5;
 
   const handleSearch = () => {
-    fetchFromSearchApi()
+    fetchFromSearchApi();
     let results = filteredCars;
 
     if (makeFilter) {
@@ -156,7 +146,6 @@ useEffect( () => {
     setFilteredCars(results);
     setCurrentPage(1);
   };
-  console.log(filteredCars);
 
   // Pagination Logic
   const indexOfLastCar = currentPage * carsPerPage;
@@ -199,138 +188,138 @@ useEffect( () => {
               Select Make
             </option>
             <option
-                          id="1"
-                          value="1"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          AUDI
-                        </option>
-                        <option
-                          id="2"
-                          value="2"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          BENTLEY
-                        </option>
-                        <option
-                          id="3"
-                          value="3"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          BMW
-                        </option>
-                        <option
-                          id="4"
-                          value="4"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          CADILLAC
-                        </option>
-                        <option
-                          id="5"
-                          value="5"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          CHEVROLET
-                        </option>
-                        <option
-                          id="6"
-                          value="6"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          FARRARI
-                        </option>
-                        <option
-                          id="7"
-                          value="7"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          FORD
-                        </option>
-                        <option
-                          id="8"
-                          value="8"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          HINO
-                        </option>
-                        <option
-                          id="9"
-                          value="9"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          HONDA
-                        </option>
-                        <option
-                          id="10"
-                          value="10"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          ISUZU
-                        </option>
-                        <option
-                          id="11"
-                          value="11"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          LEXUS
-                        </option>
-                        <option
-                          id="12"
-                          value="12"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MAZDA
-                        </option>
-                        <option
-                          id="13"
-                          value="13"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MERCEDES-BENZ
-                        </option>
-                        <option
-                          id="14"
-                          value="14"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          MISTUBISHI
-                        </option>
-                        <option
-                          id="15"
-                          value="15"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          NISSAN
-                        </option>
-                        <option
-                          id="16"
-                          value="16"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          PORCH
-                        </option>
-                        <option
-                          id="17"
-                          value="17"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          SUBARO
-                        </option>
-                        <option
-                          id="18"
-                          value="18"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          SUZUKI
-                        </option>
-                        <option
-                          id="19"
-                          value="19"
-                          className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
-                        >
-                          TOYOTA
-                        </option>
+              id="1"
+              value="1"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500  focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              AUDI
+            </option>
+            <option
+              id="2"
+              value="2"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              BENTLEY
+            </option>
+            <option
+              id="3"
+              value="3"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              BMW
+            </option>
+            <option
+              id="4"
+              value="4"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              CADILLAC
+            </option>
+            <option
+              id="5"
+              value="5"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              CHEVROLET
+            </option>
+            <option
+              id="6"
+              value="6"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              FARRARI
+            </option>
+            <option
+              id="7"
+              value="7"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              FORD
+            </option>
+            <option
+              id="8"
+              value="8"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              HINO
+            </option>
+            <option
+              id="9"
+              value="9"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              HONDA
+            </option>
+            <option
+              id="10"
+              value="10"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              ISUZU
+            </option>
+            <option
+              id="11"
+              value="11"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              LEXUS
+            </option>
+            <option
+              id="12"
+              value="12"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              MAZDA
+            </option>
+            <option
+              id="13"
+              value="13"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              MERCEDES-BENZ
+            </option>
+            <option
+              id="14"
+              value="14"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              MISTUBISHI
+            </option>
+            <option
+              id="15"
+              value="15"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              NISSAN
+            </option>
+            <option
+              id="16"
+              value="16"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              PORCH
+            </option>
+            <option
+              id="17"
+              value="17"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              SUBARO
+            </option>
+            <option
+              id="18"
+              value="18"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              SUZUKI
+            </option>
+            <option
+              id="19"
+              value="19"
+              className="appearance-none active:bg-neutral-400 active:text-neutral-500 hover:bg-neutral-400 hover:text-neutral-500 focus:bg-neutral-400 focus:text-neutral-500 text-neutral-800 bg-white p-2"
+            >
+              TOYOTA
+            </option>
           </select>
           {/* Type */}
           <select
@@ -505,12 +494,22 @@ useEffect( () => {
               >
                 <div className="flex items-center gap-4 max-sm:flex-col max-sm:h-auto max-sm:w-full">
                   {/* Placeholder for Car Image */}
-                  <div className="w-[230px] h-[130px] max-sm:h-auto max-sm:w-full bg-amber-200 rounded-xl">
+                  <div className="carImage inline-block relative overflow-hidden w-[270px] h-[150px] max-sm:h-auto max-sm:w-full bg-amber-200 rounded-xl">
                     <img
+                      loading="lazy"
                       src={`https://jpcorporation01-production.up.railway.app/uploads/${car.featured_image}`}
+                      className="cardImage cursor-pointer relative w-full h-full rounded-xl"
                       alt="Car image"
-                      className="w-full h-full rounded-xl"
                     />
+                    <span
+                      className={`absolute top-[10px] -left-[45px] -rotate-45 w-[130px] text-center z-10 ${
+                        car.availability === "Available"
+                          ? "bg-green-600"
+                          : "bg-red-600"
+                      } py-[5px] px-[1vw]  text-white text-[12px]`}
+                    >
+                      {car.availability === "Available" ? "Available" : "Sold"}
+                    </span>
                   </div>
 
                   <div className="max-sm:w-full px-4 flex flex-col">
@@ -525,11 +524,11 @@ useEffect( () => {
                       <span className="bg-[#ff4800] text-white px-2 py-1 rounded text-xs ">
                         {car.year}
                       </span>
-                      <span>{car.mileage}</span>
+                      <span className="max-[330px]:text-[12px]">{car.mileage}</span>
                       <span>•</span>
-                      <span>{car.transmission}</span>
-                      <span>•</span>
-                      <span>{car.fuel_type}</span>
+                      <span className="max-[330px]:text-[12px]">{car.transmission}</span>
+                      <span className="max-[330px]:hidden">•</span>
+                      <span className="max-[330px]:hidden">{car.fuel_type}</span>
                       <span className="max-md:hidden">•</span>
                       <span className="max-md:hidden">{car.drive_type}</span>
                     </div>

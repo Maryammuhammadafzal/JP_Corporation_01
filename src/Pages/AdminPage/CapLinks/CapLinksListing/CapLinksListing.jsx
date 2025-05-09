@@ -17,73 +17,52 @@ const CapLinksListing = () => {
   const [consignee, setConsignee] = useState("");
   const [shippingInformation, setShippingInformation] = useState("");
 
-  const fetchCapLinks = async () => {
-    try {
-      const res = await axios.get("https://jpcorporation01-production.up.railway.app/api/cap/get");
-      const data = await res.data.data;
 
-      setCapLinksData(data);
+useEffect(() => {
+  const fetchAllData = async () => {
+    try {
+      const [capRes, productRes, shippingRes] = await Promise.all([
+        axios.get("https://jpcorporation01-production.up.railway.app/api/cap/get"),
+        axios.get("https://jpcorporation01-production.up.railway.app/api/productInformation/get"),
+        axios.get("https://jpcorporation01-production.up.railway.app/api/shippingInformation/get")
+      ]);
+
+      const caps = capRes.data.data;
+      const products = productRes.data.data;
+      const shippings = shippingRes.data.data;
+
+      console.log("Cap Data", caps);
+      console.log("Product Data", products);
+      console.log("Shipping Data", shippings);
+
+      // 🔁 Merge by cap_id
+      const merged = caps.map(cap => {
+        const product = products.find(p => p.cap_id === parseInt(cap.md5_id)); // assuming md5_id === cap_id
+        const shipping = shippings.find(s => s.cap_id === parseInt(cap.md5_id));
+
+        return {
+          cap_id: parseInt(cap.md5_id),
+          company_name: cap.company_name,
+          forwarder_name: cap.forwarder_name,
+          created_at: cap.created_at,
+          product: product ? {
+            featured_image: product.featured_image,
+            manufacture_year_month: product.manufacture_year_month,
+          } : null,
+          shipping: shipping ? {
+            carrier: shipping.carrier,
+          } : null,
+        };
+      });
+
+      setCapLinksData(merged);
     } catch (error) {
-      console.log("error", error.message);
+      console.log("Error:", error.message);
     }
   };
 
-  useEffect(() => {
-    fetchCapLinks();
-  }, []);
-
-  const fetchProductData = async () => {
-    try {
-      const res = await axios.get(
-        "https://jpcorporation01-production.up.railway.app/api/productInformation/get"
-      );
-      const data = await res.data.data;
-      console.log(data);
-
-      setProductInformationData(data);
-    } catch (error) {
-      console.log("error", error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchProductData();
-  }, []);
-
-  const fetchConsigneeData = async () => {
-    try {
-      const res = await axios.get(
-        "https://jpcorporation01-production.up.railway.app/api/consigneeNotifyPartyInformation/get"
-      );
-      const data = await res.data.data;
-
-      setConsigneeData(data);
-    } catch (error) {
-      console.log("error", error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchConsigneeData();
-  }, []);
-
-  const fetchShippingInformation = async () => {
-    try {
-      const res = await axios.get(
-        "https://jpcorporation01-production.up.railway.app/api/shippingInformation/get"
-      );
-      const data = await res.data.data;
-      console.log("shipping Data", data);
-
-      setShippingInformationData(data);
-    } catch (error) {
-      console.log("error", error.message);
-    }
-  };
-
-  useEffect(() => {
-    fetchShippingInformation();
-  }, []);
+  fetchAllData();
+}, []);
 
   let allCapLinks;
   if (capLinksData) {
@@ -91,36 +70,37 @@ const CapLinksListing = () => {
     allCapLinks = capLinksData;
   }
 
+  console.log(allCapLinks);
+  
   let image = productInformationData.map(
     (product) =>
       product.cap_id === parseInt(allCapLinks.map((capLink) => capLink.md5_id))
   )?.featured_image;
-  console.log(image);
 
   let myCapLinkData = {
     company_name: capLinksData.map((capLink) => capLink.company_name),
     forwarder_name: capLinksData.map((capLink) => capLink.forwarder_name),
   };
-  console.log(myCapLinkData.company_name);
+  
 
-  // Filter search
-  const filteredCapLinks = allCapLinks.map((capLinks) => {
-    capLinks?.capLinksName?.toLowerCase()?.includes(search?.toLowerCase());
-  });
+    // Filter search
+    const filteredCapLinks = allCapLinks.filter((capLinks) => 
+      capLinks?.shipping?.carrier?.toLowerCase()?.includes(search?.toLowerCase())
+    );
 
   // Pagination Logic
   const indexOfLastCapLinks = currentPage * entriesPerPage;
   const indexOfFirstCapLinks = indexOfLastCapLinks - entriesPerPage;
-  const currentCapLinks = filteredCapLinks.slice(
-    indexOfFirstCapLinks,
-    indexOfLastCapLinks
-  );
+  const currentCapLinks = search.trim() !== "" 
+  ?  filteredCapLinks.slice( indexOfFirstCapLinks, indexOfLastCapLinks )
+  : allCapLinks.slice(indexOfFirstCapLinks , indexOfLastCapLinks);
   const totalPages = Math.ceil(filteredCapLinks.length / entriesPerPage);
 
+  
   // Delete data on mount
   const handleDelete = async (id) => {
     let del_id = parseInt(id);
-    console.log(del_id);
+   
     try {
       // setLoading(true);
 
@@ -206,6 +186,7 @@ const CapLinksListing = () => {
   const goToPreviousPage = () => {
     goToPage(currentPage - 1);
   };
+console.log(capLinksData);
 
   return (
     <div className="w-full max-h-auto min-h-screen rounded-tr-[50px] flex flex-col overflow-y-auto ">
@@ -253,85 +234,65 @@ const CapLinksListing = () => {
             <table className="min-w-full p-3 bg-white  rounded-lg shadow-md">
               <thead className="p-3 border-b">
                 <tr>
-                  <th className="p-3 text-sm">S.No</th>
-                  <th className="p-3 text-sm">Image</th>
-                  <th className="p-3 text-sm">Name</th>
-                  <th className="p-3 text-sm">Comp Name</th>
-                  <th className="p-3 text-sm">Forwarder Name</th>
-                  <th className="p-3 text-sm">Manufacture Year/Month</th>
-                  <th className="p-3 text-sm">Uploaded At</th>
-                  <th className="p-3 text-sm">Actions</th>
+                  <th className="p-3 text-sm text-center">S.No</th>
+                  <th className="p-3 text-sm text-center">Image</th>
+                  <th className="p-3 text-sm text-center">Name</th>
+                  <th className="p-3 text-sm text-center">Comp Name</th>
+                  <th className="p-3 text-sm text-center">Forwarder Name</th>
+                  <th className="p-3 text-sm text-center">Manufacture Year/Month</th>
+                  <th className="p-3 text-sm text-center">Uploaded At</th>
+                  <th className="p-3 text-sm text-center">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {capLinksData &&
-                  capLinksData
-                    // .filter((capLink) => capLink?.departure?.carrierNameRef ? capLink?.departure?.carrierNameRef.toLowerCase().includes(search.toLowerCase()) : "")
-                    .slice(0, entriesPerPage)
-                    .map((capLink, index) => (
-                      <tr key={capLink._id} className="border-b text-sm">
-                        {console.log(capLink)}
-                        <td className="p-2 text-center">
+                {currentCapLinks &&
+                  currentCapLinks.map((capLink, index) => (
+                      <tr key={capLink.cap_id} className="border-b text-sm ">
+                        <td className="p-3 text-center">
                           {indexOfFirstCapLinks + index + 1}
                         </td>
-                        <td className="p-2 ">
+                        <td className="p-2 flex justify-center">
                           <img
-                            src={`https://jpcorporation01-production.up.railway.app/uploads/${
-                              productInformationData.find(
-                                (product) =>
-                                  parseInt(product.cap_id) ===
-                                  parseInt(capLink.md5_id)
-                              )?.featured_image
-                            }`}
+                            src={`https://jpcorporation01-production.up.railway.app/uploads/${capLink.product.featured_image}`}
                             alt="capLinks"
-                            className="w-10 h-10 object-cover"
+                            className="w-16 h-12 rounded-lg object-cover"
                           />
                         </td>
-                        {console.log(
-                          productInformationData.find((ship) => ship)
-                        )}
-                        <td className="p-2 text-start ">
+                       
+                        <td className="p-3 text-center text-[12px] ">
                           {
-                            shippingInfortionData.find(
-                              (ship) =>
-                                parseInt(ship.cap_id) ===
-                                parseInt(capLink.md5_id)
-                            )?.carrier
+                            capLink.shipping.carrier
                           }
                         </td>
-                        <td className="p-2 text-center">
+                        <td className="p-3 text-center text-[12px]">
                           {capLink.company_name}
                         </td>
-                        <td className="p-2 text-center">
+                        <td className="p-3 text-center text-[12px]">
                           {capLink.forwarder_name}
                         </td>
-                        <td className="p-2 text-center">
+                        <td className="p-3 text-center text-[12px]">
                           {
-                            productInformationData.find(
-                              (product) =>
-                                parseInt(product.cap_id) ===
-                                parseInt(capLink.md5_id)
-                            )?.manufacture_year_month
+                            capLink.product.manufacture_year_month
                           }
                         </td>
-                        <td className="p-2 text-center">
+                        <td className="p-3 text-center text-[12px]">
                           {capLink.created_at.slice(0, 10)}
                         </td>
-                        <td className="p-2 justify-center flex space-x-2">
+                        <td className=" px-3 justify-center  flex space-x-2">
                           <button
-                            className="text-white p-1 rounded bg-emerald-500 "
+                            className="text-white py-1 px-[5px] w-[25px] h-[25px] rounded text-center bg-emerald-500 cursor-pointer"
                             onClick={() => handleEdit(parseInt(capLink.md5_id))}
                           >
                             <FaEye size={15} />
                           </button>
                           <button
-                            className="text-white p-1 rounded bg-orange-400"
+                            className="text-white py-1 px-[5px] w-[25px] h-[25px] rounded text-center text-[10px] bg-orange-400 cursor-pointer"
                             onClick={() => handleEdit(parseInt(capLink.md5_id))}
                           >
                             <FaEdit size={15} />
                           </button>
                           <button
-                            className="text-white p-1 rounded bg-red-500 cursor-pointer"
+                            className="text-white py-1 px-[5px] w-[25px] h-[25px] rounded text-center text-[10px] bg-red-500 cursor-pointer"
                             onClick={() => handleDelete(capLink.md5_id)}
                           >
                             <FaTrash size={15} />

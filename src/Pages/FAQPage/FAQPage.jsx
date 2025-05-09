@@ -6,6 +6,7 @@ import FAQQuestion from '../../Components/FAQQuestion/FAQQuestion';
 import Button from '../../Components/Button/Button';
 import { useNavigate } from 'react-router-dom';
 
+import {faqs} from "../../Components/FAQsData.js"
 
 const FAQPage = () => {
  
@@ -24,14 +25,9 @@ const FAQPage = () => {
                 <Heading text="Frequently Asked Questions" />
               </div>
           <div className="aboutcontent max-[1150px]:w-full w-[95%] h-auto justify-evenly items-center flex flex-wrap gap-3">
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
-         <FAQQuestion/>
+         {faqs.map((faq, index) => (
+        <FAQQuestion key={index} question={faq.question} answer={faq.answer} />
+      ))}
           </div>
           <div className="button w-full h-auto flex justify-center items-center p-5">
 <Button text="Learn more" onClick={HandleLearnMoreClick}/>

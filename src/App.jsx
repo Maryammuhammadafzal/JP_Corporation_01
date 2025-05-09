@@ -16,7 +16,7 @@ import ProductPreview from "./Components/ProductPreview/ProductPreview";
 
 function App() {
   return (
-    <div className="w-full min-h-screen bg-gray-100 flex">
+    <div className="w-full min-h-screen bg-gray-100 flex font-">
       <BrowserRouter>
         <Routes>
           <Route index element={<Home />} />

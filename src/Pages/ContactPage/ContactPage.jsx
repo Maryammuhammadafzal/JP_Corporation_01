@@ -53,7 +53,7 @@ const ContactPage = () => {
 
           <div className="socialIcon flex w-[90%] gap-4 my-5 max-[1000px]:my-2 max-[360px]:w-full max-[360px]:items-center  tracking-wide  flex-wrap h-auto">
             <div className="facebook shakeAnimation bg-blue-900 w-[60px] h-[60px] shadow-md rounded flex justify-center items-center ">
-            <a class="elementor-icon elementor-social-icon elementor-social-icon-facebook elementor-animation-buzz elementor-repeater-item-1e94673" target="_blank">
+            <a href="#" class="elementor-icon elementor-social-icon elementor-social-icon-facebook elementor-animation-buzz elementor-repeater-item-1e94673" target="_blank">
 																	<FaFacebookF  size={25} color="white"/>
 																		</a>
             </div>

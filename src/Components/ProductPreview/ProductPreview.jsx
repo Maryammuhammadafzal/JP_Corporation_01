@@ -35,7 +35,9 @@ const ProductPreview = () => {
         );
         const car = await res.data.data;
         console.log(car);
-        setCardData(car);
+        if (car) {
+          setCardData(car);
+        }
       } catch (err) {
         console.error(err);
       }
@@ -44,6 +46,7 @@ const ProductPreview = () => {
   }, [cardId]);
 
   console.log(cardData);
+  let id = cardData.list_id;
 
   // Fetch Models
   const fetchModalData = async () => {
@@ -73,7 +76,7 @@ const ProductPreview = () => {
     fetchMakeData();
   }, []);
 
-  let id = cardData.list_id;
+  
 
   //Fetch Attachment Image
   useEffect(() => {
