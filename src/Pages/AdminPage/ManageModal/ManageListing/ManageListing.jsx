@@ -3,7 +3,7 @@ import { FaEdit, FaTrash } from "react-icons/fa";
 import axios from "axios";
 import Copyright from "../../../../Components/Copyright/Copyright";
 import Pagination from "../../../../Components/Pagination/Pagination";
-import { model } from "mongoose";
+
  const token = localStorage.getItem("adminToken");
 const ManageListing = () => {
   const [search, setSearch] = useState("");
