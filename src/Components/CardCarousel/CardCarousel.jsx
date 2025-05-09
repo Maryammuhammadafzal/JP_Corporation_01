@@ -113,7 +113,7 @@ fetchCarData()
                
                   <img
                     loading="lazy"
-                    src={`../../../../admin/public/uploads/${featured_image}`}
+                    src={`https://jpcorporation01-production.up.railway.app/uploads/${featured_image}`}
                     alt={title}
                     className="cardImage w-full h-[180px] object-cover"
                   />
