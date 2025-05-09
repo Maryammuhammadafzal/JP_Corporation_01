@@ -35,7 +35,7 @@ const allowedOrigins = [
   "http://localhost:5000",
   "http://localhost:8000",
   "http://localhost:8800",
-  // "https://jp-corporation-o2co.vercel.app/"
+  "https://jp-corporation-01.vercel.app"
 ];
 const corsOptions = {
   origin: function (origin, callback) {
@@ -61,10 +61,7 @@ mongoose.connect(process.env.MONGO_URI)
 .then(() => console.log("MongoDB Connected" ,process.env.MONGO_URI))
 .catch((err) => console.log(err));
 
-// app.use("/api/cards", carRoutes);
-// app.use("/api/dashboard" , dashboardRoutes)
-// app.use("/api/car" , carRoutes)
-// app.use("/api/contact" , contactRoutes)
+
 app.use("/api/admin" , adminRoutes)
 app.use("/api/carListing" , carListingRoutes);
 app.use("/api/model" , modelRoutes)
