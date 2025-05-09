@@ -17,7 +17,7 @@ let navigate = useNavigate()
         <h5 className="subheading text-xl text-orange-600 ">Handly Picked</h5>
         <Heading text="Featured Listings" />
       </div>
-<div className="cardSection w-full my-8 max-[600px]:my-4 h-auto gap-4 max-[600px]:justify-center flex justify-start items-center flex-wrap">
+<div className="cardSection w-full my-8 max-[600px]:my-4 h-auto gap-4 max-[700px]:justify-center flex justify-start items-center flex-wrap">
 <Card/>
 </div>
 <div className="viewSection flex justify-between max-[600px]:flex-col max-[600px]:gap-5 max-[600px]:mt-0  mt-3 w-full h-auto p-3 items-center">

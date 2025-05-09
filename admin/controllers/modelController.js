@@ -78,18 +78,22 @@ export const addModal = async (req, res) => {
   try {
 
     const { make_id, model } = req.body;
+console.log(make_id , model);
 
     if (!make_id || !model) {
+      console.log("All fields are required");
+      
       return res.status(400).json({ message: "All fields are required" });
     }
 
     const count = await Model.countDocuments();
 
     const new_modal = new Model({
-      model_id: count + 1,
+      model_id: count + 1 +1,
       model,
       make_id
     });
+
 
     await new_modal.save();
     console.log(new_modal);
@@ -97,7 +101,7 @@ export const addModal = async (req, res) => {
     res.status(201).json({ message: "Added Model", data: new_modal });
 
   } catch (error) {
-
+console.log(error.message);
     res.status(500).json({ message: "Server Error", error: error.message });
   }
 };

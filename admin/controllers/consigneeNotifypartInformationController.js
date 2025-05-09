@@ -62,7 +62,7 @@ export const addConsigneeNotifypartInformation = async (req, res) => {
 // Get Consignee & Notify Party by cap_id
 export const getConsigneeNotifypartInformation = async (req, res) => {
     try {
-        const cap_id = req.params.cap_id;
+        const cap_id = req.params.id;
 
         const data = await ConsigneeNotifypartInformation.findOne({ cap_id });
 
@@ -80,8 +80,10 @@ export const getConsigneeNotifypartInformation = async (req, res) => {
 export const getConsigneeNotifypartInformationById = async (req, res) => {
     try {
         const cap_id = req.params.id;
+console.log(cap_id);
 
         const data = await ConsigneeNotifypartInformation.findOne({ cap_id });
+console.log(data);
 
         if (!data) {
             return res.status(404).json({ message: "No data found for this cap_id" });
@@ -89,6 +91,8 @@ export const getConsigneeNotifypartInformationById = async (req, res) => {
 
         res.status(200).json({ message: "Data retrieved successfully", data });
     } catch (error) {
+        console.log(error.message);
+        
         res.status(400).json({ message: "Failed to retrieve data", error: error.message });
     }
 };
@@ -96,21 +100,28 @@ export const getConsigneeNotifypartInformationById = async (req, res) => {
 // Update Consignee & Notify Party by cap_id
 export const updateConsigneeNotifypartInformation = async (req, res) => {
     try {
-        const cap_id = req.params.cap_id;
+        const cap_id = req.params.id;
         const updates = req.body;
+        console.log(cap_id , req.body);
+        
 
         const updated = await ConsigneeNotifypartInformation.findOneAndUpdate(
             { cap_id },
             updates,
             { new: true }
         );
+        console.log(updated);
+        
 
         if (!updated) {
+            console.log("No data found to update for this cap_id");
+            
             return res.status(404).json({ message: "No data found to update for this cap_id" });
         }
 
         res.status(200).json({ message: "Consignee and Notify Party updated successfully", data: updated });
     } catch (error) {
+        console.log(error.message);
         res.status(400).json({ message: "Failed to update data", error: error.message });
     }
 };
@@ -118,9 +129,11 @@ export const updateConsigneeNotifypartInformation = async (req, res) => {
 // Delete by cap_id
 export const deleteConsigneeNotifypartInformation = async (req, res) => {
     try {
-        const { cap_id } = req.params;
+        const {id } = req.params;
+console.log(id);
 
-        const deleted = await ConsigneeNotifypartInformation.findOneAndDelete({ cap_id });
+        const deleted = await ConsigneeNotifypartInformation.findOneAndDelete({ cap_id : id });
+console.log(deleted);
 
         if (!deleted) {
             return res.status(404).json({ message: "Consignee and Notify Party not found" });
@@ -128,6 +141,8 @@ export const deleteConsigneeNotifypartInformation = async (req, res) => {
 
         res.status(200).json({ message: "Consignee and Notify Party deleted successfully", data: deleted });
     } catch (error) {
+        console.log(error.message);
+        
         res.status(400).json({ message: "Failed to delete data", error: error.message });
     }
 };

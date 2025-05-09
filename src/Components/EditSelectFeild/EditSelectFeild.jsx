@@ -1,6 +1,7 @@
 import React from "react";
 
-const EditSelectFeild = ({ label, id, options, value, onChange, required }) => (
+const EditSelectFeild = React.forwardRef(
+  ({ label, id, options, defaultValue, onChange, required } , ref) => (
   <div className="flex flex-col w-full gap-2 h-auto">
     <label htmlFor={id} className="w-full">
       <p>
@@ -9,7 +10,8 @@ const EditSelectFeild = ({ label, id, options, value, onChange, required }) => (
       <select
         id={id}
         className="appearance-none mt-2 w-full border-neutral-500 border rounded-md p-2 outline-0 text-gray-400"
-        value={value}
+        ref={ref}
+        defaultValue={defaultValue}
         onChange={onChange}
       >
         <option value="" disabled>
@@ -27,6 +29,6 @@ const EditSelectFeild = ({ label, id, options, value, onChange, required }) => (
       </select>
     </label>
   </div>
+)
 );
-
 export default EditSelectFeild;

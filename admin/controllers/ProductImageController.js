@@ -46,8 +46,10 @@ export const getProductImage = async (req, res) => {
 export const getProductImageById = async (req, res) => {
     try {
         const productID = req.params.productID;
-        
+        console.log(productID);
+
         const images = await ProductImage.find({ productID: parseInt(productID) });
+        console.log(images);
 
         if (!images || images.length === 0) {
             return res.status(404).json({ message: "No images found for this product" });
@@ -55,6 +57,8 @@ export const getProductImageById = async (req, res) => {
 
         res.status(200).json({ message: "Product images retrieved successfully", data: images });
     } catch (error) {
+        console.log(error.message);
+
         res.status(500).json({ message: "Failed to get product images", error: error.message });
     }
 };
@@ -64,31 +68,41 @@ export const updateProductImage = async (req, res) => {
     try {
         const productID = req.params.productID;
         const files = req.files;
+        console.log(productID, files);
+
 
         if (!productID) {
+            console.log("Product ID is required");
+
             return res.status(400).json({ message: "Product ID is required" });
         }
 
-        await ProductImage.deleteMany({ productID: parseInt(productID) });
-
         if (files && files.length > 0) {
-            const count = await ProductImage.countDocuments();
+            console.log(files);
+
+            let deleteImages = await ProductImage.deleteMany({ productID: parseInt(productID) });
+            console.log(deleteImages);
+
 
             const updatedImages = files.map((file, index) => ({
-                img_id: count + index + 1,
                 img_url: file.filename,
                 productID: parseInt(productID),
             }));
+            console.log(updatedImages);
 
             const added = await ProductImage.insertMany(updatedImages);
+            console.log(added);
 
             return res.status(200).json({ message: "Product images updated successfully", data: added });
         }
 
         const existingImages = await ProductImage.find({ productID: parseInt(productID) });
+        console.log(existingImages);
 
         res.status(200).json({ message: "No new images uploaded. Returning existing images.", data: existingImages });
     } catch (error) {
+        console.log(error.message);
+
         res.status(500).json({ message: "Failed to update product images", error: error.message });
     }
 };
@@ -97,11 +111,16 @@ export const updateProductImage = async (req, res) => {
 export const deleteProductImage = async (req, res) => {
     try {
         const productID = req.params.productID;
+        console.log(productID);
 
-        await ProductImage.deleteMany({ productID: parseInt(productID) });
+        let deleteImages = await ProductImage.deleteMany({ productID: parseInt(productID) });
+        console.log(deleteImages);
 
-        res.status(200).json({ message: "Product images deleted successfully" });
+
+        res.status(200).json({ message: "Product images deleted successfully", data: deleteImages });
     } catch (error) {
+        console.log(error.message);
+
         res.status(500).json({ message: "Failed to delete product images", error: error.message });
     }
 };

@@ -117,28 +117,37 @@ const CapLinksListing = () => {
   );
   const totalPages = Math.ceil(filteredCapLinks.length / entriesPerPage);
 
-  // Delete Cap Link
+  // Delete data on mount
   const handleDelete = async (id) => {
     let del_id = parseInt(id);
+    console.log(del_id);
     try {
-      const productImageResponse = await axios.delete(
-        `http://localhost:5000/api/productImage/delete/${del_id}`
-      );
-      const shippingResponse = await axios.delete(
-        `http://localhost:5000/api/shippingInformation/delete/${del_id}`
-      );
-      const consigneeResponse = await axios.delete(
-        `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${del_id}`
-      );
-      const productInformationResponse = await axios.delete(
-        `http://localhost:5000/api/productInformation/delete/${del_id}`
-      );
-      const documentInformationResponse = await axios.delete(
-        `http://localhost:5000/api/documentInformation/delete/${del_id}`
-      );
-      const capResponse = await axios.delete(
-        `http://localhost:5000/api/cap/delete/${del_id}`
-      );
+      // setLoading(true);
+
+      // Fetch all data in parallel
+      const [
+        capResponse,
+        productInformationResponse,
+        consigneeResponse,
+        documentInformationResponse,
+        shippingResponse,
+        productImageResponse,
+      ] = await Promise.all([
+        axios.delete(`http://localhost:5000/api/productImage/delete/${del_id}`),
+        axios.delete(
+          `http://localhost:5000/api/shippingInformation/delete/${del_id}`
+        ),
+        axios.delete(
+          `http://localhost:5000/api/consigneeNotifyPartyInformation/delete/${del_id}`
+        ),
+        axios.delete(
+          `http://localhost:5000/api/productInformation/delete/${del_id}`
+        ),
+        axios.delete(`http://localhost:5000/api/cap/delete/${del_id}`),
+        axios.delete(
+          `http://localhost:5000/api/documentInformation/delete/${del_id}`
+        ),
+      ]);
 
       if (
         shippingResponse.status === 200 &&
@@ -148,17 +157,21 @@ const CapLinksListing = () => {
         consigneeResponse.status === 200 &&
         productImageResponse.status === 200
       ) {
-        alert(`${title} deleted`);
+        alert(`deleted`);
         fetchCapLinks();
         fetchConsigneeData();
         fetchConsigneeData();
         fetchProductData();
         fetchShippingInformation();
       }
-    } catch (error) {
-      console.log("Delete Error", error.message);
+
+      // setLoading(false);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      // setLoading(false);
     }
   };
+  
 
   const handleEdit = async (id) => {
     localStorage.setItem("EditCapLinksId", id);

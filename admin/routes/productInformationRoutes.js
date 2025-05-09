@@ -7,7 +7,7 @@ import productfeaturedImageUpload from "../middlewares/multer/productFeaturedIma
 router.post("/add" , verifyToken ,productfeaturedImageUpload.single("featured_image"), addProductInformation);
 router.get("/get" , getProductInformation);
 router.get("/getbyid/:id" , getProductInformationById);
-router.put("/update/:id" , updateProductInformation);
+router.put("/update/:id" , verifyToken , productfeaturedImageUpload.single("featured_image"), updateProductInformation);
 router.delete("/delete/:id" , deleteProductInformation);
 
 // Export Router

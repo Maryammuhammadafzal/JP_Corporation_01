@@ -4,18 +4,18 @@ import verifyToken from "../middlewares/tokenVerify.js";
 export const addImage = async (req, res) => {
         try {
                 // Get Car Id 
-                const { car_id } = req.body;
+                const id = req.body.car_id;
 
                 // Get Files / Images
                 const files = req.files;
 
                 const count = await Image.countDocuments();
-
+                let car_id = parseInt(id)
                 // Creating images data 
                 const images = files.map((file, index) => ({
                         images: file.filename,
                         order_id: index + 1,
-                        img_id: count + index + 1,
+                        img_id: count + index + 1 + 1,
                         car_id,
                 }));
                 console.log(...images);
@@ -37,7 +37,7 @@ export const getImage = async (req, res) => {
         try {
                 const id = req.params.car_id
                 console.log(id);
-                const get_images = await Image.find({ car_id: id });
+                const get_images = await Image.find({ car_id: parseInt(id) });
                 if (!get_images) {
                         res.status(400).json({ message: "Not found" })
                 }
@@ -51,68 +51,71 @@ export const getImage = async (req, res) => {
 
 
 export const updateImage = async (req, res) => {
-        try {
-                const car_id = req.params.car_id;
+  try {
+    const car_id = parseInt(req.params.car_id);
+    const files = req.files;
 
-                if (!car_id) {
-                        return res.status(400).json({ message: "Car ID is required" });
-                }
+    if (!car_id) {
+      return res.status(400).json({ message: "Car ID is required" });
+    }
 
-                const files = req.files;
-                let updatedImages = [];
+    if (!files || files.length === 0) {
+      const existingImages = await Image.find({ car_id }).sort({ order_id: 1 });
+      return res.status(200).json({
+        message: "No new images uploaded. Returning existing images.",
+        data: existingImages,
+      });
+    }
 
-                if (files && files.length > 0) {
-                        // Step 1: Delete previous images
-                        await Image.deleteMany({ car_id: parseInt(car_id) });
+    // Get current images for this car
+    const existingImages = await Image.find({ car_id }).sort({ order_id: 1 });
 
-                        const lastImage = await Image.find({ car_id: parseInt(car_id) })
-                                .sort({ img_id: -1 }) 
-                                .limit(1);
-                                console.log(lastImage);
-                                
+    const updatedImages = [];
 
-                        let lastImgId = lastImage.length > 0 ? lastImage[0].img_id : 0;
-                        console.log("last Image id" , lastImgId);
-                        
+    // Loop over new files and update existing image documents
+    for (let i = 0; i < files.length; i++) {
+      if (existingImages[i]) {
+        const updated = await Image.findOneAndUpdate(
+          { _id: existingImages[i]._id },
+          {
+            images: files[i].filename, // update image filename
+            order_id: i + 1, // update order_id
+          },
+          { new: true }
+        );
+        updatedImages.push(updated);
+      } else {
+        // If new file but no existing record, ignore or handle accordingly
+        console.warn(`Extra image uploaded: ${files[i].filename} — no matching DB record.`);
+      }
+    }
 
-                        // Step 2: Get total count of documents for img_id generation
-                        const count = await Image.countDocuments();
-                        console.log(count);
-
-                        // Step 3: Add new images
-                        updatedImages = files.map((file, index) => ({
-                                img_id: count + index + 1,
-                                images: file.filename,
-                                order_id: index + 1,
-                                car_id: parseInt(car_id),
-                        }));
-
-                        // Step 4: Save to DB
-                        const addedImages = await Image.insertMany(updatedImages);
-
-                        return res.status(200).json({
-                                message: "Images updated successfully with new files",
-                                data: addedImages,
-                        });
-                } else {
-                        // No new files, just return current images
-                        const existingImages = await Image.find({ car_id: parseInt(car_id) });
-
-                        return res.status(200).json({
-                                message: "No new images uploaded. Returning existing images.",
-                                data: existingImages,
-                        });
-                }
-        } catch (error) {
-                console.error("Update Image Error:", error.message);
-                res.status(500).json({ message: "Failed to update images", error: error.message });
-        }
+    res.status(200).json({
+      message: "Images updated successfully (only filename and order_id changed)",
+      data: updatedImages,
+    });
+  } catch (error) {
+    console.error("Update Image Error:", error.message);
+    res.status(500).json({ message: "Failed to update images", error: error.message });
+  }
 };
+
 
 export const deleteImage = async (req, res) => {
         try {
+                const car_id = req.params.car_id;
+                console.log(car_id);
+                
+                let deleteImages = await Image.deleteMany({ car_id });
+                console.log(deleteImages);
+
+
+                res.status(200).json({ message: "images deleted successfully", data: deleteImages });
 
         } catch (error) {
+                console.log(error.message);
+
+                res.status(500).json({ message: "Failed to delete product images", error: error.message });
 
         }
 }

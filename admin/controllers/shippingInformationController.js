@@ -71,9 +71,11 @@ export const addShippingInformation = async (req, res) => {
     export const getShippingInformationById = async (req, res) => {
         try {
         const cap_id = req.params.id;
+    console.log(cap_id);
     
             // Get shipping information with pagination
             const get_shipping_data = await ShippingInformation.findOne({cap_id})
+    console.log(get_shipping_data);
     
             res.status(200).json({ message: "Success", data: get_shipping_data });
     
@@ -88,18 +90,25 @@ export const addShippingInformation = async (req, res) => {
         try {
             const { id } = req.params;
             const { carrier, dep_vessel_name, port_of_loading, etd, arrive_vessel_name, port_of_discharge, eta, enrollment, cap_id } = req.body;
+    console.log(id , carrier);
     
             // Check if required fields are provided
-            if (!carrier || !dep_vessel_name || !port_of_loading || !etd || !arrive_vessel_name || !port_of_discharge || !eta) {
+            if (!carrier) {
+                console.log("All required fields must be provided" );
+                
                 return res.status(400).json({ message: "All required fields must be provided" });
             }
+
     
             const file = req.files;
     
             // Get existing shipping information
             const existingShippingInformation = await ShippingInformation.findOne({ cap_id: id });
+    console.log(existingShippingInformation);
     
             if (!existingShippingInformation) {
+                console.log("Shipping Information not found");
+                
                 return res.status(404).json({ message: "Shipping Information not found" });
             }
     
@@ -109,6 +118,7 @@ export const addShippingInformation = async (req, res) => {
             let export_certificate = file.export_certificate ? file.export_certificate[0].filename : existingShippingInformation.export_certificate;
             let english_export_certificate = file.english_export_certificate ? file.english_export_certificate[0].filename : existingShippingInformation.english_export_certificate;
             let invoice = file.invoice ? file.invoice[0].filename : existingShippingInformation.invoice;
+    console.log(bl , inspection , export_certificate , english_export_certificate , invoice);
     
             // Update the shipping information with the new or existing data
             const updated_shipping_information = await ShippingInformation.findOneAndUpdate(
@@ -131,10 +141,15 @@ export const addShippingInformation = async (req, res) => {
                 },
                 { new: true } // Return the updated document
             );
+            console.log(updateShippingInformation);
+            
     
             if (!updated_shipping_information) {
+                console.log("Failed to update shipping information");
+                
                 return res.status(404).json({ message: "Failed to update shipping information" });
             }
+
     
             res.status(200).json({ message: "Shipping Information Updated Successfully", data: updated_shipping_information });
     
@@ -151,6 +166,7 @@ export const addShippingInformation = async (req, res) => {
     
         try {
             const delete_shipping_information = await ShippingInformation.findOneAndDelete({ cap_id: id });
+    console.log(delete_shipping_information);
     
             if (!delete_shipping_information) {
                 console.log("Shipping information not found");

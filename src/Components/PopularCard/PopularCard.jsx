@@ -55,9 +55,15 @@ fetchCarData()
               className="cardImage relative max-[1160px]:h-[200px] max-[900px]:h-[230px] max-[600px]:h-[280px] w-full h-[200px] rounded-2xl"
               alt="Card image"
             />
-            <span className="absolute top-[15px] -left-[30px] -rotate-45 w-[130px] text-center z-10 bg-green-600 py-[1vh] px-[1vw] text-white text-[12px]" >
-              {availability}
-            </span>
+            <span
+                className={`absolute top-[15px] -left-[30px] -rotate-45 w-[130px] text-center z-10 ${
+                  availability === "Available"
+                    ? "bg-green-600"
+                    : "bg-red-600"
+                } py-[5px] px-[1vw]  text-white text-[12px]`}
+              >
+                {availability === "Available" ? "Available" : "Sold"}
+              </span>
           </div>
           <div className="cardContent w-full h-auto flex flex-col">
             <div className="cardbody w-full h-auto flex p-4 gap-2 flex-col border-b border-b-gray-600 justify-center">
@@ -71,9 +77,9 @@ fetchCarData()
               <button className="w-fit h-fit py-2 px-3 font-semibold text-md text-white bg-orange-600 rounded-lg">
                 {year}
               </button>
-              <p className="miles text-gray-500">{mileage} miles</p>
-              <p className="transmission text-gray-500">{transmission}</p>
-              <p className="transmission text-gray-500">{fuel_type}</p>
+              <p className=" text-[12px] miles text-gray-500">{mileage} miles</p>
+              <p className=" text-[12px] transmission text-gray-500">{transmission}</p>
+              <p className=" text-[12px] transmission text-gray-500">{fuel_type}</p>
             </div>
           </div>
         </div>

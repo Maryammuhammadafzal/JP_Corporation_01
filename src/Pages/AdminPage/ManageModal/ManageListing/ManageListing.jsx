@@ -4,7 +4,7 @@ import axios from "axios";
 import Copyright from "../../../../Components/Copyright/Copyright";
 import Pagination from "../../../../Components/Pagination/Pagination";
 import { model } from "mongoose";
-
+ const token = localStorage.getItem("adminToken");
 const ManageListing = () => {
   const [search, setSearch] = useState("");
   const [entriesPerPage, setEntriesPerPage] = useState(10);
@@ -65,7 +65,7 @@ let allMake;
   const handleDelete = async (id, title) => {
     const response = await axios.delete(`http://localhost:5000/api/model/delete/${id}` , {
       headers: {
-        Authorization: `Barear ${token}`,
+        Authorization: `Bearer ${token}`,
       },
     });
 

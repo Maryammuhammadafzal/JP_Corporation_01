@@ -56,7 +56,7 @@ const Card = () => {
           <div
             key={_id}
             onClick={() => handleCardClick(_id)}
-            className="card w-[23%]  cursor-pointer max-[1160px]:w-[32%] max-[900px]:w-[49%] max-[600px]:w-[95%] max-[360px]:w-full h-auto bg-gray-800 rounded-2xl text-white flex flex-col"
+            className="card w-[23%]  cursor-pointer max-[1160px]:w-[32%] max-[900px]:w-[46%] max-[600px]:w-[95%] max-[360px]:w-full h-auto bg-gray-800 rounded-2xl text-white flex flex-col"
           >
             <div className="carImage inline-block relative overflow-hidden w-auto h-auto">
               <img
@@ -89,9 +89,9 @@ const Card = () => {
                 <button className="w-fit h-fit py-1 px-2 font-semibold text-md text-white bg-orange-600 rounded-lg">
                   {year}
                 </button>
-                <p className="miles text-gray-500">{mileage} miles</p>
-                <p className="transmission text-gray-500">{transmission}</p>
-                <p className="transmission text-gray-500">{fuel_type}</p>
+                <p className="text-[12px] miles text-gray-500">{mileage} miles</p>
+                <p className="text-[12px] transmission text-gray-500">{transmission}</p>
+                <p className="text-[12px] transmission text-gray-500">{fuel_type}</p>
               </div>
             </div>
           </div>

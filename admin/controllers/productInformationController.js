@@ -93,6 +93,7 @@ export const getProductInformationById = async (req, res) => {
 export const updateProductInformation = async (req, res) => {
         try {
                 const { id } = req.params;
+console.log(id , req.body);
 
                 const existingProduct = await ProductInformation.findOne({ cap_id: id });
 
@@ -119,7 +120,11 @@ export const updateProductInformation = async (req, res) => {
                 } = req.body;
 
                 const parsedDoors = isNaN(parseInt(doors)) ? existingProduct.doors : parseInt(doors);
+                console.log(parsedDoors);
+                console.log(req.file);
+                
                 const featured_image = req.file ? req.file.filename : existingProduct.featured_image;
+console.log(featured_image);
 
                 const updatedProduct = await ProductInformation.findOneAndUpdate(
                         { cap_id: id },
@@ -143,6 +148,8 @@ export const updateProductInformation = async (req, res) => {
                         },
                         { new: true }
                 );
+                console.log(updatedProduct);
+                
 
                 res.status(200).json({ message: "Product information updated successfully", data: updatedProduct });
         } catch (error) {
@@ -155,12 +162,16 @@ export const updateProductInformation = async (req, res) => {
 export const deleteProductInformation = async (req, res) => {
         try {
                 const { id } = req.params;
+console.log(id);
 
                 const deletedProduct = await ProductInformation.findOneAndDelete({ cap_id: id });
+console.log(deletedProduct);
 
                 if (!deletedProduct) {
+                        console.log("Product information not found");
                         return res.status(404).json({ message: "Product information not found" });
                 }
+
 
                 res.status(200).json({ message: "Product information deleted successfully", data: deletedProduct });
         } catch (error) {

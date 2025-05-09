@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react";
 // import Button from "../Button/Button";
 import { useNavigate } from "react-router-dom";
@@ -13,32 +14,31 @@ const ContactForm = () => {
   });
 
   const handleChange = (e) => {
-        console.log(e.target.value);
+    console.log(e.target.value);
     const { name, value } = e.target;
-    console.log(name , value);
-    
+    console.log(name, value);
+
     setFormData((prevState) => ({
       ...prevState,
       [name]: value,
     }));
     console.log(formData);
-    
   };
   console.log(formData);
-  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(formData.name ,
-        formData.email ,
-        formData.phone ,
-        formData.message);
-    
+    console.log(
+      formData.name,
+      formData.email,
+      formData.phone,
+      formData.message
+    );
+
     if (
       !formData.name ||
       !formData.email ||
-      !formData.phone ||
       !formData.message
     ) {
       console.log("All fields are required!");
@@ -48,20 +48,25 @@ const ContactForm = () => {
     setLoading(true);
 
     try {
-      const response = await fetch(`http://localhost:5000/api/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+      let response = await axios.post(
+        `http://localhost:5000/api/contactUs/add`,
+        formData,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      // const response = await fetch(`http://localhost:5000/api/contact`, {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify(formData),
+      // });
 
-      const result = await response.json();
       setLoading(false);
-
-      if (!response.ok) {
-        throw new Error(result.error || "Failed to send message");
-      }
-
-      alert("Message Sent")
+ 
+      console.log("message Sent ", response.data);
+      alert("Message Sent");
       setFormData({ name: "", email: "", message: "", phone });
     } catch (error) {
       setLoading(false);

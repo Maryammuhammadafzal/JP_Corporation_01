@@ -1,0 +1,26 @@
+// //Another way of Generating password
+
+// var passwordLength = +prompt('Enter a length of the password');
+// var specialChar = "~!@#$%^&*()_-+=`|{}[]:;'<>,./?|";
+// // console.log(specialChar.length)
+
+// for (var i = 0; i < passwordLength; i++){
+//     var randomNumber = Math.floor(Math.random()*10000) 
+//     for(var j = 0; j < specialChar.length; j++){
+//         var randomSpecialChar = Math.random()*specialChar.length;
+//         ++j
+//         break;
+//     }
+//     console.log(randomNumber + specialChar[i])
+//     break;
+// }
+// // console.log(randomNumber )
+// // var randomPassword = Math.random()*4;
+// // var fixedRandomPassword = randomPassword.toFixed(passwordLength-1) 
+// // if(i === 0){
+
+
+
+ // console.log(fixedRandomPassword + specialChar[i])
+    // specialCharNum++
+    // } 

@@ -14,15 +14,16 @@ const contactUsSchema = new mongoose.Schema({
     type: String,
     default: null
   },
-  message: {
-    type: String,
-    required: true,
-    maxlength: 255
-  }
+  message:  [
+		{
+			text: { type: String, required: true },
+			sentAt: { type: Date, default: Date.now },
+		},
+	],
 }, {
   timestamps: true 
 });
 
-const ContactUs = mongoose.model('ContactUs', contactUsSchema);
+const ContactUs = mongoose.model('ContactUs', contactUsSchema , "contact_us");
 
 export default ContactUs;

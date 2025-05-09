@@ -13,7 +13,13 @@ router.post("/add", verifyToken, downloadImages.fields([
 ]), addShippingInformation);
 router.get("/get", getShippingInformation);
 router.get("/getbyid/:id", getShippingInformationById);
-router.put("/update/:id", updateShippingInformation);
+router.put("/update/:id", verifyToken, downloadImages.fields([
+        { name: "bl" },
+        { name: "inspection" },
+        { name: "export_certificate" },
+        { name: "english_export_certificate" },
+        { name: "invoice" }
+]), updateShippingInformation);
 router.delete("/delete/:id", deleteShippingInformation);
 
 // Export Router

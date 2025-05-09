@@ -49,6 +49,11 @@ const SearchPage = () => {
       console.error(error);
     }
   };
+  if(type) {
+  useEffect(()=> {
+    fetchFromTypeApi()
+  }, [])
+}
   console.log(makeFilter);
 
   const query = [];

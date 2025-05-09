@@ -53,6 +53,7 @@ export const getCapById = async (req, res) => {
 
                 // Get Cap data By id with pagination
                 const get_cap_data_by_id = await Cap.findById(cap_id)
+                    console.log(get_cap_data_by_id);
                         
                 res.status(200).json({ message: "Success", data: get_cap_data_by_id });
 
@@ -66,10 +67,14 @@ export const updateCap = async (req, res) => {
         try {
             const { id } = req.params;
             const { company_name, forwarder_name, message } = req.body;
+            console.log(id , req.body);
+            
     
             // Validate fields
             if (!company_name || !forwarder_name) {
+                    console.log("All fields are required");
                 return res.status(400).json({ message: "All fields are required" });
+                
             }
     
             // Update the cap document
@@ -78,13 +83,16 @@ export const updateCap = async (req, res) => {
                 { company_name, forwarder_name, message },
                 { new: true } // Return the updated document
             );
+            console.log(updated_cap);
+            
     
             if (!updated_cap) {
+                    console.log( "Cap not found" );
                 return res.status(404).json({ message: "Cap not found" });
             }
     
             res.status(200).json({ message: "Cap Updated Successfully", data: updated_cap });
-    
+    console.log( "Cap Updated Successfully");
         } catch (error) {
             console.log(error.message);
             res.status(400).json({ message: "Failed to update Cap", error: error.message });

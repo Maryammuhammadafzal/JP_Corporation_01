@@ -9,7 +9,7 @@ router.post("/add" ,verifyToken, productImagesUpload.array("product_images", 20)
 router.get("/get" , getProductImage);
 router.get("/getbyid/:productID" , getProductImageById);
 router.put("/update/:productID" ,productImagesUpload.array("product_images", 20), updateProductImage);
-router.put("/delete/:productID" , deleteProductImage);
+router.delete("/delete/:productID" , deleteProductImage);
 
 // Export Router
 export default router;

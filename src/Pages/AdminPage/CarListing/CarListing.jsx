@@ -17,6 +17,7 @@ const CarListings = () => {
       const res = await axios.get("http://localhost:5000/api/carListing/get" );
       const data = await res.data.data;
       setCarData(data);
+      console.log(data);
       
       
     } catch (error) {
@@ -59,17 +60,29 @@ const CarListings = () => {
   const totalPages = Math.ceil(filteredCars.length / entriesPerPage);
 
   const handleDelete = async (id, title) => {
-
+    
     if(id) {
+      let car_id = carData.map(car => car.list_id);
+      let del_id = parseInt(car_id[0])
+           
+      
       let token = localStorage.getItem("adminToken");
+      const imageResponse = await axios.delete(
+        `http://localhost:5000/api/images/delete/${del_id}` , {
+          headers : {
+            "Authorization" : `Barear ${token}`
+          }
+        });
       const response = await axios.delete(
         `http://localhost:5000/api/carListing/delete/${id}` , {
           headers : {
             "Authorization" : `Barear ${token}`
           }
         });
+
+        console.log(imageResponse);
         
-      if (response.status === 200) {
+      if (response.status === 200 && imageResponse.status === 200) {
         alert(`${title} deleted`);
         fetchCarData();
       } else {

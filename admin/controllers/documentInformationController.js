@@ -83,8 +83,10 @@ export const getDocumentInformation = async (req, res) => {
 export const getDocumentInformationById = async (req, res) => {
     try {
         const cap_id = req.params.id;
+console.log(cap_id);
 
         const documents = await DocumentInformation.findOne({cap_id})
+console.log(documents);
 
         res.status(200).json({ message: "Document information fetched successfully", data: documents });
     } catch (error) {
@@ -97,6 +99,8 @@ export const getDocumentInformationById = async (req, res) => {
 export const updateDocumentInformation = async (req, res) => {
     try {
         const { id } = req.params;
+        console.log(id , req.body);
+        
 
         const existingDoc = await DocumentInformation.findOne({ cap_id: id });
         if (!existingDoc) {
@@ -154,6 +158,8 @@ export const updateDocumentInformation = async (req, res) => {
             },
             { new: true }
         );
+        console.log(updatedDoc);
+        
 
         res.status(200).json({ message: "Document information updated successfully", data: updatedDoc });
     } catch (error) {
@@ -166,10 +172,14 @@ export const updateDocumentInformation = async (req, res) => {
 export const deleteDocumentInformation = async (req, res) => {
     try {
         const { id } = req.params;
+console.log(id);
 
         const deletedDoc = await DocumentInformation.findOneAndDelete({ cap_id: id });
+console.log(deletedDoc);
 
         if (!deletedDoc) {
+            console.log("Document not found" );
+            
             return res.status(404).json({ message: "Document not found" });
         }
 
